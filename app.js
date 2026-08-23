@@ -375,46 +375,15 @@ function speakWord(e) {
     }
 }
 
-// ПОКРАЩЕНЕ КЕШУВАННЯ НІМЕЦЬКОГО ГОЛОСУ ДЛЯ ПРАВИЛЬНОЇ ВИМОВИ
-let selectedGermanVoice = null;
-
-function loadGermanVoices() {
-    if (!('speechSynthesis' in window)) return;
-    const voices = window.speechSynthesis.getVoices();
-    // Шукаємо першочергово німецький голос (de-DE або німецьку мову)
-    selectedGermanVoice = voices.find(v => v.lang.toLowerCase() === 'de-de' || v.lang.toLowerCase().startsWith('de')) || null;
-}
-
-if ('speechSynthesis' in window) {
-    window.speechSynthesis.onvoiceschanged = loadGermanVoices;
-    loadGermanVoices();
-}
-
+// 100% НАДІЙНИЙ НІМЕЦЬКИЙ АУДЬОПОТІК (GOOGLE CLOUD TTS)
 function speakCompactWord(wordStr) {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    
-    // Очищення тексту для чистої німецької вимови
     let cleanText = wordStr.split('/')[0];
     cleanText = cleanText.split(',')[0];
     cleanText = cleanText.replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
     
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'de-DE';
-    utterance.rate = 0.9;
-    
-    if (!selectedGermanVoice) {
-        loadGermanVoices();
-    }
-    if (selectedGermanVoice) {
-        utterance.voice = selectedGermanVoice;
-    }
-
-    // Захист від збирача сміття (Garbage Collection)
-    window.speechUtterancesPool = window.speechUtterancesPool || [];
-    window.speechUtterancesPool.push(utterance);
-    
-    window.speechSynthesis.speak(utterance);
+    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=de&client=tw-ob`;
+    const audio = new Audio(audioUrl);
+    audio.play().catch(e => console.log("Audio playback error:", e));
 }
 
 function speakTrialWord() {
@@ -639,7 +608,6 @@ function nextCard() { AudioEngine.play('click'); currentIndex = (currentIndex + 
 function prevCard() { AudioEngine.play('click'); currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCard(); }
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadGermanVoices();
     document.addEventListener('click', () => {
         AudioEngine.init();
     }, { once: true });
@@ -900,7 +868,7 @@ function inspectSoul(ger, ukr, gram, emoji, rarity) {
     const modal = document.getElementById("soul-inspect-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("soul-inspect-box");
-    if (box) box.classList.add("scale-95");
+    if (box) box.classList.remove("scale-95");
 }
 
 function closeSoulInspect() {
