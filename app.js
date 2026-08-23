@@ -756,7 +756,7 @@ function openMasteryTrial() {
     renderTrialUI();
 
     const modal = document.getElementById("trial-modal");
-    if (modal) modal.classList.0 = modal.classList.remove("opacity-0", "pointer-events-none");
+    if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("trial-box");
     if (box) box.classList.remove("scale-95");
 }
