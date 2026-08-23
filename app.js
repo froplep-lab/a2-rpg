@@ -375,13 +375,13 @@ function speakWord(e) {
     }
 }
 
-// 100% НАДІЙНИЙ НІМЕЦЬКИЙ АУДЬОПОТІК (GOOGLE CLOUD TTS)
+// 100% НАДІЙНИЙ ХМАРНИЙ НЕЙРО-ГОЛОС (STREAMELEMENTS TTS API)
 function speakCompactWord(wordStr) {
     let cleanText = wordStr.split('/')[0];
     cleanText = cleanText.split(',')[0];
     cleanText = cleanText.replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
     
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=de&client=tw-ob`;
+    const audioUrl = `https://api.streamelements.com/v2/speech?voice=Vicki&text=${encodeURIComponent(cleanText)}`;
     const audio = new Audio(audioUrl);
     audio.play().catch(e => console.log("Audio playback error:", e));
 }
@@ -952,7 +952,7 @@ function openWordBrowser() {
     const modal = document.getElementById("word-browser-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("browser-box");
-    if (box) box.classList.remove("scale-95");
+    if (box) box.classList.add("scale-95");
 }
 
 function closeWordBrowser() {
