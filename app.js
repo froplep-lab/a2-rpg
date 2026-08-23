@@ -375,15 +375,24 @@ function speakWord(e) {
     }
 }
 
-// 100% НАДІЙНИЙ ХМАРНИЙ НЕЙРО-ГОЛОС (STREAMELEMENTS TTS API)
+// 100% НАДІЙНИЙ ГІБРИДНИЙ РУШІЙ ОЗВУЧКИ (GOOGLE TTS + SYSTEM FALLBACK)
 function speakCompactWord(wordStr) {
     let cleanText = wordStr.split('/')[0];
     cleanText = cleanText.split(',')[0];
     cleanText = cleanText.replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
     
-    const audioUrl = `https://api.streamelements.com/v2/speech?voice=Vicki&text=${encodeURIComponent(cleanText)}`;
+    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=de&client=tw-ob`;
     const audio = new Audio(audioUrl);
-    audio.play().catch(e => console.log("Audio playback error:", e));
+    
+    audio.play().catch(e => {
+        console.log("Google TTS error, fallback to SpeechSynthesis:", e);
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'de-DE';
+            window.speechSynthesis.speak(utterance);
+        }
+    });
 }
 
 function speakTrialWord() {
@@ -747,7 +756,7 @@ function openMasteryTrial() {
     renderTrialUI();
 
     const modal = document.getElementById("trial-modal");
-    if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
+    if (modal) modal.classList.0 = modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("trial-box");
     if (box) box.classList.remove("scale-95");
 }
@@ -868,7 +877,7 @@ function inspectSoul(ger, ukr, gram, emoji, rarity) {
     const modal = document.getElementById("soul-inspect-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("soul-inspect-box");
-    if (box) box.classList.remove("scale-95");
+    if (box) box.classList.add("scale-95");
 }
 
 function closeSoulInspect() {
@@ -884,7 +893,7 @@ function openInventoryModal() {
     const modal = document.getElementById("inventory-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("inventory-box");
-    if (box) box.classList.remove("scale-95");
+    if (box) box.classList.add("scale-95");
 }
 
 function closeInventoryModal() {
