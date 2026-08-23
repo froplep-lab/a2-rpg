@@ -63,7 +63,6 @@ const AudioEngine = {
     }
 };
 
-// --- TELEGRAM MINI APP ІНІЦІАЛІЗАЦІЯ ---
 const tg = window.Telegram?.WebApp;
 let tgUser = tg?.initDataUnsafe?.user;
 
@@ -71,9 +70,7 @@ if (tg) {
     tg.ready();
     tg.expand();
     if (tg.setHeaderColor) tg.setHeaderColor('#030712');
-    if (typeof tg.requestFullscreen === 'function') {
-        tg.requestFullscreen();
-    }
+    if (typeof tg.requestFullscreen === 'function') tg.requestFullscreen();
 }
 
 let hero = {
@@ -88,73 +85,6 @@ let hero = {
     pet: localStorage.getItem('a2_pet') || '🐲',
     streak: 0
 };
-
-window.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener('click', () => {
-        AudioEngine.init();
-    }, { once: true });
-
-    if (AudioEngine.muted) {
-        const icon = document.getElementById("sound-icon");
-        if (icon) icon.className = "fa-solid fa-volume-xmark text-pink-500";
-        const masterBtn = document.getElementById("sound-master-btn");
-        if (masterBtn) {
-            masterBtn.className = "interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-slate-800 text-slate-400";
-            masterBtn.innerText = "ВИМКНЕНО";
-        }
-    }
-    updateHeroUI();
-    updateCard();
-    renderCompactBlock();
-});
-
-function openSoundSettingsModal() {
-    AudioEngine.play('click');
-    const modal = document.getElementById("sound-settings-modal");
-    if (modal) {
-        modal.classList.remove("opacity-0", "pointer-events-none");
-        const box = document.getElementById("sound-box");
-        if (box) box.classList.remove("scale-95");
-    }
-}
-
-function closeSoundSettingsModal() {
-    AudioEngine.play('click');
-    const modal = document.getElementById("sound-settings-modal");
-    if (modal) {
-        modal.classList.add("opacity-0", "pointer-events-none");
-        const box = document.getElementById("sound-box");
-        if (box) box.classList.add("scale-95");
-    }
-}
-
-function toggleAudioMute() {
-    AudioEngine.muted = !AudioEngine.muted;
-    localStorage.setItem('a2_muted', AudioEngine.muted);
-    const icon = document.getElementById("sound-icon");
-    const masterBtn = document.getElementById("sound-master-btn");
-    if (AudioEngine.muted) {
-        if (icon) icon.className = "fa-solid fa-volume-xmark text-pink-500";
-        if (masterBtn) {
-            masterBtn.className = "interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-slate-800 text-slate-400";
-            masterBtn.innerText = "ВИМКНЕНО";
-        }
-    } else {
-        if (icon) icon.className = "fa-solid fa-volume-high text-cyan-400";
-        if (masterBtn) {
-            masterBtn.className = "interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-cyan-500 text-slate-950";
-            masterBtn.innerText = "УВІМКНЕНО";
-        }
-    }
-}
-
-function resetAllProgress() {
-    AudioEngine.play('click');
-    if (confirm("Скинути всю мережу та прогрес?")) {
-        localStorage.clear();
-        window.location.reload();
-    }
-}
 
 let trophies = JSON.parse(localStorage.getItem('a2_trophies') || '[]');
 let envIndex = 0;
@@ -229,7 +159,7 @@ let cards = [
     { german: "der Künstler, - / die Künstlerin, -nen", grammar: "Nomen", ukrainian: "артист / митець", hint: "Творець мистецтва", emoji: "🎨", sentence: "Berühmte Künstler stellen hier ihre Bilder aus." },
     { german: "Europa (Sg.)", grammar: "Nomen", ukrainian: "Європа", hint: "Наш континент", emoji: "🇪🇺", sentence: "Deutschland liegt im Herzen von Europa." },
     { german: "das Spielzeug, -e", grammar: "Nomen", ukrainian: "іграшка", hint: "Для дитячих ігор", emoji: "🧸", sentence: "Die Kinder räumen ihr Spielzeug nach dem Spielen auf." },
-    { german: "die CD, -s", grammar: "Nomen", ukrainian: "диск", hint: "Носій аудіо", emoji: "💿", sentence: "Hörst du noch Musik über CD или streamst du online?" },
+    { german: "die CD, -s", grammar: "Nomen", ukrainian: "диск", hint: "Носій аудіо", emoji: "💿", sentence: "Hörst du noch Musik über CD oder streamst du online?" },
     { german: "die Renovierung, -en", grammar: "Nomen", ukrainian: "косметичний ремонт", hint: "Оновлення приміщення", emoji: "🛠️", sentence: "Die Renovierung unserer Wohnung dauert noch zwei Wochen." },
     { german: "die Wiedereröffnung, -en", grammar: "Nomen", ukrainian: "повторне відкриття", hint: "Знову відчинено", emoji: "🎉", sentence: "Wir feiern heute die Wiedereröffnung des Museums." },
     { german: "an·nehmen", grammar: "Verb", ukrainian: "приймати", hint: "Погодитися на щось", emoji: "🤲", sentence: "Ich werde dieses tolle Jobangebot gerne annehmen." },
@@ -684,6 +614,25 @@ function flipCard() {
 
 function nextCard() { AudioEngine.play('click'); currentIndex = (currentIndex + 1) % cards.length; updateCard(); }
 function prevCard() { AudioEngine.play('click'); currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCard(); }
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', () => {
+        AudioEngine.init();
+    }, { once: true });
+
+    if (AudioEngine.muted) {
+        const icon = document.getElementById("sound-icon");
+        if (icon) icon.className = "fa-solid fa-volume-xmark text-pink-500";
+        const masterBtn = document.getElementById("sound-master-btn");
+        if (masterBtn) {
+            masterBtn.className = "interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-slate-800 text-slate-400";
+            masterBtn.innerText = "ВИМКНЕНО";
+        }
+    }
+    updateHeroUI();
+    updateCard();
+    renderCompactBlock();
+});
 
 function toggleShuffle() {
     AudioEngine.play('click');
