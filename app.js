@@ -70,6 +70,10 @@ let tgUser = tg?.initDataUnsafe?.user;
 if (tg) {
     tg.ready();
     tg.expand();
+    if (tg.setHeaderColor) tg.setHeaderColor('#030712');
+    if (typeof tg.requestFullscreen === 'function') {
+        tg.requestFullscreen();
+    }
 }
 
 let hero = {
@@ -225,7 +229,7 @@ let cards = [
     { german: "der Künstler, - / die Künstlerin, -nen", grammar: "Nomen", ukrainian: "артист / митець", hint: "Творець мистецтва", emoji: "🎨", sentence: "Berühmte Künstler stellen hier ihre Bilder aus." },
     { german: "Europa (Sg.)", grammar: "Nomen", ukrainian: "Європа", hint: "Наш континент", emoji: "🇪🇺", sentence: "Deutschland liegt im Herzen von Europa." },
     { german: "das Spielzeug, -e", grammar: "Nomen", ukrainian: "іграшка", hint: "Для дитячих ігор", emoji: "🧸", sentence: "Die Kinder räumen ihr Spielzeug nach dem Spielen auf." },
-    { german: "die CD, -s", grammar: "Nomen", ukrainian: "диск", hint: "Носій аудіо", emoji: "💿", sentence: "Hörst du noch Musik über CD oder streamst du online?" },
+    { german: "die CD, -s", grammar: "Nomen", ukrainian: "диск", hint: "Носій аудіо", emoji: "💿", sentence: "Hörst du noch Musik über CD или streamst du online?" },
     { german: "die Renovierung, -en", grammar: "Nomen", ukrainian: "косметичний ремонт", hint: "Оновлення приміщення", emoji: "🛠️", sentence: "Die Renovierung unserer Wohnung dauert noch zwei Wochen." },
     { german: "die Wiedereröffnung, -en", grammar: "Nomen", ukrainian: "повторне відкриття", hint: "Знову відчинено", emoji: "🎉", sentence: "Wir feiern heute die Wiedereröffnung des Museums." },
     { german: "an·nehmen", grammar: "Verb", ukrainian: "приймати", hint: "Погодитися на щось", emoji: "🤲", sentence: "Ich werde dieses tolle Jobangebot gerne annehmen." },
@@ -442,10 +446,16 @@ function speakWord(e) {
 }
 
 function speakCompactWord(wordStr) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
     let cleanText = wordStr.split('/')[0].replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=de&client=tw-ob`;
-    const audio = new Audio(audioUrl);
-    audio.play().catch(err => console.log("Audio play error:", err));
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    const voices = window.speechSynthesis.getVoices();
+    const deVoice = voices.find(v => v.lang.startsWith('de') || v.lang.startsWith('DE'));
+    if (deVoice) utterance.voice = deVoice;
+    window.speechSynthesis.speak(utterance);
 }
 
 function speakTrialWord() {
@@ -453,6 +463,12 @@ function speakTrialWord() {
     if (card && card.german) {
         speakCompactWord(card.german);
     }
+}
+
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+    };
 }
 
 function renderMarathonQuestion() {
