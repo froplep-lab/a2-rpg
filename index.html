@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>А2: RPG Studio (Telegram Edition)</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen flex flex-col justify-between p-3 sm:p-6 max-w-6xl mx-auto antialiased select-none">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="w-full pt-1 pb-3">
+        <div class="flex items-center justify-between mb-3">
+            <h1 id="main-title" class="text-xl sm:text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-pink-500 uppercase">
+                ⚡ А2: RPG Studio
+            </h1>
+            <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                <select id="music-select" onchange="changeMusicTrack(this.value)" class="interactive-btn bg-slate-900 text-purple-300 px-2.5 py-2 rounded-xl border border-purple-500/30 text-xs font-bold focus:outline-none cursor-pointer">
+                    <option value="off">🔇 Музика: Викл</option>
+                    <option value="trap">⚡ Trap</option>
+                    <option value="phonk">🏎️ Phonk</option>
+                    <option value="synthwave">🌆 Synth</option>
+                </select>
+
+                <button onclick="openAchievementsModal()" class="interactive-btn bg-slate-900 text-yellow-300 px-3 py-2 rounded-xl border border-yellow-500/30 text-xs font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-trophy"></i> <span>Місії</span> <span id="ach-count-badge" class="bg-yellow-500/20 text-yellow-300 text-[10px] px-1 py-0.5 rounded-md font-extrabold">0/5</span>
+                </button>
+                <button onclick="openInventoryModal()" class="interactive-btn bg-slate-900 text-cyan-300 px-3 py-2 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-microchip text-pink-500"></i> <span>Сховище</span> <span id="inv-count-badge" class="bg-pink-500/20 text-pink-300 text-[10px] px-1 py-0.5 rounded-md font-extrabold">0</span>
+                </button>
+                <button onclick="openWordBrowser()" class="interactive-btn bg-slate-900 text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs" title="Пошук слів">
+                    <i class="fa-solid fa-terminal text-cyan-400"></i>
+                </button>
+                <button onclick="openSoundSettingsModal()" class="interactive-btn bg-slate-900 text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs" title="Звук">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-cyan-400"></i>
+                </button>
+                <button onclick="resetAllProgress()" class="interactive-btn bg-slate-900 text-slate-400 hover:text-pink-400 p-2.5 rounded-xl border border-slate-800 text-xs" title="Скинути">
+                    <i class="fa-solid fa-power-off"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- THEME BAR -->
+        <div class="flex items-center justify-between bg-slate-900 p-3 rounded-2xl border border-cyan-500/30 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+                <div class="interactive-btn bg-cyan-500/20 text-cyan-300 px-3.5 py-2 rounded-xl border border-cyan-500/40 text-xs font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-pink-400"></i> А2: Тема 8 <span id="total-vocab-badge" class="text-pink-400">84 слова</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <button onclick="switchDisplayMode('game')" id="mode-game-btn" class="interactive-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-400 text-slate-950">Картки</button>
+                <button onclick="switchDisplayMode('compact')" id="mode-compact-btn" class="interactive-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 text-slate-300 border border-slate-800">Блок</button>
+                <button onclick="openMarathonModal()" class="interactive-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-500 text-white">🚀 Марафон</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CYBER ARENA / BATTLE HUD -->
+    <div id="arena-box" class="w-full bg-slate-900 border border-cyan-500/30 rounded-3xl p-4 sm:p-5 my-2 relative overflow-hidden">
+        <div class="flex items-center justify-between relative z-10">
+            <!-- HERO STATS -->
+            <div class="flex items-center gap-3">
+                <div id="hero-avatar-box" class="w-14 h-14 sm:w-16 sm:h-16 relative flex items-center justify-center anim-hero">
+                    <svg viewBox="0 0 100 100" class="w-full h-full stroke-cyan-400 fill-none stroke-[5] stroke-linecap-round stroke-linejoin-round" id="hero-svg">
+                        <circle cx="50" cy="22" r="12" class="fill-slate-950" />
+                        <path id="hero-visor" d="M38 20 Q50 12 62 20" class="stroke-pink-500 stroke-[3] hidden" />
+                        <line x1="50" y1="34" x2="50" y2="70" />
+                        <line x1="50" y1="44" x2="26" y2="54" />
+                        <line x1="50" y1="44" x2="74" y2="38" />
+                        <line id="hero-weapon-line" x1="74" y1="38" x2="94" y2="30" class="stroke-pink-500 stroke-[4.5]" />
+                        <line x1="50" y1="70" x2="34" y2="92" />
+                        <line x1="50" y1="70" x2="66" y2="92" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span id="hero-level-badge" class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-md font-bold border border-cyan-500/40">LVL 1</span>
+                        <span id="hero-class-label" class="text-xs sm:text-sm font-black text-white">Cyber-Runner</span>
+                        <span id="pet-display" class="text-base">🐲</span>
+                    </div>
+                    <div class="w-32 sm:w-44 bg-slate-950 h-2 rounded-full overflow-hidden border border-cyan-500/20 mt-1.5">
+                        <div id="hero-xp-bar" class="bg-gradient-to-r from-cyan-400 to-pink-500 h-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div id="hero-xp-text" class="text-[10px] text-slate-400 font-medium mt-0.5">XP: 0 / 100</div>
+                </div>
+            </div>
+
+            <!-- STREET SLANG / COMBO -->
+            <div class="flex flex-col items-center justify-center px-1">
+                <span class="text-[10px] font-black text-pink-400 tracking-wider">COMBO</span>
+                <span id="combo-badge" class="text-xs sm:text-sm font-black text-white bg-pink-500/20 px-2.5 py-0.5 rounded-xl border border-pink-500/40 my-0.5">x1</span>
+                <span id="slang-hint" class="text-[10px] text-cyan-300 italic hidden sm:inline">"Bock drauf!"</span>
+            </div>
+
+            <!-- ENEMY / TARGET STATS -->
+            <div class="flex flex-col items-end text-right">
+                <div class="text-[10px] text-slate-400 font-bold mb-1 flex items-center gap-1">
+                    <span>HP:</span> <span id="enemy-hp-text" class="text-pink-400 font-black text-xs">3000 / 3000</span>
+                </div>
+                <div class="w-32 sm:w-44 bg-slate-950 h-2 rounded-full overflow-hidden border border-pink-500/20 mb-1.5">
+                    <div id="enemy-hp-bar" class="bg-gradient-to-r from-pink-500 to-cyan-400 h-full transition-all duration-200" style="width: 100%"></div>
+                </div>
+                <div id="enemy-container" onclick="attackEnemyClick()" class="interactive-btn cursor-pointer flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-pink-500/30 hover:border-cyan-400" title="Вдарити ворога!">
+                    <span id="battle-word-target" class="text-xs sm:text-sm font-black text-slate-200 truncate max-w-[90px] sm:max-w-[130px]">...</span>
+                    <span id="battle-emoji-target" class="text-2xl">👾</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3 pt-2.5 border-t border-cyan-500/20 flex items-center justify-between">
+            <div class="flex items-center gap-2 text-xs text-cyan-400 font-medium">
+                <i class="fa-solid fa-shield-halved text-pink-500"></i> Трофеї: <span id="sub-trophies-count" class="font-bold text-white">0</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <span class="text-[10px] text-slate-400">Локація:</span>
+                <button onclick="cycleEnvironment()" id="env-btn" class="interactive-btn text-[10px] bg-slate-950 text-cyan-300 px-2.5 py-1 rounded-lg border border-cyan-500/30">🌆 Cyber Berlin</button>
+            </div>
+        </div>
+        <div id="inline-trophies" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 bg-slate-950 p-2 rounded-xl border border-cyan-500/20 min-h-[44px] max-h-24 overflow-y-auto items-center mt-2"></div>
+    </div>
+
+    <!-- MAIN INTERACTIVE SECTION -->
+    <main class="w-full flex-1 flex flex-col justify-between space-y-3 my-1">
+        
+        <!-- GAME VIEW (CARDS) -->
+        <div id="game-view-container" class="w-full flex flex-col space-y-3">
+            <div class="flex items-center justify-between bg-slate-900 border border-cyan-500/20 px-4 py-2.5 rounded-2xl text-xs">
+                <div class="flex items-center gap-2">
+                    <span id="card-counter" class="font-bold text-cyan-400 text-sm">1 / 84</span>
+                    <span class="text-slate-600">|</span>
+                    <span id="block-badge" class="text-slate-300">Тема 8</span>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button onclick="openMasteryTrial()" id="soul-hack-btn" class="interactive-btn bg-pink-500/20 hover:bg-pink-500/30 text-pink-300 px-3 py-2 rounded-xl border border-pink-500/40 text-xs font-bold flex items-center gap-1.5">
+                        <i id="soul-hack-icon" class="fa-solid fa-bolt text-pink-400"></i>
+                        <span id="soul-hack-label">Зламати душу</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FLASHCARD VIEW -->
+            <div id="view-cards" class="w-full">
+                <div class="w-full h-72 sm:h-88 perspective cursor-pointer group" onclick="flipCard()">
+                    <div id="card-inner" class="w-full h-full relative transform-style-3d cyber-card rounded-3xl shadow-xl">
+                        
+                        <!-- FRONT SIDE -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden bg-slate-900 border border-cyan-500/30 rounded-3xl p-6 sm:p-8 flex flex-col justify-between items-center text-center">
+                            <div class="w-full flex justify-between items-center">
+                                <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded-lg font-semibold border border-cyan-500/30">DEUTSCH 🇩🇪</span>
+                                <button onclick="speakWord(event)" class="interactive-btn text-cyan-400 hover:text-pink-400 p-2 text-base"><i class="fa-solid fa-volume-high"></i></button>
+                            </div>
+                            <div class="my-auto">
+                                <div id="card-front-word" class="text-3xl sm:text-5xl font-black text-white mb-3 tracking-tight"></div>
+                                <div id="card-front-grammar" class="text-xs font-semibold text-pink-400 bg-pink-500/10 border border-pink-500/20 px-3 py-1.5 rounded-full inline-block"></div>
+                            </div>
+                            <div class="text-[10px] text-slate-400 flex items-center gap-1">
+                                <i class="fa-solid fa-hand-pointer text-[10px]"></i> Натисни для перевороту
+                            </div>
+                        </div>
+
+                        <!-- BACK SIDE -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 flex flex-col justify-between items-center text-center">
+                            <div class="w-full flex justify-between items-center">
+                                <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-lg font-semibold border border-emerald-500/20">ÜBERSETZUNG 🇺🇦</span>
+                                <span id="card-back-grammar-badge" class="text-xs text-slate-300"></span>
+                            </div>
+                            <div class="my-auto space-y-3">
+                                <div id="card-back-emoji" class="text-4xl sm:text-5xl"></div>
+                                <div id="card-back-translation" class="text-2xl sm:text-4xl font-bold text-emerald-400 tracking-tight"></div>
+                                <div id="card-back-hint" class="text-xs sm:text-sm text-slate-300 italic"></div>
+                            </div>
+                            <div class="text-[10px] text-slate-400">Натисни для повернення</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- CARD CONTROLS -->
+                <div class="grid grid-cols-4 gap-2 mt-4">
+                    <button onclick="prevCard()" class="interactive-btn bg-slate-900 text-slate-200 py-3 rounded-2xl text-xs font-bold border border-cyan-500/20 flex flex-col items-center">
+                        <i class="fa-solid fa-arrow-left text-xs mb-0.5 text-cyan-400"></i> Назад
+                    </button>
+                    <button onclick="flipCard()" class="interactive-btn bg-slate-900 text-cyan-400 py-3 rounded-2xl text-xs font-bold border border-cyan-500/20 flex flex-col items-center">
+                        <i class="fa-solid fa-rotate text-xs mb-0.5"></i> Оберт
+                    </button>
+                    <button onclick="nextCard()" class="interactive-btn bg-cyan-400 text-slate-950 py-3 rounded-2xl text-xs font-black flex flex-col items-center">
+                        <i class="fa-solid fa-arrow-right text-xs mb-0.5"></i> Далі
+                    </button>
+                    <button onclick="toggleShuffle()" id="shuffle-btn" class="interactive-btn bg-slate-900 text-slate-200 py-3 rounded-2xl text-xs font-bold border border-cyan-500/20 flex flex-col items-center">
+                        <i class="fa-solid fa-shuffle text-xs mb-0.5 text-cyan-400"></i> Шум
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPACT WORDS BLOCK VIEW -->
+        <div id="compact-block-view" class="hidden w-full bg-slate-900 border border-cyan-500/30 rounded-3xl p-5 shadow-xl">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-cyan-500/20">
+                <div class="flex items-center gap-2 text-cyan-400 font-bold text-sm">
+                    <i class="fa-solid fa-border-all"></i> <span id="compact-title">А2 Тема 8: Всі слова</span>
+                </div>
+                <span id="compact-count" class="text-xs text-slate-300">84 слова</span>
+            </div>
+            <div id="compact-words-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-[60vh] overflow-y-auto pr-1"></div>
+        </div>
+
+    </main>
+
+    <!-- MODAL: SOUND SETTINGS -->
+    <div id="sound-settings-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl w-full max-w-sm p-6 shadow-2xl transform scale-95 transition-transform duration-200" id="sound-box">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                <h3 class="font-bold text-sm text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-sliders"></i> Звук</h3>
+                <button onclick="closeSoundSettingsModal()" class="interactive-btn text-slate-400 hover:text-white p-1.5 text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4 text-xs">
+                <div class="flex items-center justify-between bg-slate-950 p-3 rounded-2xl border border-cyan-500/20">
+                    <span class="text-slate-200">Головний звук</span>
+                    <button onclick="toggleAudioMute()" id="sound-master-btn" class="interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-cyan-500 text-slate-950">УВІМКНЕНО</button>
+                </div>
+                <button onclick="closeSoundSettingsModal()" class="interactive-btn w-full bg-cyan-500 text-slate-950 py-3 rounded-2xl font-bold text-xs">ЗБЕРЕГТИ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Решта модальних вікон (марафони, досягнення тощо за потреби підхоплюються з логіки) -->
+    <div id="marathon-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-slate-900 border border-pink-500/50 rounded-3xl w-full max-w-lg p-6 shadow-2xl transform scale-95 transition-transform duration-200" id="marathon-box">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                <h3 class="font-bold text-sm text-pink-400">🚀 Ультра-Марафон</h3>
+                <button onclick="closeMarathonModal()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="marathon-content" class="space-y-4">
+                <div class="text-center py-4">
+                    <button onclick="startMarathon('all')" class="interactive-btn bg-pink-500 text-slate-950 px-6 py-3 rounded-2xl font-bold text-xs">ПОЧАТИ МАРАФОН (84 слова)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
