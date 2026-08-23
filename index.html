@@ -19,13 +19,6 @@
                 ⚡ А2: RPG Studio
             </h1>
             <div class="flex items-center gap-1.5 flex-wrap justify-end">
-                <select id="music-select" onchange="changeMusicTrack(this.value)" class="interactive-btn bg-slate-900 text-purple-300 px-2.5 py-2 rounded-xl border border-purple-500/30 text-xs font-bold focus:outline-none cursor-pointer">
-                    <option value="off">🔇 Музика: Викл</option>
-                    <option value="trap">⚡ Trap</option>
-                    <option value="phonk">🏎️ Phonk</option>
-                    <option value="synthwave">🌆 Synth</option>
-                </select>
-
                 <button onclick="openAchievementsModal()" class="interactive-btn bg-slate-900 text-yellow-300 px-3 py-2 rounded-xl border border-yellow-500/30 text-xs font-bold flex items-center gap-1.5">
                     <i class="fa-solid fa-trophy"></i> <span>Місії</span> <span id="ach-count-badge" class="bg-yellow-500/20 text-yellow-300 text-[10px] px-1 py-0.5 rounded-md font-extrabold">0/5</span>
                 </button>
@@ -228,7 +221,7 @@
         </div>
     </div>
 
-    <!-- Решта модальних вікон (марафони, досягнення тощо за потреби підхоплюються з логіки) -->
+    <!-- MODAL: MARATHON -->
     <div id="marathon-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
         <div class="bg-slate-900 border border-pink-500/50 rounded-3xl w-full max-w-lg p-6 shadow-2xl transform scale-95 transition-transform duration-200" id="marathon-box">
             <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
@@ -240,6 +233,100 @@
                     <button onclick="startMarathon('all')" class="interactive-btn bg-pink-500 text-slate-950 px-6 py-3 rounded-2xl font-bold text-xs">ПОЧАТИ МАРАФОН (84 слова)</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL: INVENTORY -->
+    <div id="inventory-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl w-full max-w-lg p-6 shadow-2xl transform scale-95 transition-transform duration-200 max-h-[90vh] overflow-y-auto" id="inventory-box">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                <h3 class="font-bold text-sm text-cyan-400">🛡️ Сховище та екіпірування</h3>
+                <button onclick="closeInventoryModal()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4 text-xs">
+                <div>
+                    <div class="font-bold text-slate-300 mb-2">Клас агента:</div>
+                    <div id="class-list" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
+                </div>
+                <div>
+                    <div class="font-bold text-slate-300 mb-2">Пет-компаньйон:</div>
+                    <div id="pet-list" class="grid grid-cols-6 gap-2"></div>
+                </div>
+                <div id="gear-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2"></div>
+                <div>
+                    <div class="font-bold text-slate-300 mb-2">Трофеї (<span id="sub-trophies-count-inv">0</span>):</div>
+                    <div id="trophies-grid" class="grid grid-cols-6 gap-2 bg-slate-950 p-3 rounded-2xl border border-cyan-500/25 min-h-[60px]"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ACHIEVEMENTS -->
+    <div id="achievements-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-slate-900 border border-yellow-500/50 rounded-3xl w-full max-w-lg p-6 shadow-2xl transform scale-95 transition-transform duration-200" id="achievements-box">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                <h3 class="font-bold text-sm text-yellow-400">🏆 Кібер-Місії</h3>
+                <button onclick="closeAchievementsModal()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="achievements-list" class="space-y-2.5 max-h-[60vh] overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: WORD BROWSER -->
+    <div id="word-browser-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl w-full max-w-xl p-6 shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col max-h-[85vh]" id="browser-box">
+            <div class="flex justify-between items-center mb-3 pb-3 border-b border-slate-800">
+                <h3 class="font-bold text-sm text-cyan-400">📜 База даних слів</h3>
+                <button onclick="closeWordBrowser()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="text" id="browser-search" oninput="filterWords()" placeholder="Пошук слова чи перекладу..." class="w-full bg-slate-950 border border-cyan-500/30 rounded-xl px-3.5 py-2.5 text-xs text-white mb-3 focus:outline-none">
+            <div id="browser-list" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: MASTERY TRIAL -->
+    <div id="trial-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-slate-900 border border-pink-500/50 rounded-3xl w-full max-w-md p-6 shadow-2xl transform scale-95 transition-transform duration-200" id="trial-box">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                <h3 class="font-bold text-sm text-pink-400">⚡ Злам ядріва слова</h3>
+                <button onclick="closeTrial()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4 text-xs">
+                <div class="bg-slate-950 p-3.5 rounded-2xl border border-cyan-500/30 flex items-center justify-between">
+                    <div>
+                        <div class="text-[10px] text-slate-400 mb-0.5">Цільовий переклад:</div>
+                        <div id="trial-translation-target" class="text-sm font-bold text-white">...</div>
+                    </div>
+                    <button onclick="speakTrialWord()" class="interactive-btn bg-cyan-500/20 text-cyan-300 p-2.5 rounded-xl border border-cyan-500/40"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div>
+                    <div class="text-[10px] text-slate-400 mb-1.5">Зберіть правильне німецьке слово з модулів:</div>
+                    <div id="trial-slots" class="bg-slate-950 p-3 rounded-2xl border border-pink-500/30 min-h-[50px] flex flex-wrap gap-1.5 items-center"></div>
+                </div>
+                <div>
+                    <div class="text-[10px] text-slate-400 mb-1.5">Доступні модулі пам'яті:</div>
+                    <div id="trial-modules" class="flex flex-wrap gap-2"></div>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="resetTrialAssembly()" class="interactive-btn bg-slate-800 text-slate-300 py-3 px-4 rounded-xl font-bold text-xs flex-1">Скинути</button>
+                    <button onclick="verifyTrialAssembly()" class="interactive-btn bg-pink-500 text-slate-950 py-3 px-5 rounded-xl font-bold text-xs flex-1">Зламати</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: INSPECT SOUL -->
+    <div id="soul-inspect-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl transform scale-95 transition-transform duration-200" id="soul-inspect-box">
+            <div class="flex justify-end mb-2">
+                <button onclick="closeSoulInspect()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="inspect-emoji" class="text-5xl mb-3"></div>
+            <div id="inspect-rarity"></div>
+            <div id="inspect-german" class="text-xl font-black text-white mb-1"></div>
+            <div id="inspect-grammar" class="text-xs text-pink-400 font-semibold mb-2"></div>
+            <div id="inspect-translation" class="text-sm text-emerald-400 font-medium mb-4"></div>
+            <button onclick="closeSoulInspect()" class="interactive-btn w-full bg-cyan-500 text-slate-950 py-2.5 rounded-xl font-bold text-xs">Закрити</button>
         </div>
     </div>
 
