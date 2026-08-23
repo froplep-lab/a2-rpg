@@ -375,11 +375,26 @@ function speakWord(e) {
     }
 }
 
+// ПОКРАЩЕНЕ КЕШУВАННЯ НІМЕЦЬКОГО ГОЛОСУ ДЛЯ ПРАВИЛЬНОЇ ВИМОВИ
+let selectedGermanVoice = null;
+
+function loadGermanVoices() {
+    if (!('speechSynthesis' in window)) return;
+    const voices = window.speechSynthesis.getVoices();
+    // Шукаємо першочергово німецький голос (de-DE або німецьку мову)
+    selectedGermanVoice = voices.find(v => v.lang.toLowerCase() === 'de-de' || v.lang.toLowerCase().startsWith('de')) || null;
+}
+
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = loadGermanVoices;
+    loadGermanVoices();
+}
+
 function speakCompactWord(wordStr) {
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     
-    // Очищення рядка від артиклів/дефісів після коми чи слеша для правильної озвучки браузером
+    // Очищення тексту для чистої німецької вимови
     let cleanText = wordStr.split('/')[0];
     cleanText = cleanText.split(',')[0];
     cleanText = cleanText.replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
@@ -387,9 +402,18 @@ function speakCompactWord(wordStr) {
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'de-DE';
     utterance.rate = 0.9;
-    const voices = window.speechSynthesis.getVoices();
-    const deVoice = voices.find(v => v.lang.startsWith('de') || v.lang.startsWith('DE'));
-    if (deVoice) utterance.voice = deVoice;
+    
+    if (!selectedGermanVoice) {
+        loadGermanVoices();
+    }
+    if (selectedGermanVoice) {
+        utterance.voice = selectedGermanVoice;
+    }
+
+    // Захист від збирача сміття (Garbage Collection)
+    window.speechUtterancesPool = window.speechUtterancesPool || [];
+    window.speechUtterancesPool.push(utterance);
+    
     window.speechSynthesis.speak(utterance);
 }
 
@@ -398,12 +422,6 @@ function speakTrialWord() {
     if (card && card.german) {
         speakCompactWord(card.german);
     }
-}
-
-if ('speechSynthesis' in window) {
-    window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
-    };
 }
 
 function renderMarathonQuestion() {
@@ -621,6 +639,7 @@ function nextCard() { AudioEngine.play('click'); currentIndex = (currentIndex + 
 function prevCard() { AudioEngine.play('click'); currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCard(); }
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadGermanVoices();
     document.addEventListener('click', () => {
         AudioEngine.init();
     }, { once: true });
@@ -881,7 +900,7 @@ function inspectSoul(ger, ukr, gram, emoji, rarity) {
     const modal = document.getElementById("soul-inspect-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("soul-inspect-box");
-    if (box) box.classList.remove("scale-95");
+    if (box) box.classList.add("scale-95");
 }
 
 function closeSoulInspect() {
