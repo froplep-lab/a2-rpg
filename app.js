@@ -378,7 +378,12 @@ function speakWord(e) {
 function speakCompactWord(wordStr) {
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
-    let cleanText = wordStr.split('/')[0].replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
+    
+    // Очищення рядка від артиклів/дефісів після коми чи слеша для правильної озвучки браузером
+    let cleanText = wordStr.split('/')[0];
+    cleanText = cleanText.split(',')[0];
+    cleanText = cleanText.replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
+    
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'de-DE';
     utterance.rate = 0.9;
