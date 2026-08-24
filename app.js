@@ -106,93 +106,7 @@ const rarities = [
 
 const slangPhrases = ["Bock drauf!", "Digga, läuft!", "Sheesh!", "Ehrenmann!", "Voll cringe!"];
 
-let cards = [
-    { german: "der Witwer, - / die Witwe, -n", grammar: "Nomen", ukrainian: "вдівець / вдова", hint: "Людина, яка втратила чоловіка/дружину", emoji: "🥀", sentence: "Nach dem Tod seiner Frau wurde er zum Witwer." },
-    { german: "das Stadtzentrum, -zentren", grammar: "Nomen", ukrainian: "центр міста", hint: "Серце міста", emoji: "🏙️", sentence: "Wir treffen uns heute Nachmittag direkt im Stadtzentrum." },
-    { german: "der Stadtrand, ̈-er", grammar: "Nomen", ukrainian: "околиця міста", hint: "Периферія, ближче до природи", emoji: "🏡", sentence: "Sie wohnen ruhig am Stadtrand von Berlin." },
-    { german: "sich wohl·fühlen", grammar: "Verb", ukrainian: "почуватися добре", hint: "Мати затишок і комфорт", emoji: "😌", sentence: "In dieser gemütlichen Wohnung kann man sich sofort wohlfühlen." },
-    { german: "aus·schlafen", grammar: "Verb", ukrainian: "виспатися", hint: "Спати стільки, стільки хочеться", emoji: "🛌", sentence: "Am Sonntag möchte ich endlich einmal richtig ausschlafen." },
-    { german: "die Disko, -s / die Disko(thek), -en", grammar: "Nomen", ukrainian: "дискотека", hint: "Місце для танців", emoji: "🪩", sentence: "Die Jugendlichen gehen am Wochenende gerne in die Disko." },
-    { german: "aus·gehen", grammar: "Verb", ukrainian: "виходити (у світ, на прогулянку)", hint: "Проводити вечір поза домом", emoji: "🎉", sentence: "Lass uns heute Abend zusammen ausgehen!" },
-    { german: "verbringen", grammar: "Verb", ukrainian: "проводити (час)", hint: "Витрачати час на щось", emoji: "⏳", sentence: "Wie hast du deine Sommerferien verbracht?" },
-    { german: "die Wäsche (Sg.)", grammar: "Nomen", ukrainian: "білизна, прання", hint: "Одяг для прання", emoji: "🧺", sentence: "Ich muss heute unbedingt die Wäsche waschen." },
-    { german: "unternehmen", grammar: "Verb", ukrainian: "робити, здійснювати", hint: "Кудись іти або діяти", emoji: "🚀", sentence: "Was wollen wir am Wochenende zusammen unternehmen?" },
-    { german: "das Ding, -e", grammar: "Nomen", ukrainian: "річ, штука", hint: "Будь-який предмет", emoji: "📦", sentence: "Was ist das für ein komisches Ding auf dem Tisch?" },
-    { german: "der See, -n", grammar: "Nomen", ukrainian: "озеро", hint: "Водойма суші", emoji: "🌊", sentence: "Im Sommer schwimmen wir oft im klaren See." },
-    { german: "trotzdem", grammar: "Adverb", ukrainian: "незважаючи на це, все одно", hint: "Всупереч обставинам", emoji: "🔄", sentence: "Es regnete stark, aber wir gingen trotzdem spazieren." },
-    { german: "die Radtour, -en", grammar: "Nomen", ukrainian: "велосипедний тур", hint: "Поїздка на велосипедах", emoji: "🚴", sentence: "Am Samstag machen wir eine lange Radtour am Fluss." },
-    { german: "der Flohmarkt, ̈-er", grammar: "Nomen", ukrainian: "блошиний ринок", hint: "Барахолка старих речей", emoji: "🏷️", sentence: "Auf dem Flohmarkt kann man günstige alte Bücher finden." },
-    { german: "erkältet sein", grammar: "Adjektiv", ukrainian: "бути застуженим", hint: "Мати нежить або кашель", emoji: "🤧", sentence: "Er kann heute nicht arbeiten, weil er erkältet ist." },
-    { german: "ständig", grammar: "Adjektiv", ukrainian: "постійно", hint: "Безперервно", emoji: "🔁", sentence: "Mein kleiner Bruder stellt mir ständig schwierige Fragen." },
-    { german: "weg·legen", grammar: "Verb", ukrainian: "відкласти", hint: "Покласти кудись подалі", emoji: "📥", sentence: "Bitte lege dein Handy beim Essen weg." },
-    { german: "der Vorschlag, ̈-er", grammar: "Nomen", ukrainian: "пропозиція", hint: "Ідея до дії", emoji: "💡", sentence: "Das ist ein ausgezeichneter Vorschlag, vielen Dank!" },
-    { german: "die Rundfahrt, -en", grammar: "Nomen", ukrainian: "поїздка, тур, екскурсія", hint: "Оглядове коло", emoji: "🚌", sentence: "Wir haben eine interessante Rundfahrt durch die Altstadt gemacht." },
-    { german: "einverstanden", grammar: "Adjektiv", ukrainian: "згодний", hint: "Коли думки збігаються", emoji: "🤝", sentence: "Bist du mit diesem Plan einverstanden?" },
-    { german: "positiv", grammar: "Adjektiv", ukrainian: "позитивний", hint: "Схвальний, хороший", emoji: "➕", sentence: "Wir müssen immer in die Zukunft positiv blicken." },
-    { german: "reagieren", grammar: "Verb", ukrainian: "реагувати", hint: "Давати відповідь на подію", emoji: "⚡", sentence: "Wie hat dein Chef auf diese Nachricht reagiert?" },
-    { german: "negativ", grammar: "Adjektiv", ukrainian: "негативний", hint: "Протилежність позитивному", emoji: "➖", sentence: "Seine Kritik war ziemlich negativ." },
-    { german: "die Bar, -s", grammar: "Nomen", ukrainian: "бар", hint: "Заклад з напоями", emoji: "🍸", sentence: "Sie trafen sich abends in einer kleinen Bar." },
-    { german: "die Kultur (Sg.)", grammar: "Nomen", ukrainian: "культура", hint: "Мистецтво та традиції", emoji: "🎭", sentence: "Mich interessiert die deutsche Kultur und Geschichte sehr." },
-    { german: "die Natur (Sg.)", grammar: "Nomen", ukrainian: "природа", hint: "Ліси, гори, річки", emoji: "🌲", sentence: "Am Wochenende genieße ich gerne die Ruhe in der Natur." },
-    { german: "die Oper, -n", grammar: "Nomen", ukrainian: "опера", hint: "Музичний театр", emoji: "🎼", sentence: "Wir hören heute Abend eine wunderschöne Oper." },
-    { german: "bügeln", grammar: "Verb", ukrainian: "прасувати", hint: "Розгладжувати одяг праскою", emoji: "👔", sentence: "Nach dem Waschen muss ich noch meine Hemden bügeln." },
-    { german: "wochentags", grammar: "Adverb", ukrainian: "у будні дні", hint: "З понеділка по п'ятницю", emoji: "📅", sentence: "Stehst du wochentags immer um sechs Uhr auf?" },
-    { german: "die Eintrittskarte, -n", grammar: "Nomen", ukrainian: "квиток", hint: "Пропуск на захід", emoji: "🎫", sentence: "Hast du schon die Eintrittskarten für das Konzert gekauft?" },
-    { german: "der Sender, -", grammar: "Nomen", ukrainian: "канал (ТБ / радіо)", hint: "Джерело трансляції", emoji: "📡", sentence: "Welchen Radiosender hörst du am liebsten?" },
-    { german: "mit·spielen", grammar: "Verb", ukrainian: "грати разом", hint: "Брати участь у грі", emoji: "🎮", sentence: "Darf ich bei eurem Kartenspiel auch mitspielen?" },
-    { german: "das Fremdwort, ̈-er", grammar: "Nomen", ukrainian: "запозичене / іноземне слово", hint: "Слово з іншої мови", emoji: "🌐", sentence: "Was bedeutet dieses Fremdwort im Text?" },
-    { german: "der Veranstaltungskalender, -", grammar: "Nomen", ukrainian: "календар подій", hint: "Розклад заходів", emoji: "🗓️", sentence: "Schau in den Veranstaltungskalender, was heute läuft." },
-    { german: "der Treffpunkt, -e", grammar: "Nomen", ukrainian: "місце зустрічі", hint: "Де всі збираються", emoji: "📍", sentence: "Unser Treffpunkt ist vor dem Hauptbahnhof." },
-    { german: "das Rathaus, ̈-er", grammar: "Nomen", ukrainian: "ратуша", hint: "Міська рада", emoji: "🏛️", sentence: "Das alte Rathaus steht im Zentrum der Stadt." },
-    { german: "die Teilnahme, -n", grammar: "Nomen", ukrainian: "участь", hint: "Долучення до процесу", emoji: "🙋", sentence: "Die Teilnahme an diesem Kurs ist kostenlos." },
-    { german: "kostenfrei", grammar: "Adjektiv", ukrainian: "безкоштовно", hint: "Без витрат грошей", emoji: "🎁", sentence: "Diese Software steht für alle Benutzer kostenfrei zur Verfügung." },
-    { german: "auf·treten", grammar: "Verb", ukrainian: "виступати", hint: "На сцені перед публікою", emoji: "🎤", sentence: "Die bekannte Band wird morgen Abend hier auftreten." },
-    { german: "die Bahn, -en", grammar: "Nomen", ukrainian: "потяг, залізниця", hint: "Рейковий транспорт", emoji: "🚆", sentence: "Ich fahre morgen mit der Bahn nach Frankfurt." },
-    { german: "offen", grammar: "Adjektiv", ukrainian: "відкритий", hint: "Не зачинений", emoji: "🔓", sentence: "Das Geschäft ist heute den ganzen Tag offen." },
-    { german: "die Volkshochschule, -n", grammar: "Nomen", ukrainian: "народна школа (VHS)", hint: "Курси для дорослих", emoji: "🏫", sentence: "Sie belegt einen Sprachkurs an der Volkshochschule." },
-    { german: "die Politik (Sg.)", grammar: "Nomen", ukrainian: "політика", hint: "Державне управління", emoji: "🗳️", sentence: "Er liest jeden Tag die Nachrichten über Politik." },
-    { german: "die Fotografie, -n", grammar: "Nomen", ukrainian: "фотографія", hint: "Мистецтво знімків", emoji: "📸", sentence: "Ihre große Leidenschaft ist die künstlerische Fotografie." },
-    { german: "die Literatur (Sg.)", grammar: "Nomen", ukrainian: "література", hint: "Книги та письменство", emoji: "📚", sentence: "Er studiert deutsche Literatur an der Universität." },
-    { german: "erforderlich", grammar: "Adjektiv", ukrainian: "необхідний", hint: "Обов'язковий для справи", emoji: "✅", sentence: "Ein gültiger Reisepass ist für diese Reise erforderlich." },
-    { german: "sich ein·schreiben", grammar: "Verb", ukrainian: "записуватися (на курс)", hint: "Зареєструватися", emoji: "✍️", sentence: "Du musst dich rechtzeitig für den Kurs einschreiben." },
-    { german: "das Semester, -", grammar: "Nomen", ukrainian: "семестр", hint: "Навчальний період", emoji: "📆", sentence: "Das neue universitäre Semester beginnt im Oktober." },
-    { german: "die Wanderung, -en", grammar: "Nomen", ukrainian: "похід, піша прогулянка", hint: "Прогулянка природою", emoji: "🥾", sentence: "Am Sonntag machen wir eine anstrengende Wanderung in den Bergen." },
-    { german: "das Programm, -e", grammar: "Nomen", ukrainian: "програма", hint: "План дій", emoji: "📋", sentence: "Das kulturelle Programm für das Wochenende ist sehr abwechslungsreich." },
-    { german: "der Fan, -s", grammar: "Nomen", ukrainian: "фанат", hint: "Прихильник чогось", emoji: "⭐", sentence: "Er ist ein großer Fan dieser Fußballmannschaft." },
-    { german: "der Künstler, - / die Künstlerin, -nen", grammar: "Nomen", ukrainian: "артист / митець", hint: "Творець мистецтва", emoji: "🎨", sentence: "Berühmte Künstler stellen hier ihre Bilder aus." },
-    { german: "Europa (Sg.)", grammar: "Nomen", ukrainian: "Європа", hint: "Наш континент", emoji: "🇪🇺", sentence: "Deutschland liegt im Herzen von Europa." },
-    { german: "das Spielzeug, -e", grammar: "Nomen", ukrainian: "іграшка", hint: "Для дитячих ігор", emoji: "🧸", sentence: "Die Kinder räumen ihr Spielzeug nach dem Spielen auf." },
-    { german: "die CD, -s", grammar: "Nomen", ukrainian: "диск", hint: "Носій аудіо", emoji: "💿", sentence: "Hörst du noch Musik über CD oder streamst du online?" },
-    { german: "die Renovierung, -en", grammar: "Nomen", ukrainian: "косметичний ремонт", hint: "Оновлення приміщення", emoji: "🛠️", sentence: "Die Renovierung unserer Wohnung dauert noch zwei Wochen." },
-    { german: "die Wiedereröffnung, -en", grammar: "Nomen", ukrainian: "повторне відкриття", hint: "Знову відчинено", emoji: "🎉", sentence: "Wir feiern heute die Wiedereröffnung des Museums." },
-    { german: "an·nehmen", grammar: "Verb", ukrainian: "приймати", hint: "Погодитися на щось", emoji: "🤲", sentence: "Ich werde dieses tolle Jobangebot gerne annehmen." },
-    { german: "ab·lehnen", grammar: "Verb", ukrainian: "відхиляти, відмовляти", hint: "Сказати «ні»", emoji: "🙅", sentence: "Leider musste er das Angebot aus persönlichen Gründen ablehnen." },
-    { german: "das Bedauern (Sg.)", grammar: "Nomen", ukrainian: "жаль, шкодування", hint: "Коли про щось шкодуєш", emoji: "😔", sentence: "Er äußerte großes Bedauern über diesen Fehler." },
-    { german: "der Gegensatz, ̈-er", grammar: "Nomen", ukrainian: "протилежність", hint: "Повна протилежність", emoji: "↔️", sentence: "Groß und klein sind ein klarer Gegensatz." },
-    { german: "die Wirklichkeit (Sg.)", grammar: "Nomen", ukrainian: "дійсність, реальність", hint: "Те, що є насправді", emoji: "🌍", sentence: "Manchmal ist die Wirklichkeit spannender als ein Traum." },
-    { german: "der Keller, -", grammar: "Nomen", ukrainian: "підвал", hint: "Нижній поверх будинку", emoji: "🏚️", sentence: "Wir lagern alte Fahrräder unten im Keller." },
-    { german: "erraten", grammar: "Verb", ukrainian: "розгадати", hint: "Вгадати загадку", emoji: "🧩", sentence: "Kannst du mein Rätsel erraten?" },
-    { german: "berühmt", grammar: "Adjektiv", ukrainian: "знаменитий, відомий", hint: "Про якого всі знають", emoji: "🌟", sentence: "Dieser Schriftsteller ist weltweit berühmt." },
-    { german: "der Ärger (Sg.)", grammar: "Nomen", ukrainian: "злість, неприємності", hint: "Роздратування", emoji: "💢", sentence: "Wegen der Verspätung gab es viel Ärger im Büro." },
-    { german: "die Polizei (Sg.)", grammar: "Nomen", ukrainian: "поліція", hint: "Охоронці порядку", emoji: "👮", sentence: "Bei einem Unfall muss man sofort die Polizei rufen." },
-    { german: "herrlich", grammar: "Adjektiv", ukrainian: "чудовий, прекрасний", hint: "Неймовірно гарний", emoji: "✨", sentence: "Heute haben wir ein herrliches Sommerwetter." },
-    { german: "die Region, -en", grammar: "Nomen", ukrainian: "регіон", hint: "Певно область чи край", emoji: "🗺️", sentence: "Diese Region ist bekannt für ihren guten Wein." },
-    { german: "der Kanal, ̈-er", grammar: "Nomen", ukrainian: "канал", hint: "Водний шлях або потік", emoji: "🛶", sentence: "Schiffe fahren durch den großen Kanal." },
-    { german: "die Werbung (Sg.)", grammar: "Nomen", ukrainian: "реклама", hint: "Промоція товарів", emoji: "📺", sentence: "Im Fernsehen läuft schon wieder so viel Werbung." },
-    { german: "die Presse (Sg.)", grammar: "Nomen", ukrainian: "преса", hint: "Газети та журнали", emoji: "📰", sentence: "Die Presse berichtete ausführlich über dieses Ereignis." },
-    { german: "die Bestellung, -en", grammar: "Nomen", ukrainian: "замовлення", hint: "Придбаний товар", emoji: "📦", sentence: "Ihre Bestellung wird morgen per Post geliefert." },
-    { german: "beantworten", grammar: "Verb", ukrainian: "відповідати (на щось)", hint: "Дати відповідь", emoji: "💬", sentence: "Könnten Sie bitte meine Fragen beantworten?" },
-    { german: "recherchieren", grammar: "Verb", ukrainian: "шукати інформацію в інтернеті", hint: "Досліджувати питання", emoji: "💻", sentence: "Für den Artikel muss ich noch im Internet recherchieren." },
-    { german: "der Anhang, ̈-er", grammar: "Nomen", ukrainian: "додаток, вкладення (у листі)", hint: "Файл до листа", emoji: "📎", sentence: "Die Dokumente finden Sie im Anhang dieser E-Mail." },
-    { german: "die Quelle, -n", grammar: "Nomen", ukrainian: "джерело", hint: "Звідки інформація", emoji: "🔍", sentence: "Nennen Sie bitte immer Ihre wissenschaftliche Quelle." },
-    { german: "herunter·laden", grammar: "Verb", ukrainian: "завантажувати (з інтернету)", hint: "Зберегти файл", emoji: "⬇️", sentence: "Du kannst das Formular direkt von unserer Website herunterladen." },
-    { german: "das Passwort, ̈-er", grammar: "Nomen", ukrainian: "пароль", hint: "Секретний код", emoji: "🔑", sentence: "Bitte geben Sie Ihr sicheres Passwort ein." },
-    { german: "ändern", grammar: "Verb", ukrainian: "змінювати", hint: "Модифікувати", emoji: "✏️", sentence: "Ich möchte meine persönlichen Daten im Profil ändern." },
-    { german: "die Bankverbindung, -en", grammar: "Nomen", ukrainian: "банківські реквізити", hint: "Дані рахунку в банку", emoji: "💳", sentence: "Bitte tragen Sie hier Ihre Bankverbindung ein." },
-    { german: "das Girokonto, -konten", grammar: "Nomen", ukrainian: "поточний рахунок", hint: "Банківський рахунок", emoji: "🏦", sentence: "Ich habe ein neues Girokonto bei der Sparkasse eröffnet." },
-    { german: "geheim", grammar: "Adjektiv", ukrainian: "секретний, таємний", hint: "Нікому не відомий", emoji: "🔒", sentence: "Diese Information muss unbedingt geheim bleiben." }
-];
-
+let cards = []; // Масив слів буде завантажено з words.json
 let currentIndex = 0;
 let isFlipped = false;
 let isShuffled = false;
@@ -385,17 +299,13 @@ function speakWord(e) {
     if (card && card.german) speakText(card.german);
 }
 
-// ---------------------------------------------------------
-// --- НАДІЙНИЙ БЛОК ГЕНЕРАЦІЇ ГОЛОСУ З КЕШУВАННЯМ ТА ОЧИЩЕННЯМ ---
-// ---------------------------------------------------------
-
+// --- СИСТЕМА ОЗВУЧУВАННЯ З КЕШУВАННЯМ ТА ОЧИЩЕННЯМ ---
 let cachedDeVoice = null;
 
 function getGermanVoice() {
     if (cachedDeVoice) return cachedDeVoice;
     if (!('speechSynthesis' in window)) return null;
     const voices = window.speechSynthesis.getVoices() || [];
-    // Шукаємо виключно німецький голос
     cachedDeVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang === 'de-AT' || v.lang.startsWith('de'));
     return cachedDeVoice;
 }
@@ -413,7 +323,7 @@ if ('speechSynthesis' in window) {
 function getCleanGermanWord(raw) {
     if (!raw) return '';
     if (/[.!?]/.test(raw) || (raw.split(' ').length > 4 && !raw.includes('/'))) {
-        return raw; // Залишаємо речення як є
+        return raw; 
     }
     let clean = raw.split('/')[0];
     clean = clean.split(',')[0];
@@ -432,11 +342,11 @@ function speakCompactWord(text) {
     const cleanText = getCleanGermanWord(text);
     if (!cleanText) return;
 
-    window.speechSynthesis.cancel(); // Зупиняємо попередні аудіо потоки
+    window.speechSynthesis.cancel(); 
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'de-DE';
-    utterance.rate = 0.86; // Оптимальна швидкість для розбору
+    utterance.rate = 0.86;
     utterance.pitch = 1.0;
 
     const voice = getGermanVoice();
@@ -444,7 +354,6 @@ function speakCompactWord(text) {
         utterance.voice = voice;
         window.speechSynthesis.speak(utterance);
     } else {
-        // Якщо голоси ще не ініціалізувалися, даємо крихітну затримку
         setTimeout(() => {
             const delayedVoice = getGermanVoice();
             if (delayedVoice) utterance.voice = delayedVoice;
@@ -453,12 +362,10 @@ function speakCompactWord(text) {
     }
 }
 
-// Замінюємо стару не надійну функцію speakText на виклик нової
 function speakText(text) {
     speakCompactWord(text);
 }
 
-// Сумісність для інших кнопок
 function speakMarathonSentence(idx) {
     const w = marathonWords[idx];
     if (w && w.sentence) {
@@ -483,7 +390,7 @@ function renderMarathonQuestion() {
             <div class="text-center py-6 space-y-4">
                 <div class="text-6xl animate-bounce">👑</div>
                 <div class="text-lg font-bold text-pink-400">РЕЙД-БОСС: BUG-LORD 9000</div>
-                <div class="text-sm text-slate-300 max-w-md mx-auto">Ти пройшов усі 84 слова! Знищ фінальний вірус системи, щоб завершити місію.</div>
+                <div class="text-sm text-slate-300 max-w-md mx-auto">Ти пройшов усі слова! Знищ фінальний вірус системи, щоб завершити місію.</div>
                 <button onclick="startRaidBossFinal()" class="interactive-btn w-full max-w-sm mx-auto bg-pink-500 hover:bg-pink-400 text-slate-950 py-3.5 rounded-2xl font-bold text-sm shadow-lg block">АТАКУВАТИ БОСА</button>
             </div>
         `;
@@ -555,7 +462,7 @@ function renderBossQuestion() {
             <div class="text-center py-6 space-y-4">
                 <div class="text-6xl animate-bounce">👑</div>
                 <div class="text-base font-bold text-emerald-400">РЕЙД-БОСС ПЕРЕМОЖЕНИЙ!</div>
-                <div class="text-sm text-slate-300 max-w-md mx-auto">Ти отримав +250 XP, елітний трофей та врятував мережу Теми 8!</div>
+                <div class="text-sm text-slate-300 max-w-md mx-auto">Ти отримав +250 XP, елітний трофей та врятував мережу!</div>
                 <button onclick="closeMarathonModal()" class="interactive-btn w-full max-w-sm mx-auto bg-cyan-500 text-slate-950 py-3.5 rounded-2xl font-bold text-sm block">ЗАВЕРШИТИ ТА ОТРИМАТИ НАГОРОДУ</button>
             </div>
         `;
@@ -629,7 +536,7 @@ function switchDisplayMode(mode) {
 
 function renderCompactBlock() {
     const titleEl = document.getElementById("compact-title");
-    if (titleEl) titleEl.innerText = `А2 Тема 8: Всі слова (${cards.length})`;
+    if (titleEl) titleEl.innerText = `А2 Слова (${cards.length})`;
     const countEl = document.getElementById("compact-count");
     if (countEl) countEl.innerText = `${cards.length} слів`;
     const grid = document.getElementById("compact-words-grid");
@@ -658,6 +565,7 @@ function renderCompactBlock() {
 function jumpToCardIndex(idx) { currentIndex = idx; switchDisplayMode('game'); updateCard(); }
 
 function updateCard() {
+    if (cards.length === 0) return;
     if (!cards[currentIndex]) currentIndex = 0;
     const card = cards[currentIndex];
     const cardInner = document.getElementById("card-inner");
@@ -685,8 +593,8 @@ function flipCard() {
     if (cardInner) cardInner.classList.toggle("rotate-y-180", isFlipped);
 }
 
-function nextCard() { AudioEngine.play('click'); currentIndex = (currentIndex + 1) % cards.length; updateCard(); }
-function prevCard() { AudioEngine.play('click'); currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCard(); }
+function nextCard() { AudioEngine.play('click'); if(cards.length > 0) currentIndex = (currentIndex + 1) % cards.length; updateCard(); }
+function prevCard() { AudioEngine.play('click'); if(cards.length > 0) currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCard(); }
 
 window.addEventListener('error', (event) => {
     console.error('[A2 RPG] Runtime error:', event.error || event.message);
@@ -695,7 +603,15 @@ window.addEventListener('unhandledrejection', (event) => {
     console.error('[A2 RPG] Promise error:', event.reason);
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+// Головна ініціалізація з завантаженням words.json
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('words.json');
+        cards = await response.json();
+    } catch (err) {
+        console.error("Не вдалося завантажити words.json:", err);
+    }
+
     document.addEventListener('click', () => {
         AudioEngine.init();
     }, { once: true });
@@ -722,7 +638,9 @@ function toggleShuffle() {
         cards.sort(() => Math.random() - 0.5);
         const btn = document.getElementById("shuffle-btn");
         if (btn) btn.classList.add("text-cyan-400", "border-cyan-400/50");
-    } else { window.location.reload(); }
+    } else { 
+        window.location.reload(); 
+    }
     currentIndex = 0; updateCard(); renderCompactBlock();
 }
 
@@ -731,7 +649,7 @@ const achievementsList = [
     { id: 'soul_collector', title: 'Колекціонер душ', desc: 'Зламайте 10 душ слів', reward: 150, check: () => masteredWords.size >= 10 },
     { id: 'cyber_lvl3', title: 'Елітний Кібер-Агент', desc: 'Досягніть 3 рівня героя', reward: 200, check: () => hero.level >= 3 },
     { id: 'trophy_hunter', title: 'Мисливець за трофеями', desc: 'Зберіть 5 унікальних емодзі-трофеїв', reward: 100, check: () => trophies.length >= 5 },
-    { id: 'polyglot', title: 'Кібер-Поліглот', desc: 'Зламайте всі душі теми 8', reward: 500, check: () => masteredWords.size >= cards.length }
+    { id: 'polyglot', title: 'Кібер-Поліглот', desc: 'Зламайте всі душі теми', reward: 500, check: () => cards.length > 0 && masteredWords.size >= cards.length }
 ];
 
 function updateAchievementsCount() {
@@ -816,7 +734,7 @@ function getWordModules(cleanWord) {
 function openMasteryTrial() {
     AudioEngine.play('click');
     const card = cards[currentIndex];
-    if (masteredWords.has(card.german)) return;
+    if (!card || masteredWords.has(card.german)) return;
 
     currentTrialTarget = card;
     currentTrialCleanWord = getCleanGermanWord(card.german);
