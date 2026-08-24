@@ -1,17 +1,3 @@
-import './speedrush.js';
-import './profile.js';
-import './leitner.js';
-import './sentence.js';
-import './boss.js';
-import './skills.js';
-import './dictation.js';
-import './match.js';
-import './articles.js';
-import './dialogues.js';
-import './verbs.js';
-import { initHeroes } from './heroes.js';
-import { openQuizModal, closeQuizModal, startQuickQuiz, checkQuizAnswer } from './quiz.js';
-import { initAchievements } from './achievements.js';
 import { TelegramBridge } from './telegram.js';
 import { AudioEngine, toggleAudioMute, updateAudioVolume, toggleAutoSpeak, toggleSpeechRate, syncSoundUI } from './audio.js';
 import { speakWord } from './speech.js';
@@ -21,7 +7,6 @@ import { updateCard, flipCard, nextCard, prevCard, attackEnemyClick, toggleBookm
 import { switchDisplayMode, filterCompactWords, clearCompactSearch, setRarityFilter } from './vocabulary.js';
 import { openExamSimulator, closeExamSimulator } from './exam.js';
 import { openSoundSettingsModal, closeSoundSettingsModal, openStatsModal, closeStatsModal, exportProgress, importProgress } from './ui.js';
-import { initQuests, claimQuestReward, claimBonusReward } from './quests.js';
 
 window.toggleAudioMute = toggleAudioMute;
 window.updateAudioVolume = updateAudioVolume;
@@ -45,30 +30,41 @@ window.openStatsModal = openStatsModal;
 window.closeStatsModal = closeStatsModal;
 window.exportProgress = exportProgress;
 window.importProgress = importProgress;
-window.claimQuestReward = claimQuestReward;
-window.claimBonusReward = claimBonusReward;
 
 document.addEventListener('DOMContentLoaded', async () => {
     TelegramBridge.init();
-    initQuests();
-    initAchievements();
-    initHeroes();
 
     try {
         const res = await fetch('data/words.json');
         if (!res.ok) throw new Error();
         const data = await res.json();
-        setCards(Array.isArray(data) && data.length > 0 ? data : [{ german: "das Beispiel", grammar: "Nomen, n.", ukrainian: "приклад", hint: "Демонстрація чогось", sentence: "Das ist ein Beispiel.", emoji: "📌", rarity: "звичайний" }]);
+        setCards(Array.isArray(data) && data.length > 0 ? data : [{ german: "das Beispiel", grammar: "Nomen", ukrainian: "приклад", hint: "Демонстрація", emoji: "📌", sentence: "Das ist ein Beispiel." }]);
     } catch (e) {
-        setCards([{ german: "das Beispiel", grammar: "Nomen, n.", ukrainian: "приклад", hint: "Демонстрація чогось", sentence: "Das ist ein Beispiel.", emoji: "📌", rarity: "звичайний" }]);
+        setCards([{ german: "der Fehler", grammar: "Nomen", ukrainian: "помилка", hint: "Проблема", emoji: "⚠️", sentence: "Ein Fehler ist aufgetreten." }]);
     }
 
     checkDailyLoginBonus();
-    updateCard();
     syncSoundUI();
+    updateHeroUI();
+    updateCard();
+
+    document.addEventListener('click', () => { AudioEngine.init(); }, { once: true });
 });
 
-window.openQuizModal = openQuizModal;
-window.closeQuizModal = closeQuizModal;
-window.startQuickQuiz = startQuickQuiz;
-window.checkQuizAnswer = checkQuizAnswer;
+window.addEventListener('keydown', (e) => {
+    if (document.querySelector('.fixed.inset-0:not(.pointer-events-none)')) {
+        if (e.key === 'Escape') {
+            closeSoundSettingsModal();
+            closeStatsModal();
+            closeExamSimulator();
+        }
+        return;
+    }
+    const gameView = document.getElementById("game-view-container");
+    if (gameView && !gameView.classList.contains("hidden")) {
+        if (e.key === 'ArrowRight' || e.key === 'd') nextCard();
+        else if (e.key === 'ArrowLeft' || e.key === 'a') prevCard();
+        else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+        else if (e.key === 's' || e.key === 'і') { e.preventDefault(); speakWord(); }
+    }
+});

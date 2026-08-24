@@ -52,59 +52,5 @@
     "emoji": "🏆",
     "sentence": "Das Projekt war äußerst erfolgreich.",
     "rarity": "звичайний"
-  },
-  {
-    "german": "die Verantwortung",
-    "grammar": "Nomen, f.",
-    "ukrainian": "відповідальність",
-    "hint": "Обов'язок за щось",
-    "emoji": "🎯",
-    "sentence": "Er übernimmt die volle Verantwortung für das Projekt.",
-    "rarity": "епічний"
-  },
-  {
-    "german": "unterstützen",
-    "grammar": "Verb",
-    "ukrainian": "підтримувати",
-    "hint": "Допомагати комусь",
-    "emoji": "🤝",
-    "sentence": "Wir können uns gegenseitig unterstützen.",
-    "rarity": "звичайний"
-  },
-  {
-    "german": "die Erfahrung",
-    "grammar": "Nomen, f.",
-    "ukrainian": "досвід",
-    "hint": "Знання, отримані на практиці",
-    "emoji": "📈",
-    "sentence": "Sie hat langjährige Erfahrung in der IT.",
-    "rarity": "рідкісний"
-  },
-  {
-    "german": "fortschrittlich",
-    "grammar": "Adjektiv",
-    "ukrainian": "прогресивний",
-    "hint": "Сучасний, передовий",
-    "emoji": "🚀",
-    "sentence": "Das ist eine sehr fortschrittliche Technologie.",
-    "rarity": "легендарний"
-  },
-  {
-    "german": "die Fähigkeit",
-    "grammar": "Nomen, f.",
-    "ukrainian": "здатність, вміння",
-    "hint": "Талант або навичка",
-    "emoji": "💡",
-    "sentence": "Sprachenlernen erfordert Geduld und gute Fähigkeiten.",
-    "rarity": "рідкісний"
-  },
-  {
-    "german": "überzeugen",
-    "grammar": "Verb",
-    "ukrainian": "переконувати",
-    "hint": "Доводити свою правоту",
-    "emoji": "💬",
-    "sentence": "Seine Argumente haben mich überzeugt.",
-    "rarity": "епічний"
   }
 ]

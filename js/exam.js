@@ -1,5 +1,3 @@
-import { checkAchievement } from './achievements.js';
-import { progressQuest } from './quests.js';
 import { cards } from './state.js';
 import { AudioEngine } from './audio.js';
 import { Haptics } from './telegram.js';
@@ -48,13 +46,11 @@ export function renderExamQuestion() {
         if (passed) {
             AudioEngine.play('levelup');
             Haptics.trigger('success');
-            addXp(150, 'exam');
-            checkAchievement('exam_pass', 1);
+            addXp(150);
         } else {
             AudioEngine.play('error');
             Haptics.trigger('error');
         }
-        progressQuest('complete_exam', 1);
 
         content.innerHTML = `
             <div class="text-center py-6 space-y-4">
