@@ -1,4 +1,4 @@
-# GESTALT Autonomous Agent Context — v0.012
+# GESTALT Autonomous Agent Context — v0.013
 
 Product goal: create a premium, lightweight vocabulary trainer for German learning.
 
@@ -30,3 +30,11 @@ Before each release:
 
 ## Design direction
 Use the provided mobile screenshot as the primary visual reference: dark premium, electric violet/blue, large rounded flashcard, two primary answer buttons, floating bottom navigation, soft ambient glow, minimal motion.
+
+## v0.013 development focus
+- Treat learning quality as the highest priority.
+- Never ship placeholder example sentences in course content.
+- New course cards must contain clean display text, Ukrainian translation, emoji, natural example and example translation.
+- Unseen words are learning candidates, not overdue SRS reviews.
+- Auto-speech must not repeatedly trigger during harmless UI re-renders.
+- Keep Telegram sync asynchronous and debounced.
