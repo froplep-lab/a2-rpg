@@ -47,6 +47,7 @@
           <button class="subtab" data-subview="stats">Статистика</button>
           <button class="subtab" data-subview="collection">Колекції</button>
         </div>
+        <div class="topic-row glass-small"><div><span class="eyebrow">КУРС / ТЕМА</span><strong id="topicTitleInline">Тема 8 · Am Wochenende</strong></div><select id="topicSelect" class="select topic-select" aria-label="Тема навчання"></select></div>
 
         <div id="subview-learn" class="subview active">
           <section class="progress-card glass">
@@ -123,7 +124,7 @@
         <section class="panel glass">
           <div class="panel-head"><div><span class="eyebrow">КОЛЕКЦІЇ</span><h2>Мої слова</h2></div><button id="openAddCollection" class="small-accent">＋ Додати</button></div>
           <div class="collection-hero"><div class="collection-orb">✦</div><div><strong id="collectionBigCount">0</strong><span>слова в колекції</span></div><div class="collection-note">Улюблені, вивчені та слова, які варто повторити.</div></div>
-          <div class="search-row"><input id="collectionSearch" class="input" placeholder="Знайти слово…"></div>
+          <div class="search-row"><input id="collectionSearch" class="input" placeholder="Знайти слово…"><select id="collectionTopicSelect" class="select topic-select" aria-label="Фільтр теми"></select></div>
           <div id="collectionList" class="word-list tall"></div>
         </section>
       </section>
@@ -165,6 +166,7 @@
   </div>
 
   <div id="toast" class="toast"></div>
+  <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
   <script type="module" src="./js/app.js"></script>
 </body>
 </html>

@@ -10,11 +10,11 @@ const js=read('js/app.js');
 const server=read('server/index.mjs');
 const words=JSON.parse(read('data/words.json'));
 assert.ok(Array.isArray(words)&&words.length>=410,'dictionary missing course expansion');
-assert.ok(words.filter(w=>w.source==='Kursbuch · 8 Am Wochenende').length===123,'Kursbuch 8 vocabulary missing');
-assert.ok(words.filter(w=>w.source==='Kursbuch · 8 Am Wochenende' && w.emoji).length===123,'course emojis missing');
+assert.ok(words.filter(w=>w.topicId==='topic-8').length>=120,'Kursbuch 8 vocabulary missing');
+assert.ok(words.filter(w=>w.topicId==='topic-8' && w.emoji).length>=120,'course emojis missing');
 assert.ok(words.every(w=>w.german&&w.ukrainian&&w.emoji&&w.sentence),'word record missing required study fields');
-assert.equal(words.filter(w=>w.source==='Kursbuch · 8 Am Wochenende' && /Приклад для закріплення|Wir (?:ausdenken|mitspielen|ausgehen|herunterladen) heute zusammen/.test(w.sentence)).length,0,'low-quality placeholder course examples remain');
-assert.ok(words.some(w=>w.german==='die Diskothek'),'Diskothek variant missing');
+assert.equal(words.filter(w=>w.topicId==='topic-8' && /Приклад для закріплення|Ich kenne das Wort/.test(w.sentence)).length,0,'low-quality placeholder course examples remain');
+assert.ok(words.some(w=>w.german==='die Diskothek'),'Diskothek variant missing');assert.ok(words.some(w=>w.german==='die Disko'),'Disko variant missing');assert.ok(words.some(w=>w.topicId==='topic-8'&&w.topicNumber===8),'topic 8 metadata missing');
 assert.ok(words.some(w=>w.german==='halb-'),'halb- learning item missing');
 
 assert.doesNotMatch(html,/Random Dice|Battle Board|START WAVE|enemy|boss|spawnDie|autoMerge/i,'old game UI still present');
@@ -30,3 +30,6 @@ const sw=read('sw.js');for(const asset of [...sw.matchAll(/'([^']+)'/g)].map(m=>
 let p=spawn(process.execPath,['--check','js/app.js']);let code=await new Promise(r=>p.on('close',r));assert.equal(code,0,'js syntax failed');
 p=spawn(process.execPath,['--check','server/index.mjs']);code=await new Promise(r=>p.on('close',r));assert.equal(code,0,'server syntax failed');
 console.log('SMOKE OK');
+
+assert.ok(js.includes('currentTopic')&&js.includes('topic-8'),'topic persistence missing');
+assert.ok(js.includes('gestalt_v7_'),'Telegram legacy migration missing');

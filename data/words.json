@@ -3732,7 +3732,7 @@
   },
   {
     "german": "der Witwer",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "вдівець",
     "hint": "вдівець",
     "emoji": "🕯️",
@@ -3742,25 +3742,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-001"
+    "id": "course8-001",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Witwe",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "вдова",
     "hint": "вдова",
-    "emoji": "🌹",
+    "emoji": "🕯️",
     "sentence": "Die Witwe lebt am Stadtrand.",
     "sentenceUa": "Вдова живе на околиці міста.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-002"
+    "id": "course8-002",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Stadtzentrum",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "центр міста",
     "hint": "центр міста",
     "emoji": "🏙️",
@@ -3770,21 +3776,27 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-003"
+    "id": "course8-003",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Stadtrand",
-    "grammar": "Nomen",
-    "ukrainian": "околиця міста",
+    "grammar": "Nomen, m.",
+    "ukrainian": "околиці міста",
     "hint": "околиця міста",
-    "emoji": "🏘️",
+    "emoji": "🏙️",
     "sentence": "Sie wohnt am Stadtrand.",
     "sentenceUa": "Вона живе на околиці міста.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-004"
+    "id": "course8-004",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "sich wohlfühlen",
@@ -3798,7 +3810,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-005"
+    "id": "course8-005",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Scharade",
@@ -3812,21 +3827,27 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-006"
+    "id": "course8-006",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Spielanleitung",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "інструкція до гри",
     "hint": "інструкція до гри",
-    "emoji": "📜",
+    "emoji": "📖",
     "sentence": "Lies bitte die Spielanleitung.",
     "sentenceUa": "Прочитай, будь ласка, інструкцію до гри.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-007"
+    "id": "course8-007",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "sich ausdenken",
@@ -3840,11 +3861,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-008"
+    "id": "course8-008",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Holz",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "дерево",
     "hint": "дерево",
     "emoji": "🪵",
@@ -3854,11 +3878,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-009"
+    "id": "course8-009",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Hammer",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "молоток",
     "hint": "молоток",
     "emoji": "🔨",
@@ -3868,35 +3895,44 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-010"
+    "id": "course8-010",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Werkzeug",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "інструмент",
     "hint": "інструмент",
-    "emoji": "🧰",
+    "emoji": "🛠️",
     "sentence": "Das Werkzeug ist neu.",
     "sentenceUa": "Інструмент новий.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-011"
+    "id": "course8-011",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "mitspielen",
     "grammar": "Verb",
     "ukrainian": "грати разом",
     "hint": "грати разом",
-    "emoji": "🤝",
+    "emoji": "🎮",
     "sentence": "Willst du mitspielen?",
     "sentenceUa": "Ти хочеш грати разом?",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-012"
+    "id": "course8-012",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "ausschlafen",
@@ -3910,11 +3946,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-013"
+    "id": "course8-013",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Disko",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "дискотека",
     "hint": "дискотека",
     "emoji": "🪩",
@@ -3924,11 +3963,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-014"
+    "id": "course8-014",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Diskothek",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "дискотека",
     "hint": "дискотека",
     "emoji": "🪩",
@@ -3938,11 +3980,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-015"
+    "id": "course8-015",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Fremdwort",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "запозичене слово",
     "hint": "запозичене слово",
     "emoji": "🔤",
@@ -3952,7 +3997,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-016"
+    "id": "course8-016",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "ausgehen",
@@ -3966,7 +4014,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-017"
+    "id": "course8-017",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "verbringen",
@@ -3980,11 +4031,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-018"
+    "id": "course8-018",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Wäsche",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "білизна",
     "hint": "білизна",
     "emoji": "🧺",
@@ -3994,25 +4048,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-019"
+    "id": "course8-019",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "unternehmen",
     "grammar": "Verb",
     "ukrainian": "робити, здійснювати",
     "hint": "робити, здійснювати",
-    "emoji": "🗺️",
+    "emoji": "🧭",
     "sentence": "Was wollen wir heute unternehmen?",
     "sentenceUa": "Що ми хочемо сьогодні робити?",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-020"
+    "id": "course8-020",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Ding",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "річ, штука",
     "hint": "річ, штука",
     "emoji": "📦",
@@ -4022,11 +4082,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-021"
+    "id": "course8-021",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der See",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "озеро",
     "hint": "озеро",
     "emoji": "🏞️",
@@ -4036,12 +4099,15 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-022"
+    "id": "course8-022",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "trotzdem",
     "grammar": "Adverb",
-    "ukrainian": "попри це",
+    "ukrainian": "все одно",
     "hint": "попри це",
     "emoji": "↪️",
     "sentence": "Es regnet, trotzdem gehen wir spazieren.",
@@ -4050,11 +4116,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-023"
+    "id": "course8-023",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Radtour",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "велосипедний тур",
     "hint": "велосипедний тур",
     "emoji": "🚲",
@@ -4064,11 +4133,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-024"
+    "id": "course8-024",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Flohmarkt",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "блошиний ринок",
     "hint": "блошиний ринок",
     "emoji": "🧺",
@@ -4078,7 +4150,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-025"
+    "id": "course8-025",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "erkältet sein",
@@ -4092,7 +4167,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-026"
+    "id": "course8-026",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "ständig",
@@ -4106,7 +4184,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-027"
+    "id": "course8-027",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "weglegen",
@@ -4120,11 +4201,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-028"
+    "id": "course8-028",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Vorschlag",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "пропозиція",
     "hint": "пропозиція",
     "emoji": "💬",
@@ -4134,11 +4218,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-029"
+    "id": "course8-029",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Rundfahrt",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "поїздка, екскурсія, тур",
     "hint": "поїздка, екскурсія, тур",
     "emoji": "🚌",
@@ -4148,7 +4235,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-030"
+    "id": "course8-030",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "einverstanden",
@@ -4162,53 +4252,65 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-031"
+    "id": "course8-031",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "positiv",
     "grammar": "Adjektiv",
     "ukrainian": "позитивний",
     "hint": "позитивний",
-    "emoji": "🌟",
+    "emoji": "➕",
     "sentence": "Sie reagiert positiv auf den Vorschlag.",
     "sentenceUa": "Вона позитивно реагує на пропозицію.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-032"
+    "id": "course8-032",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "reagieren",
     "grammar": "Verb",
     "ukrainian": "реагувати",
     "hint": "реагувати",
-    "emoji": "↔️",
+    "emoji": "⚡",
     "sentence": "Wie reagierst du auf die Nachricht?",
     "sentenceUa": "Як ти реагуєш на цю новину?",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-033"
+    "id": "course8-033",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "negativ",
     "grammar": "Adjektiv",
     "ukrainian": "негативний",
     "hint": "негативний",
-    "emoji": "⚠️",
+    "emoji": "➖",
     "sentence": "Er reagiert negativ.",
     "sentenceUa": "Він реагує негативно.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-034"
+    "id": "course8-034",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Bar",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "бар",
     "hint": "бар",
     "emoji": "🍸",
@@ -4218,25 +4320,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-035"
+    "id": "course8-035",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Kultur",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "культура",
     "hint": "культура",
-    "emoji": "🎨",
+    "emoji": "🎭",
     "sentence": "Ich interessiere mich für Kultur.",
     "sentenceUa": "Я цікавлюся культурою.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-036"
+    "id": "course8-036",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Natur",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "природа",
     "hint": "природа",
     "emoji": "🌿",
@@ -4246,11 +4354,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-037"
+    "id": "course8-037",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Oper",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "опера",
     "hint": "опера",
     "emoji": "🎼",
@@ -4260,39 +4371,48 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-038"
+    "id": "course8-038",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "bügeln",
     "grammar": "Verb",
     "ukrainian": "прасувати",
     "hint": "прасувати",
-    "emoji": "👔",
+    "emoji": "👕",
     "sentence": "Ich muss heute die Wäsche bügeln.",
     "sentenceUa": "Мені сьогодні треба попрасувати білизну.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-039"
+    "id": "course8-039",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Veranstaltungskalender",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "календар подій",
     "hint": "календар подій",
-    "emoji": "📅",
+    "emoji": "🗓️",
     "sentence": "Ich schaue in den Veranstaltungskalender.",
     "sentenceUa": "Я дивлюся в календар подій.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-040"
+    "id": "course8-040",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Skate-Night",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "Skate-Night",
     "hint": "Skate-Night",
     "emoji": "🛼",
@@ -4302,11 +4422,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-041"
+    "id": "course8-041",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Inlineskater",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "ролер",
     "hint": "ролер",
     "emoji": "🛼",
@@ -4316,11 +4439,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-042"
+    "id": "course8-042",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Treffpunkt",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "місце зустрічі",
     "hint": "місце зустрічі",
     "emoji": "📍",
@@ -4330,11 +4456,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-043"
+    "id": "course8-043",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Rathaus",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "ратуша",
     "hint": "ратуша",
     "emoji": "🏛️",
@@ -4344,11 +4473,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-044"
+    "id": "course8-044",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Teilnahme",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "участь",
     "hint": "участь",
     "emoji": "🙋",
@@ -4358,7 +4490,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-045"
+    "id": "course8-045",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "kostenfrei",
@@ -4372,7 +4507,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-046"
+    "id": "course8-046",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "auftreten",
@@ -4386,25 +4524,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-047"
+    "id": "course8-047",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Soul",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "соул",
     "hint": "соул",
-    "emoji": "🎶",
+    "emoji": "🎵",
     "sentence": "Ich höre gern Soul.",
     "sentenceUa": "Я люблю слухати соул.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-048"
+    "id": "course8-048",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Jazz",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "джаз",
     "hint": "джаз",
     "emoji": "🎷",
@@ -4414,25 +4558,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-049"
+    "id": "course8-049",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Pop",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "поп",
     "hint": "поп",
-    "emoji": "🎵",
+    "emoji": "🎤",
     "sentence": "Meine Schwester mag Pop.",
     "sentenceUa": "Моя сестра любить поп-музику.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-050"
+    "id": "course8-050",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Bahn",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "потяг",
     "hint": "потяг",
     "emoji": "🚆",
@@ -4442,7 +4592,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-051"
+    "id": "course8-051",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "offen",
@@ -4456,11 +4609,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-052"
+    "id": "course8-052",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Volkshochschule",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "народна школа",
     "hint": "народна школа",
     "emoji": "🏫",
@@ -4470,11 +4626,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-053"
+    "id": "course8-053",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Politik",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "політика",
     "hint": "політика",
     "emoji": "🏛️",
@@ -4484,11 +4643,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-054"
+    "id": "course8-054",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Fotografie",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "фотографія",
     "hint": "фотографія",
     "emoji": "📷",
@@ -4498,11 +4660,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-055"
+    "id": "course8-055",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Literatur",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "література",
     "hint": "література",
     "emoji": "📚",
@@ -4512,21 +4677,27 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-056"
+    "id": "course8-056",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "erforderlich",
     "grammar": "Adjektiv",
     "ukrainian": "необхідний",
     "hint": "необхідний",
-    "emoji": "📝",
+    "emoji": "⚠️",
     "sentence": "Eine Anmeldung ist erforderlich.",
     "sentenceUa": "Реєстрація необхідна.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-057"
+    "id": "course8-057",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "sich einschreiben",
@@ -4540,11 +4711,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-058"
+    "id": "course8-058",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Semester",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "семестр",
     "hint": "семестр",
     "emoji": "🎓",
@@ -4554,11 +4728,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-059"
+    "id": "course8-059",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Wanderung",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "похід",
     "hint": "похід",
     "emoji": "🥾",
@@ -4568,11 +4745,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-060"
+    "id": "course8-060",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Kräuter",
-    "grammar": "Plural",
+    "grammar": "Nomen, Pl.",
     "ukrainian": "трави",
     "hint": "трави",
     "emoji": "🌿",
@@ -4582,11 +4762,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-061"
+    "id": "course8-061",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Programm",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "програма",
     "hint": "програма",
     "emoji": "📋",
@@ -4596,39 +4779,48 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-062"
+    "id": "course8-062",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "halb-",
-    "grammar": "Adverb",
+    "grammar": "Präfix",
     "ukrainian": "половина",
     "hint": "половина",
-    "emoji": "🕧",
+    "emoji": "½",
     "sentence": "Der Kurs beginnt um halb neun.",
     "sentenceUa": "Курс починається о пів на дев'яту.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-063"
+    "id": "course8-063",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Fan",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "фанат",
     "hint": "фанат",
-    "emoji": "🙌",
+    "emoji": "⭐",
     "sentence": "Er ist ein großer Fan dieser Band.",
     "sentenceUa": "Він великий фанат цього гурту.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-064"
+    "id": "course8-064",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Künstler",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "артист",
     "hint": "артист",
     "emoji": "🎨",
@@ -4638,25 +4830,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-065"
+    "id": "course8-065",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Künstlerin",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "артистка",
     "hint": "артистка",
-    "emoji": "👩‍🎨",
+    "emoji": "🎨",
     "sentence": "Die Künstlerin spricht über ihre Arbeit.",
     "sentenceUa": "Артистка розповідає про свою роботу.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-066"
+    "id": "course8-066",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "Europa",
-    "grammar": "Eigenname",
+    "grammar": "Nomen, n.",
     "ukrainian": "Європа",
     "hint": "Європа",
     "emoji": "🌍",
@@ -4666,11 +4864,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-067"
+    "id": "course8-067",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Spielzeug",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "іграшка",
     "hint": "іграшка",
     "emoji": "🧸",
@@ -4680,11 +4881,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-068"
+    "id": "course8-068",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die CD",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "диск",
     "hint": "диск",
     "emoji": "💿",
@@ -4694,11 +4898,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-069"
+    "id": "course8-069",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Renovierung",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "косметичний ремонт",
     "hint": "косметичний ремонт",
     "emoji": "🛠️",
@@ -4708,11 +4915,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-070"
+    "id": "course8-070",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Wiedereröffnung",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "повторне відкриття",
     "hint": "повторне відкриття",
     "emoji": "🎉",
@@ -4722,11 +4932,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-071"
+    "id": "course8-071",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Luft- und Raumfahrt",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "авіація та космос",
     "hint": "авіація та космос",
     "emoji": "🚀",
@@ -4736,25 +4949,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-072"
+    "id": "course8-072",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "wochentags",
     "grammar": "Adverb",
     "ukrainian": "у будні",
     "hint": "у будні",
-    "emoji": "📆",
+    "emoji": "📅",
     "sentence": "Wochentags arbeite ich bis fünf.",
     "sentenceUa": "У будні я працюю до п'ятої.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-073"
+    "id": "course8-073",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Eintrittskarte",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "квиток",
     "hint": "квиток",
     "emoji": "🎟️",
@@ -4764,11 +4983,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-074"
+    "id": "course8-074",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Sender",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "канал",
     "hint": "канал",
     "emoji": "📺",
@@ -4778,40 +5000,49 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-075"
+    "id": "course8-075",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "annehmen",
     "grammar": "Verb",
     "ukrainian": "приймати",
     "hint": "приймати",
-    "emoji": "🤲",
+    "emoji": "🤝",
     "sentence": "Ich nehme deine Einladung gern an.",
     "sentenceUa": "Я із задоволенням приймаю твоє запрошення.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-076"
+    "id": "course8-076",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "ablehnen",
     "grammar": "Verb",
     "ukrainian": "відмовляти",
     "hint": "відмовляти",
-    "emoji": "🙅",
+    "emoji": "🛑",
     "sentence": "Sie lehnt das Angebot ab.",
     "sentenceUa": "Вона відхиляє пропозицію.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-077"
+    "id": "course8-077",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Bedauern",
-    "grammar": "Nomen",
-    "ukrainian": "шкода, жаль",
+    "grammar": "Nomen, n.",
+    "ukrainian": "шкодування, жаль",
     "hint": "шкода, жаль",
     "emoji": "😔",
     "sentence": "Zu meinem Bedauern kann ich nicht kommen.",
@@ -4820,11 +5051,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-078"
+    "id": "course8-078",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Gegensatz",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "протилежність",
     "hint": "протилежність",
     "emoji": "↔️",
@@ -4834,11 +5068,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-079"
+    "id": "course8-079",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Killer",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "кілер",
     "hint": "кілер",
     "emoji": "🎬",
@@ -4848,25 +5085,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-080"
+    "id": "course8-080",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Wirklichkeit",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "дійсність",
     "hint": "дійсність",
-    "emoji": "🪞",
+    "emoji": "🌐",
     "sentence": "Der Film basiert auf der Wirklichkeit.",
     "sentenceUa": "Фільм заснований на реальних подіях.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-081"
+    "id": "course8-081",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Biergarten",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "пивний сад",
     "hint": "пивний сад",
     "emoji": "🍺",
@@ -4876,21 +5119,27 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-082"
+    "id": "course8-082",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Keller",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "підвал",
     "hint": "підвал",
-    "emoji": "🏠",
+    "emoji": "🏚️",
     "sentence": "Das Fahrrad steht im Keller.",
     "sentenceUa": "Велосипед стоїть у підвалі.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-083"
+    "id": "course8-083",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "erraten",
@@ -4904,39 +5153,48 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-084"
+    "id": "course8-084",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "berühmt",
     "grammar": "Adjektiv",
     "ukrainian": "знаменитий, відомий",
     "hint": "знаменитий, відомий",
-    "emoji": "⭐",
+    "emoji": "🌟",
     "sentence": "Der Schauspieler ist weltweit berühmt.",
     "sentenceUa": "Актор відомий у всьому світі.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-085"
+    "id": "course8-085",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Gott",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "бог",
     "hint": "бог",
-    "emoji": "⚡",
+    "emoji": "⛪",
     "sentence": "In der Geschichte spielt ein Gott eine Rolle.",
     "sentenceUa": "У цій історії важливу роль відіграє бог.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-086"
+    "id": "course8-086",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Ruhetag",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "вихідний",
     "hint": "вихідний",
     "emoji": "🛌",
@@ -4946,12 +5204,15 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-087"
+    "id": "course8-087",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "zusammengesetzt",
     "grammar": "Adjektiv",
-    "ukrainian": "поєднаний",
+    "ukrainian": "складений, поєднаний",
     "hint": "поєднаний",
     "emoji": "🧩",
     "sentence": "Das Wort ist zusammengesetzt.",
@@ -4960,12 +5221,15 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-088"
+    "id": "course8-088",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Kirchgang",
-    "grammar": "Nomen",
-    "ukrainian": "похід у церкву",
+    "grammar": "Nomen, m.",
+    "ukrainian": "похід до церкви",
     "hint": "похід у церкву",
     "emoji": "⛪",
     "sentence": "Der Kirchgang am Sonntag ist für ihn wichtig.",
@@ -4974,12 +5238,15 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-089"
+    "id": "course8-089",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Ärger",
-    "grammar": "Nomen",
-    "ukrainian": "злість, роздратування",
+    "grammar": "Nomen, m.",
+    "ukrainian": "злість, прикрість",
     "hint": "злість, роздратування",
     "emoji": "😤",
     "sentence": "Das macht mir viel Ärger.",
@@ -4988,21 +5255,27 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-090"
+    "id": "course8-090",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Polizei",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "поліція",
     "hint": "поліція",
-    "emoji": "🚓",
+    "emoji": "👮",
     "sentence": "Die Polizei kommt schnell.",
     "sentenceUa": "Поліція швидко приїжджає.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-091"
+    "id": "course8-091",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "herrlich",
@@ -5016,11 +5289,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-092"
+    "id": "course8-092",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Forums-Beitrag",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "допис у форумі",
     "hint": "допис у форумі",
     "emoji": "💬",
@@ -5030,11 +5306,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-093"
+    "id": "course8-093",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Alpen",
-    "grammar": "Plural",
+    "grammar": "Nomen, Pl.",
     "ukrainian": "Альпи",
     "hint": "Альпи",
     "emoji": "🏔️",
@@ -5044,11 +5323,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-094"
+    "id": "course8-094",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Mini-Kurs",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "міні-курс",
     "hint": "міні-курс",
     "emoji": "📘",
@@ -5058,11 +5340,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-095"
+    "id": "course8-095",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Schnupper-Schwimmen",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "пробне заняття з плавання",
     "hint": "пробне заняття з плавання",
     "emoji": "🏊",
@@ -5072,11 +5357,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-096"
+    "id": "course8-096",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Lauf",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "біг",
     "hint": "біг",
     "emoji": "🏃",
@@ -5086,11 +5374,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-097"
+    "id": "course8-097",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Turnier",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "турнір",
     "hint": "турнір",
     "emoji": "🏆",
@@ -5100,25 +5391,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-098"
+    "id": "course8-098",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Show",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "шоу",
     "hint": "шоу",
-    "emoji": "🎭",
+    "emoji": "🎪",
     "sentence": "Die Show beginnt um acht.",
     "sentenceUa": "Шоу починається о восьмій.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-099"
+    "id": "course8-099",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Feuer",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "багаття, вогонь",
     "hint": "багаття, вогонь",
     "emoji": "🔥",
@@ -5128,11 +5425,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-100"
+    "id": "course8-100",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Medien",
-    "grammar": "Plural",
+    "grammar": "Nomen, Pl.",
     "ukrainian": "медіа",
     "hint": "медіа",
     "emoji": "📰",
@@ -5142,39 +5442,48 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-101"
+    "id": "course8-101",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Mediathek",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "медіатека",
     "hint": "медіатека",
-    "emoji": "🗂️",
+    "emoji": "📺",
     "sentence": "Der Film ist in der Mediathek verfügbar.",
     "sentenceUa": "Фільм доступний у медіатеці.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-102"
+    "id": "course8-102",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Region",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "регіон",
     "hint": "регіон",
-    "emoji": "🗺️",
+    "emoji": "📍",
     "sentence": "Die Region ist für ihre Seen bekannt.",
     "sentenceUa": "Регіон відомий своїми озерами.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-103"
+    "id": "course8-103",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Kanal",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "канал",
     "hint": "канал",
     "emoji": "📺",
@@ -5184,11 +5493,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-104"
+    "id": "course8-104",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Werbung",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "реклама",
     "hint": "реклама",
     "emoji": "📣",
@@ -5198,25 +5510,31 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-105"
+    "id": "course8-105",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Presse",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "преса",
     "hint": "преса",
-    "emoji": "🗞️",
+    "emoji": "📰",
     "sentence": "Die Presse berichtet über das Ereignis.",
     "sentenceUa": "Преса повідомляє про подію.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-106"
+    "id": "course8-106",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Quizshow",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "вікторина",
     "hint": "вікторина",
     "emoji": "❓",
@@ -5226,11 +5544,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-107"
+    "id": "course8-107",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Bestellung",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "замовлення",
     "hint": "замовлення",
     "emoji": "🛒",
@@ -5240,26 +5561,32 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-108"
+    "id": "course8-108",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "beantworten",
     "grammar": "Verb",
     "ukrainian": "відповідати",
     "hint": "відповідати",
-    "emoji": "✉️",
+    "emoji": "↩️",
     "sentence": "Ich beantworte die E-Mail heute.",
     "sentenceUa": "Я відповім на електронного листа сьогодні.",
     "rarity": "звичайний",
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-109"
+    "id": "course8-109",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "recherchieren",
     "grammar": "Verb",
-    "ukrainian": "шукати в інтернеті, досліджувати",
+    "ukrainian": "шукати в інтернеті",
     "hint": "шукати в інтернеті, досліджувати",
     "emoji": "🔎",
     "sentence": "Ich recherchiere das Thema online.",
@@ -5268,11 +5595,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-110"
+    "id": "course8-110",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Anhang",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "додаток, вкладення",
     "hint": "додаток, вкладення",
     "emoji": "📎",
@@ -5282,11 +5612,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-111"
+    "id": "course8-111",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Quelle",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "джерело",
     "hint": "джерело",
     "emoji": "🔗",
@@ -5296,7 +5629,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-112"
+    "id": "course8-112",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "herunterladen",
@@ -5310,11 +5646,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-113"
+    "id": "course8-113",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Passwort",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "пароль",
     "hint": "пароль",
     "emoji": "🔐",
@@ -5324,11 +5663,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-114"
+    "id": "course8-114",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Virus",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "вірус",
     "hint": "вірус",
     "emoji": "🦠",
@@ -5338,11 +5680,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-115"
+    "id": "course8-115",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Kombination",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "комбінація",
     "hint": "комбінація",
     "emoji": "🔢",
@@ -5352,7 +5697,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-116"
+    "id": "course8-116",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "ändern",
@@ -5366,7 +5714,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-117"
+    "id": "course8-117",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der/die Kriminelle",
@@ -5380,11 +5731,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-118"
+    "id": "course8-118",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die Bankverbindung",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "банківські реквізити",
     "hint": "банківські реквізити",
     "emoji": "🏦",
@@ -5394,11 +5748,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-119"
+    "id": "course8-119",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "der Newsletter",
-    "grammar": "Nomen",
+    "grammar": "Nomen, m.",
     "ukrainian": "інформаційний бюлетень",
     "hint": "інформаційний бюлетень",
     "emoji": "✉️",
@@ -5408,11 +5765,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-120"
+    "id": "course8-120",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "die PIN",
-    "grammar": "Nomen",
+    "grammar": "Nomen, f.",
     "ukrainian": "пін-код",
     "hint": "пін-код",
     "emoji": "🔢",
@@ -5422,11 +5782,14 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-121"
+    "id": "course8-121",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "das Girokonto",
-    "grammar": "Nomen",
+    "grammar": "Nomen, n.",
     "ukrainian": "поточний рахунок",
     "hint": "поточний рахунок",
     "emoji": "💳",
@@ -5436,7 +5799,10 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-122"
+    "id": "course8-122",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
   },
   {
     "german": "geheim",
@@ -5450,6 +5816,43 @@
     "level": "A2/B1",
     "category": "8 Am Wochenende",
     "source": "Kursbuch · 8 Am Wochenende",
-    "id": "course8-123"
+    "id": "course8-123",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende"
+  },
+  {
+    "id": "t8-0411",
+    "german": "Über Scharade",
+    "ukrainian": "шарада",
+    "grammar": "Nomen",
+    "emoji": "🎭",
+    "hint": "шарада",
+    "sentence": "Das Wort Über Scharade passt gut zu diesem Thema.",
+    "sentenceUa": "Слово «Über Scharade» добре підходить до цієї теми.",
+    "level": "A2",
+    "category": "Kursbuch 8",
+    "source": "Kursbuch · 8 Am Wochenende",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende",
+    "frequency": 5000
+  },
+  {
+    "id": "t8-0412",
+    "german": "einschreiben",
+    "ukrainian": "записуватися",
+    "grammar": "Verb",
+    "emoji": "📝",
+    "hint": "записуватися",
+    "sentence": "Am Wochenende möchte ich einschreiben.",
+    "sentenceUa": "На вихідних я хочу практикувати слово «einschreiben».",
+    "level": "A2",
+    "category": "Kursbuch 8",
+    "source": "Kursbuch · 8 Am Wochenende",
+    "topicId": "topic-8",
+    "topicNumber": 8,
+    "topicTitle": "Тема 8 · Am Wochenende",
+    "frequency": 4999
   }
 ]

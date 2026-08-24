@@ -38,3 +38,8 @@ Use the provided mobile screenshot as the primary visual reference: dark premium
 - Unseen words are learning candidates, not overdue SRS reviews.
 - Auto-speech must not repeatedly trigger during harmless UI re-renders.
 - Keep Telegram sync asynchronous and debounced.
+
+
+## v0.014 focus
+- Topic-based vocabulary. User-provided textbook words belong to topic-8 (Am Wochenende).
+- Future user-provided lists must be stored as separate topics, never mixed silently.
