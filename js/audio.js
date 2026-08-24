@@ -1,146 +1,132 @@
-import { showToast } from './utils.js';
-
-let audioCtx = null;
-let masterVolume = 0.5;
-let isMuted = false;
-let autoSpeak = false;
-let currentSpeechRate = 0.9;
-
-export { currentSpeechRate };
-
-export function getAudioContext() {
-    if (!audioCtx) {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (AudioContextClass) {
-            audioCtx = new AudioContextClass();
-        }
-    }
-    if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume().catch(() => {});
-    }
-    return audioCtx;
-}
+import { StorageEngine } from './storage.js';
 
 export const AudioEngine = {
-    play(soundName) {
-        if (isMuted) return;
+    muted: StorageEngine.get('a2_muted', false),
+    volumes: StorageEngine.get('a2_volumes', { click: 0.5, hit: 0.5, success: 0.5, error: 0.5 }),
+    audioCtx: null,
+    init() {
+        if (!this.audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) this.audioCtx = new AudioContext();
+        }
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+        }
+    },
+    play(type) {
+        if (this.muted) return;
+        this.init();
+        if (!this.audioCtx) return;
+
         try {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
+            const osc = this.audioCtx.createOscillator();
+            const gain = this.audioCtx.createGain();
             osc.connect(gain);
-            gain.connect(ctx.destination);
+            gain.connect(this.audioCtx.destination);
 
-            const now = ctx.currentTime;
-            gain.gain.setValueAtTime(masterVolume * 0.2, now);
+            const now = this.audioCtx.currentTime;
+            const vol = (this.volumes[type] !== undefined ? this.volumes[type] : 0.5) * 0.3;
 
-            if (soundName === 'click') {
+            if (type === 'click') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(500, now);
-                osc.frequency.exponentialRampToValueAtTime(300, now + 0.04);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
+                osc.frequency.setValueAtTime(600, now);
+                gain.gain.setValueAtTime(vol, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
                 osc.start(now);
-                osc.stop(now + 0.04);
-            } else if (soundName === 'success') {
+                osc.stop(now + 0.05);
+            } else if (type === 'success') {
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(440, now);
-                osc.frequency.setValueAtTime(660, now + 0.06);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.frequency.setValueAtTime(880, now + 0.08);
+                gain.gain.setValueAtTime(vol, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
                 osc.start(now);
-                osc.stop(now + 0.15);
-            } else if (soundName === 'error') {
+                osc.stop(now + 0.25);
+            } else if (type === 'error') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(200, now);
-                osc.frequency.setValueAtTime(120, now + 0.08);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.setValueAtTime(120, now + 0.1);
+                gain.gain.setValueAtTime(vol, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
                 osc.start(now);
-                osc.stop(now + 0.15);
-            } else if (soundName === 'levelup') {
+                osc.stop(now + 0.2);
+            } else if (type === 'levelup') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, now);
-                osc.frequency.setValueAtTime(659.25, now + 0.08);
-                osc.frequency.setValueAtTime(783.99, now + 0.16);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.setValueAtTime(500, now + 0.1);
+                osc.frequency.setValueAtTime(800, now + 0.2);
+                gain.gain.setValueAtTime(vol, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
                 osc.start(now);
-                osc.stop(now + 0.3);
-            } else {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
-                osc.start(now);
-                osc.stop(now + 0.08);
+                osc.stop(now + 0.4);
             }
         } catch (e) {
-            // Silently catch audio restrictions on mobile webviews
+            console.warn("[AudioEngine] Playback error:", e);
         }
     }
 };
 
+export let autoSpeakOnFlip = StorageEngine.get('a2_autospeak', false);
+export let currentSpeechRate = StorageEngine.get('a2_speech_rate', 0.9);
+
 export function toggleAudioMute() {
-    isMuted = !isMuted;
+    AudioEngine.muted = !AudioEngine.muted;
+    StorageEngine.set('a2_muted', AudioEngine.muted);
     syncSoundUI();
-    showToast(isMuted ? "Звук вимкнено" : "Звук увімкнено", "info");
+    AudioEngine.play('click');
 }
 
 export function updateAudioVolume(val) {
-    masterVolume = Number(val) / 100;
-    const lbl = document.getElementById("volume-val-label");
-    if (lbl) lbl.innerText = `${val}%`;
+    const num = parseInt(val) / 100;
+    AudioEngine.volumes = { click: num, hit: num, success: num, error: num, levelup: num };
+    StorageEngine.set('a2_volumes', AudioEngine.volumes);
+    const label = document.getElementById("volume-val-label");
+    if (label) label.innerText = `${val}%`;
+    AudioEngine.play('click');
 }
 
 export function toggleAutoSpeak() {
-    autoSpeak = !autoSpeak;
-    const btn = document.getElementById("sound-autospeak-btn");
-    if (btn) {
-        btn.innerText = autoSpeak ? "УВІМКНЕНО" : "ВИМКНЕНО";
-        btn.className = autoSpeak ? 
-            "interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-cyan-400 text-slate-950 shadow-md" : 
-            "interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-slate-800 text-slate-500";
-    }
+    autoSpeakOnFlip = !autoSpeakOnFlip;
+    StorageEngine.set('a2_autospeak', autoSpeakOnFlip);
+    syncSoundUI();
+    AudioEngine.play('click');
 }
 
 export function toggleSpeechRate() {
-    if (currentSpeechRate === 0.9) {
-        currentSpeechRate = 0.75;
-    } else if (currentSpeechRate === 0.75) {
-        currentSpeechRate = 1.0;
-    } else {
-        currentSpeechRate = 0.9;
-    }
-    const btn = document.getElementById("sound-rate-btn");
-    if (btn) {
-        let label = "НОРМАЛЬНА (0.9X)";
-        if (currentSpeechRate === 0.75) label = "ПОВІЛЬНА (0.75X)";
-        if (currentSpeechRate === 1.0) label = "ШВИДКА (1.0X)";
-        btn.innerText = label;
-    }
+    currentSpeechRate = currentSpeechRate === 0.9 ? 0.7 : 0.9;
+    StorageEngine.set('a2_speech_rate', currentSpeechRate);
+    syncSoundUI();
+    AudioEngine.play('click');
 }
 
 export function syncSoundUI() {
-    const btnHeader = document.getElementById("sound-master-btn-header");
-    const btnModal = document.getElementById("sound-master-btn");
+    const muted = AudioEngine.muted;
     const icon = document.getElementById("sound-icon");
+    if (icon) icon.className = muted ? 'fa-solid fa-volume-xmark text-pink-500' : 'fa-solid fa-volume-high text-cyan-400';
+    
+    const masterBtnHeader = document.getElementById("sound-master-btn-header");
+    if (masterBtnHeader) masterBtnHeader.className = muted ? 'interactive-btn glass-panel text-pink-500 p-2.5 rounded-xl border border-pink-500/30 hover:bg-slate-800' : 'interactive-btn glass-panel text-cyan-400 p-2.5 rounded-xl border border-cyan-500/30 hover:bg-slate-800';
 
-    if (isMuted) {
-        if (icon) icon.className = "fa-solid fa-volume-xmark text-pink-400";
-        if (btnHeader) btnHeader.classList.add("border-pink-500/50");
-        if (btnModal) {
-            btnModal.innerText = "ВИМКНЕНО";
-            btnModal.className = "interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-pink-500 text-white shadow-md";
-        }
-    } else {
-        if (icon) icon.className = "fa-solid fa-volume-high text-cyan-400";
-        if (btnHeader) btnHeader.classList.remove("border-pink-500/50");
-        if (btnModal) {
-            btnModal.innerText = "УВІМКНЕНО";
-            btnModal.className = "interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-cyan-400 text-slate-950 shadow-md";
-        }
+    const masterBtnModal = document.getElementById("sound-master-btn");
+    if (masterBtnModal) {
+        masterBtnModal.className = muted ? 'interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-slate-800 text-slate-500' : 'interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-cyan-400 text-slate-950 shadow-md';
+        masterBtnModal.textContent = muted ? 'ВИМКНЕНО' : 'УВІМКНЕНО';
     }
-}
 
-window.toggleAudioMute = toggleAudioMute;
-window.updateAudioVolume = updateAudioVolume;
-window.toggleAutoSpeak = toggleAutoSpeak;
-window.toggleSpeechRate = toggleSpeechRate;
+    const autoBtn = document.getElementById("sound-autospeak-btn");
+    if (autoBtn) {
+        autoBtn.className = autoSpeakOnFlip ? 'interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-cyan-400 text-slate-950 shadow-md' : 'interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-slate-800 text-slate-500';
+        autoBtn.textContent = autoSpeakOnFlip ? 'УВІМКНЕНО' : 'ВИМКНЕНО';
+    }
+
+    const rateBtn = document.getElementById("sound-rate-btn");
+    if (rateBtn) {
+        rateBtn.textContent = currentSpeechRate === 0.7 ? 'ПОВІЛЬНА (0.7X)' : 'НОРМАЛЬНА (0.9X)';
+    }
+
+    const currentVol = Math.round((AudioEngine.volumes.click !== undefined ? AudioEngine.volumes.click : 0.5) * 100);
+    const slider = document.getElementById("sound-volume-slider");
+    const label = document.getElementById("volume-val-label");
+    if (slider) slider.value = currentVol;
+    if (label) label.innerText = `${currentVol}%`;
+}
