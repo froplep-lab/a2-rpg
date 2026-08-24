@@ -81,35 +81,40 @@
             </div>
 
             <!-- FLASHCARD CONTAINER -->
-            <div class="perspective w-full h-[320px] cursor-pointer" onclick="flipCard()">
+            <div class="perspective w-full h-[340px] cursor-pointer" onclick="flipCard()">
                 <div id="flashcard-inner" class="relative w-full h-full duration-500 transform-gpu preserve-3d shadow-[0_20px_50px_rgba(6,182,212,0.15)] rounded-3xl">
                     
                     <!-- FRONT FACE -->
                     <div class="absolute inset-0 w-full h-full glass-panel border border-cyan-500/40 rounded-3xl p-6 flex flex-col justify-between backface-hidden">
                         <div class="flex justify-between items-center">
-                            <span id="card-rarity-badge" class="text-[10px] font-black px-2.5 py-1 rounded-md border border-cyan-500/30 text-cyan-300 uppercase">ЗВИЧАЙНИЙ</span>
-                            <span id="card-index-indicator" class="text-xs font-bold text-slate-400">1 / 84</span>
+                            <span class="text-[10px] font-black px-3 py-1.5 rounded-xl border border-cyan-500/30 text-cyan-300 uppercase tracking-widest bg-slate-900/40">DEUTSCH DE</span>
+                            <button onclick="event.stopPropagation(); speakWord();" aria-label="Озвучити" class="interactive-btn text-cyan-400 hover:text-white p-2 rounded-xl bg-slate-900/40 border border-cyan-500/20"><i class="fa-solid fa-volume-high text-sm"></i></button>
                         </div>
-                        <div class="text-center space-y-3">
-                            <div id="card-emoji" class="text-6xl mb-1">📌</div>
-                            <div id="card-german" class="text-2xl font-black text-white tracking-wide">Beispiel</div>
-                            <div id="card-grammar" class="text-xs font-bold text-pink-400 uppercase tracking-widest">Nomen, n.</div>
+                        <div class="text-center space-y-3 my-auto">
+                            <div id="card-german" class="text-2xl sm:text-3xl font-black text-white tracking-wide leading-tight">Beispiel</div>
+                            <div>
+                                <span id="card-grammar" class="text-[11px] font-black px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 uppercase tracking-widest inline-block">Nomen</span>
+                            </div>
                         </div>
-                        <div class="text-center text-[11px] text-slate-400 font-bold">Натисни, щоб перевернути</div>
+                        <div class="text-center text-[11px] text-slate-400 font-bold flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-hand-pointer text-cyan-400 text-xs"></i> Натисни для розвороту картки
+                        </div>
                     </div>
 
                     <!-- BACK FACE -->
-                    <div class="absolute inset-0 w-full h-full glass-panel border border-pink-500/40 rounded-3xl p-6 flex flex-col justify-between backface-hidden rotate-y-180">
+                    <div class="absolute inset-0 w-full h-full glass-panel border border-emerald-500/40 rounded-3xl p-6 flex flex-col justify-between backface-hidden rotate-y-180">
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-black px-2.5 py-1 rounded-md border border-pink-500/30 text-pink-300 uppercase">ПЕРЕКЛАД</span>
-                            <span class="text-xs font-bold text-slate-400">А2 ЛЕКСИКА</span>
+                            <span class="text-[10px] font-black px-3 py-1.5 rounded-xl border border-emerald-500/30 text-emerald-300 uppercase tracking-widest bg-slate-900/40">ÜBERSETZUNG UA</span>
+                            <span id="card-back-grammar" class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nomen</span>
                         </div>
-                        <div class="text-center space-y-3">
-                            <div id="card-ukrainian" class="text-2xl font-black text-emerald-400">приклад</div>
-                            <div id="card-hint" class="text-xs text-slate-300 italic">Демонстрація чогось</div>
-                            <div id="card-sentence" class="text-[11px] text-cyan-300 bg-slate-900/50 p-2.5 rounded-xl border border-cyan-500/20">Das ist ein Beispiel.</div>
+                        <div class="text-center space-y-3 my-auto">
+                            <div id="card-emoji" class="text-4xl mb-1">📌</div>
+                            <div id="card-ukrainian" class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-wide leading-tight">приклад</div>
+                            <div id="card-hint" class="text-xs text-slate-300 italic max-w-xs mx-auto">Демонстрація чогось</div>
                         </div>
-                        <div class="text-center text-[11px] text-slate-400 font-bold">Зворотний бік картки</div>
+                        <div class="text-center text-[11px] text-slate-400 font-bold flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-rotate text-emerald-400 text-xs"></i> Натисни для повернення
+                        </div>
                     </div>
 
                 </div>

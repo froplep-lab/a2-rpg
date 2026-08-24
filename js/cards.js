@@ -14,11 +14,11 @@ export function updateCard() {
 
     document.getElementById("card-german").innerText = card.german;
     document.getElementById("card-grammar").innerText = card.grammar;
+    const backGrammar = document.getElementById("card-back-grammar");
+    if (backGrammar) backGrammar.innerText = card.grammar;
     document.getElementById("card-ukrainian").innerText = card.ukrainian;
     document.getElementById("card-hint").innerText = card.hint;
-    document.getElementById("card-sentence").innerText = card.sentence;
     document.getElementById("card-emoji").innerText = card.emoji || '📌';
-    document.getElementById("card-index-indicator").innerText = `${currentIndex + 1} / ${cards.length}`;
 
     const rObj = [{ name: 'звичайний', color: 'border-cyan-500/30 text-cyan-300' }, { name: 'рідкісний', color: 'border-cyan-400 text-cyan-300' }, { name: 'епічний', color: 'border-purple-400 text-purple-300' }, { name: 'легендарний', color: 'border-yellow-400 text-yellow-300' }].find(r => r.name === card.rarity) || { name: 'звичайний', color: 'border-cyan-500/30 text-cyan-300' };
     const badge = document.getElementById("card-rarity-badge");
