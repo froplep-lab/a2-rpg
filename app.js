@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.7.2";
+const APP_VERSION = "v1.7.3";
 
 const AudioEngine = {
     ctx: null,
@@ -167,7 +167,7 @@ let cards = [
     { german: "die Wiedereröffnung, -en", grammar: "Nomen", ukrainian: "повторне відкриття", hint: "Знову відчинено", emoji: "🎉", sentence: "Wir feiern heute die Wiedereröffnung des Museums." },
     { german: "an·nehmen", grammar: "Verb", ukrainian: "приймати", hint: "Погодитися на щось", emoji: "🤲", sentence: "Ich werde dieses tolle Jobangebot gerne annehmen." },
     { german: "ab·lehnen", grammar: "Verb", ukrainian: "відхиляти, відмовляти", hint: "Сказати «ні»", emoji: "🙅", sentence: "Leider musste er das Angebot aus persönlichen Gründen ablehnen." },
-    { german: "das Bedauern (Sg.)", grammar: "Nomen", ukrainian: "жаль, шкодування", hint: "Коли про щось шкодуєш", emoji: "😔", sentence: "Er äußerte großes Bedauern über diesen Fehler." },
+    { german: "das Bedauern (Sg.)", grammar: "Nomen", ukrainian: "жаль, шкодування", hint: "Коли про شيء шкодуєш", emoji: "😔", sentence: "Er äußerte großes Bedauern über diesen Fehler." },
     { german: "der Gegensatz, ̈-er", grammar: "Nomen", ukrainian: "протилежність", hint: "Повна протилежність", emoji: "↔️", sentence: "Groß und klein sind ein klarer Gegensatz." },
     { german: "die Wirklichkeit (Sg.)", grammar: "Nomen", ukrainian: "дійсність, реальність", hint: "Те, що є насправді", emoji: "🌍", sentence: "Manchmal ist die Wirklichkeit spannender als ein Traum." },
     { german: "der Keller, -", grammar: "Nomen", ukrainian: "підвал", hint: "Нижній поверх будинку", emoji: "🏚️", sentence: "Wir lagern alte Fahrräder unten im Keller." },
@@ -385,31 +385,8 @@ function speakWord(e) {
     if (card && card.german) speakGermanText(getCleanGermanWord(card.german));
 }
 
-// Robust German speech engine.
-let germanVoices = [];
+// StreamElements Reliable German Audio TTS Engine
 let currentTtsAudio = null;
-
-function refreshGermanVoices() {
-    if (!('speechSynthesis' in window)) return [];
-    const voices = window.speechSynthesis.getVoices() || [];
-    germanVoices = voices.filter(v => /^de(?:-|$)/i.test(v.lang || ''));
-    return germanVoices;
-}
-
-function getBestGermanVoice() {
-    const voices = refreshGermanVoices();
-    if (!voices.length) return null;
-    const preferred = voices.find(v => /^de-DE$/i.test(v.lang))
-        || voices.find(v => /Google.*Deutsch|Google.*German/i.test(v.name))
-        || voices.find(v => /Microsoft.*German|Microsoft.*Deutsch/i.test(v.name))
-        || voices[0];
-    return preferred || null;
-}
-
-if ('speechSynthesis' in window) {
-    refreshGermanVoices();
-    window.speechSynthesis.addEventListener?.('voiceschanged', refreshGermanVoices);
-}
 
 function normalizeGermanText(text) {
     return String(text ?? '')
@@ -419,102 +396,49 @@ function normalizeGermanText(text) {
 }
 
 function getGermanTtsUrl(text) {
-    return `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=de&client=tw-ob`;
+    return `https://api.streamelements.com/kappa/v2/speech?voice=Vicki&text=${encodeURIComponent(text)}`;
 }
 
-function playRemoteGermanAudio(text) {
-    return new Promise((resolve, reject) => {
-        try {
-            if (currentTtsAudio) {
-                currentTtsAudio.pause();
-                currentTtsAudio.currentTime = 0;
-            }
-            const audio = new Audio();
-            currentTtsAudio = audio;
-            audio.preload = 'auto';
-            audio.volume = 1;
-            audio.src = getGermanTtsUrl(text);
-            audio.onended = () => { if (currentTtsAudio === audio) currentTtsAudio = null; };
-            audio.onerror = () => { if (currentTtsAudio === audio) currentTtsAudio = null; reject(new Error('Remote German TTS failed')); };
-            const playPromise = audio.play();
-            if (playPromise && typeof playPromise.then === 'function') {
-                playPromise.then(() => resolve(true)).catch(reject);
-            } else {
-                resolve(true);
-            }
-        } catch (err) {
-            reject(err);
-        }
-    });
-}
-
-function speakWithBrowserGermanVoice(text) {
-    return new Promise((resolve, reject) => {
-        if (!('speechSynthesis' in window)) {
-            reject(new Error('speechSynthesis unavailable'));
-            return;
-        }
-        try {
-            const synth = window.speechSynthesis;
-            synth.cancel();
-            const voice = getBestGermanVoice();
-            if (!voice) {
-                reject(new Error('No German voice installed'));
-                return;
-            }
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = voice.lang || 'de-DE';
-            utterance.voice = voice;
-            utterance.rate = 0.9;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            utterance.onend = () => resolve(true);
-            utterance.onerror = (event) => reject(new Error(event?.error || 'German TTS error'));
-            synth.speak(utterance);
-            setTimeout(() => {
-                if (synth.speaking || synth.pending) resolve(true);
-            }, 120);
-        } catch (err) {
-            reject(err);
-        }
-    });
-}
-
-async function speakGermanText(text) {
+function speakGermanText(text) {
     if (AudioEngine.muted) return;
     const cleanText = normalizeGermanText(text);
     if (!cleanText) return;
 
     try {
-        await speakWithBrowserGermanVoice(cleanText);
-        return;
-    } catch (localErr) {
-        console.warn('German browser voice unavailable:', localErr);
-    }
-
-    try {
-        await playRemoteGermanAudio(cleanText);
-        return;
-    } catch (remoteErr) {
-        console.warn('German remote TTS unavailable:', remoteErr);
-    }
-
-    if ('speechSynthesis' in window) {
-        setTimeout(() => {
-            try {
-                const voice = getBestGermanVoice();
-                if (!voice) return;
-                window.speechSynthesis.cancel();
+        if (currentTtsAudio) {
+            currentTtsAudio.pause();
+            currentTtsAudio.currentTime = 0;
+        }
+        const audio = new Audio();
+        currentTtsAudio = audio;
+        audio.preload = 'auto';
+        audio.volume = 1;
+        audio.src = getGermanTtsUrl(cleanText);
+        audio.onended = () => { if (currentTtsAudio === audio) currentTtsAudio = null; };
+        audio.onerror = () => {
+            if (currentTtsAudio === audio) currentTtsAudio = null;
+            // Fallback to browser SpeechSynthesis if API fails
+            if ('speechSynthesis' in window) {
                 const utterance = new SpeechSynthesisUtterance(cleanText);
-                utterance.lang = voice.lang || 'de-DE';
-                utterance.voice = voice;
+                utterance.lang = 'de-DE';
                 utterance.rate = 0.9;
-                utterance.volume = 1;
                 window.speechSynthesis.speak(utterance);
-            } catch (err) {
-                console.warn('Final German TTS attempt failed:', err);
             }
-        }, 150);
+        };
+        const playPromise = audio.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(err => {
+                console.warn('StreamElements audio play blocked/failed:', err);
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = 'de-DE';
+                    utterance.rate = 0.9;
+                    window.speechSynthesis.speak(utterance);
+                }
+            });
+        }
+    } catch (err) {
+        console.warn('TTS Error:', err);
     }
 }
 
@@ -780,7 +704,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     syncSoundUI();
-    refreshGermanVoices();
     updateHeroUI();
     updateCard();
     renderCompactBlock();
@@ -1033,7 +956,7 @@ function inspectSoul(ger, ukr, gram, emoji, rarity) {
     const modal = document.getElementById("soul-inspect-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("soul-inspect-box");
-    if (box) box.classList.add("scale-95");
+    if (box) box.classList.remove("scale-95");
 }
 
 function closeSoulInspect() {
@@ -1049,7 +972,7 @@ function openInventoryModal() {
     const modal = document.getElementById("inventory-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("inventory-box");
-    if (box) box.classList.add("scale-95");
+    if (box) box.classList.remove("scale-95");
 }
 
 function closeInventoryModal() {
