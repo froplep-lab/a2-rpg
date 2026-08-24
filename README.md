@@ -1,37 +1,32 @@
-# GESTALT DE B1 RPG — v0.007
+# GESTALT — Deutsch RPG v0.008
 
-## Update
-Stability + PC/mobile compatibility pass over v0.006.
+Stable core build focused on the reference UI: Home, Words, Anki/SRS, Random Dice, Profile/Settings.
 
-### Fixed
-- Added the real modular app entry point (`js/app.js`) so learning, quests, audio, profiles, achievements and legacy systems are initialized consistently.
-- Fixed missing DOM targets that could stop the dashboard sync function.
-- Fixed mobile safe-area CSS; replaced undefined custom variables with `env(safe-area-inset-*)`.
-- Fixed duplicate legacy DOM ids in compatibility surface.
-- Added offline cache entries for all JavaScript modules.
-- Persisted Light/Dark theme and Reduced Motion settings.
-- Prevented duplicate custom-word insertion.
-- Improved touch target sizes and mobile input sizing.
-
-### Core systems kept
-- Vocabulary / A2→B1 learning loop
-- Anki / SRS
-- Random Dice 5×3
-- RPG progression
-- Quests / achievements
-- Worlds / profile / settings
-- Audio / speech synthesis
+## Features
+- PC + mobile responsive UI
+- Telegram Mini App compatible (Telegram API optional)
+- Offline-ready PWA cache
+- 287 built-in German words + custom words
+- SRS intervals: 1/2/4/7/14/30 days
+- Mastery 0–5
+- Random Dice 5x3 board, roll, merge, waves, boss waves, language power
+- XP, level, coins, streak
+- Export/import progress
+- LocalStorage persistence and migration from common previous save keys
 
 ## Run
-Best: serve the folder over HTTP (for example `python -m http.server 8080`) and open `http://localhost:8080/`.
-The project also keeps a graceful inline fallback vocabulary so the landing UI can still render when `fetch()` is unavailable.
+Open `index.html` through a local web server (recommended) or host the folder.
+
+## Telegram
+Use the hosted site as Telegram WebApp / Mini App. Telegram WebApp integration is optional; browser mode works without Telegram.
 
 ## QA
-- JS syntax checks
-- JSON validation
-- DOM id/reference audit
-- local HTTP smoke test
-- ZIP integrity
+Static JS/JSON/path checks are required before packaging. Hardware iPhone/Android testing is not performed in this environment.
 
-## Known limitation
-No physical iPhone/Android hardware test was performed in this environment.
+## Changelog
+### v0.008
+- Rebuilt conflicting UI/runtime into a single stable core.
+- Removed legacy DOM dependencies from the active entrypoint.
+- Added robust storage and old-save migration.
+- Added working Words, SRS, Dice and Profile flows.
+- Added safe-area mobile navigation and offline cache.
