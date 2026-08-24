@@ -2,599 +2,1410 @@
 <html lang="uk" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#07111f">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="application-version" content="0.001">
-    <title>DE B1 RPG • v0.001 — Німецька через гру</title>
-    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DEUTSCH QUEST — B1 RPG v0.002</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/v001.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@600;700;900&family=Space+Grotesk:wght@400;600;700;900&display=swap');
+        
+        * { 
+            touch-action: manipulation; 
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, opacity 0.3s ease;
+        }
+        
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            user-select: none; 
+            background: #0d0704; 
+            color: #f3e5d8;
+            overflow-x: hidden;
+        }
+
+        .font-medieval { font-family: 'MedievalSharp', cursive; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+
+        .tavern-bg-texture {
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(180, 83, 9, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 10% 80%, rgba(120, 53, 15, 0.25) 0%, transparent 40%),
+                linear-gradient(to bottom, #0d0704 0%, #1a0d06 50%, #080402 100%);
+        }
+
+        .tavern-panel {
+            background: radial-gradient(circle, #2d180f 0%, #150904 100%);
+            border: 3px solid #7d4824;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.85), 0 10px 30px rgba(0,0,0,0.9);
+            border-radius: 1.25rem;
+            position: relative;
+        }
+
+        .parchment-scroll {
+            background: radial-gradient(circle, #3d2617 0%, #29180e 100%);
+            border: 3px solid #8c5328;
+            color: #fce7c8;
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8), 0 10px 25px rgba(0,0,0,0.9);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        @keyframes fireplaceGlow {
+            0%, 100% { box-shadow: inset 0 0 30px rgba(217, 119, 6, 0.15), 0 10px 30px rgba(133, 77, 39, 0.4); }
+            50% { box-shadow: inset 0 0 45px rgba(245, 158, 11, 0.3), 0 12px 35px rgba(217, 119, 6, 0.6); }
+        }
+        .fireplace-anim { animation: fireplaceGlow 3.5s infinite ease-in-out; }
+
+        @keyframes swayTree {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(2deg); }
+        }
+        .vines-decoration::before {
+            content: '🌿'; position: absolute; top: -14px; left: 12px; font-size: 22px; z-index: 20; opacity: 0.9;
+            filter: drop-shadow(0 2px 4px #000); animation: swayTree 4s ease-in-out infinite;
+        }
+        .vines-decoration::after {
+            content: '🍃'; position: absolute; bottom: -12px; right: 14px; font-size: 20px; z-index: 20; opacity: 0.9;
+            filter: drop-shadow(0 2px 4px #000); animation: swayTree 6s ease-in-out infinite reverse;
+        }
+
+        .moss-corner {
+            position: absolute; width: 35px; height: 35px;
+            background: radial-gradient(circle, #1e3f1c 0%, transparent 75%);
+            pointer-events: none; opacity: 0.6; z-index: 15;
+        }
+
+        .interactive-btn { cursor: pointer; }
+        .interactive-btn:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            filter: brightness(1.2);
+        }
+        .interactive-btn:active:not(:disabled) { transform: translateY(1px) scale(0.96); }
+
+        @keyframes ronanSlash {
+            0% { transform: translateX(0) rotate(0deg); }
+            30% { transform: translateX(20px) rotate(10deg); }
+            50% { transform: translateX(35px) rotate(-15deg); }
+            100% { transform: translateX(0) rotate(0deg); }
+        }
+        @keyframes skyeShoot {
+            0% { transform: scale(1); }
+            40% { transform: translateX(-8px) scale(0.95); }
+            60% { transform: translateX(12px) scale(1.05); }
+            100% { transform: translateX(0) scale(1); }
+        }
+        @keyframes bellCast {
+            0% { transform: scale(1); filter: drop-shadow(0 0 0px #a855f7); }
+            50% { transform: scale(1.1) translateY(-4px); filter: drop-shadow(0 0 15px #c084fc); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 0px #a855f7); }
+        }
+
+        .anim-attack-ronan { animation: ronanSlash 0.4s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        .anim-attack-skye { animation: skyeShoot 0.4s ease-out; }
+        .anim-attack-bell { animation: bellCast 0.5s ease-in-out; }
+
+        @keyframes monsterHurt {
+            0% { transform: scale(1); filter: brightness(1); }
+            30% { transform: scale(1.15) rotate(-8deg); filter: brightness(1.8) drop-shadow(0 0 20px #ef4444); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+        .anim-monster-hurt { animation: monsterHurt 0.3s ease-in-out; }
+
+        @keyframes projectileFly {
+            0% { transform: translate(0, 0) scale(0.8); opacity: 1; }
+            100% { transform: translate(var(--target-x), var(--target-y)) scale(1.2); opacity: 0; }
+        }
+
+        .attack-orb {
+            position: absolute; width: 14px; height: 14px; border-radius: 50%;
+            background: #f59e0b; box-shadow: 0 0 12px #f59e0b, 0 0 20px #ef4444;
+            pointer-events: none; z-index: 90;
+            animation: projectileFly 0.4s ease-in forwards;
+        }
+
+        .rarity-0 { border-color: #475569 !important; background: radial-gradient(circle, #1e293b 0%, #020617 100%); color: #64748b; }
+        .rarity-1 { border-color: #94a3b8 !important; background: radial-gradient(circle, #334155 0%, #0f172a 100%); color: #cbd5e1; }
+        .rarity-2 { border-color: #22c55e !important; background: radial-gradient(circle, #15803d 0%, #0f172a 100%); color: #4ade80; }
+        .rarity-3 { border-color: #38bdf8 !important; background: radial-gradient(circle, #0284c7 0%, #0f172a 100%); color: #38bdf8; }
+        .rarity-4 { border-color: #a855f7 !important; background: radial-gradient(circle, #7e22ce 0%, #0f172a 100%); color: #c084fc; }
+        .rarity-5 { border-color: #eab308 !important; background: radial-gradient(circle, #a16207 0%, #0f172a 100%); color: #fde047; }
+        .rarity-6 { border-color: #ec4899 !important; background: radial-gradient(circle, #be185d 0%, #0f172a 100%); color: #f472b6; }
+        .rarity-7 { border-color: #f97316 !important; background: radial-gradient(circle, #c2410c 0%, #0f172a 100%); color: #fb923c; }
+
+        .roulette-container {
+            position: relative; width: 100%; height: 130px; overflow: hidden;
+            background: #090503; border: 2px solid #b45309; border-radius: 1.25rem;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.9);
+        }
+        .roulette-pointer {
+            position: absolute; top: 0; bottom: 0; left: 50%; width: 4px; background: #ef4444;
+            box-shadow: 0 0 15px #ef4444; transform: translateX(-50%); z-index: 30;
+        }
+        .roulette-track { display: flex; align-items: center; position: absolute; height: 100%; will-change: transform; }
+        .roulette-card {
+            width: 115px; height: 110px; margin: 0 5px; flex-shrink: 0;
+            border-radius: 0.85rem; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            border: 2px solid rgba(255,255,255,0.15); background: rgba(20, 10, 6, 0.95);
+        }
+
+        .click-float-dmg {
+            position: absolute; font-weight: 900; color: #ef4444; font-size: 22px;
+            pointer-events: none; text-shadow: 0 0 10px #000;
+            animation: floatUp 0.65s ease-out forwards; z-index: 100;
+        }
+        @keyframes floatUp { 
+            0% { opacity: 1; transform: translateY(0) scale(0.8); } 
+            100% { opacity: 0; transform: translateY(-50px) scale(1.2); } 
+        }
+
+        .perspective { perspective: 1400px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0d0704; }
+        ::-webkit-scrollbar-thumb { background: #7d4824; border-radius: 6px; }
+    
+        /* v0.002 — DEUTSCH QUEST COMMAND CENTER */
+        .dq-dashboard-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:1rem}
+        .dq-stat{background:linear-gradient(145deg,rgba(58,31,18,.95),rgba(17,9,5,.98));border:1px solid rgba(217,119,6,.45);border-radius:1rem;padding:.8rem;box-shadow:inset 0 0 18px rgba(0,0,0,.45)}
+        .dq-progress{height:8px;background:#0a0604;border-radius:999px;overflow:hidden;border:1px solid rgba(217,119,6,.25)}
+        .dq-progress>i{display:block;height:100%;background:linear-gradient(90deg,#b45309,#fbbf24,#f59e0b);border-radius:999px;transition:width .35s ease}
+        .dq-mission{display:flex;align-items:center;gap:.75rem;padding:.75rem;border:1px solid rgba(120,72,36,.65);border-radius:.85rem;background:rgba(12,7,4,.65)}
+        .dq-mission.done{border-color:rgba(34,197,94,.55);background:rgba(20,55,32,.18)}
+        .dq-mission .check{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#1c1009;border:1px solid #7d4824;flex:none}
+        .dq-mission.done .check{background:#14532d;border-color:#22c55e}
+        .dq-battle-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.4rem;max-width:520px;margin:auto}
+        .dq-cell{aspect-ratio:1;border:1px solid rgba(245,158,11,.25);border-radius:.65rem;background:radial-gradient(circle,#2a160c,#0c0603);display:flex;align-items:center;justify-content:center;font-size:1.55rem;box-shadow:inset 0 0 12px rgba(0,0,0,.55)}
+        .dq-cell.active{border-color:#f59e0b;box-shadow:0 0 16px rgba(245,158,11,.28),inset 0 0 12px rgba(0,0,0,.55)}
+        .dq-streak-flame{font-size:2rem;filter:drop-shadow(0 0 10px rgba(245,158,11,.55))}
+        @media(max-width:760px){.dq-dashboard-grid{grid-template-columns:1fr}.dq-battle-board{max-width:430px}}
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+    </style>
 </head>
-<body class="app-shell min-h-screen flex flex-col items-center justify-between p-4 selection:bg-cyan-500 selection:text-slate-950">
+<body id="app-body" class="min-h-screen flex flex-col justify-between p-3 sm:p-6 lg:p-8 max-w-5xl xl:max-w-6xl mx-auto antialiased tavern-bg-texture">
 
+    <div class="relative z-10 flex flex-col min-h-screen justify-between space-y-4">
 
-    <div class="v001-topline" role="status">
-        <div class="v001-brand">
-            <span class="brand-orb">DE</span>
-            <div>
-                <strong>Deutsch Quest</strong>
-                <small>Version 0.001 • PLAYTEST BUILD</small>
+        <!-- HEADER / БАРНИЙ СТІЛ ТАВЕРНИ -->
+        <header class="w-full tavern-panel fireplace-anim vines-decoration p-4 sm:p-6 shadow-2xl relative overflow-hidden">
+            <div class="moss-corner top-0 left-0"></div>
+            <div class="moss-corner bottom-0 right-0"></div>
+
+            <div class="flex items-center justify-between gap-4">
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="openHeroSelectModal()" class="relative group cursor-pointer interactive-btn">
+                        <div id="hero-chibi-container" class="w-20 h-20 bg-amber-950/70 border-2 border-amber-600/70 rounded-2xl flex items-center justify-center p-1 shadow-inner overflow-hidden"></div>
+                        <span class="absolute -bottom-2 inset-x-0 mx-auto w-max text-[9px] bg-amber-800 text-amber-100 px-2 py-0.5 rounded-full font-bold uppercase border border-amber-500">Змінити</span>
+                    </button>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span id="hero-lvl-badge" class="text-xs bg-amber-900/80 text-amber-300 px-2 py-0.5 rounded font-mono font-bold border border-amber-600/50">LVL 1</span>
+                            <span id="hero-title" class="text-lg sm:text-xl font-medieval text-amber-200 font-bold tracking-wide">Ронан</span>
+                        </div>
+                        <div class="w-32 sm:w-48 bg-stone-950 h-2.5 rounded-full overflow-hidden border border-amber-900/60 mt-1.5">
+                            <div id="hero-xp-bar" class="h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-400" style="width: 0%"></div>
+                        </div>
+                        <div class="text-xs text-amber-300/80 font-mono mt-1 flex items-center gap-2">
+                            <span>⚔️ Атака: <b id="total-atk-text" class="text-amber-400">10</b></span>
+                            <span>|</span>
+                            <span>🍺 Монети: <b id="gold-amount-text" class="text-yellow-400">0</b></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div id="enemy-box" onclick="manualClickAttack(event)" class="interactive-btn bg-stone-950/90 hover:bg-stone-900 px-4 py-3 rounded-2xl border border-amber-800/70 flex items-center gap-3 shadow-lg relative">
+                        <div class="flex flex-col text-right font-mono">
+                            <span id="enemy-name-text" class="text-xs font-bold text-amber-200">Чібі-Вампірчик</span>
+                            <span id="enemy-hp-text" class="text-xs text-red-400 font-black">50/50</span>
+                        </div>
+                        
+                        <div id="monster-chibi-svg" class="w-12 h-12 flex items-center justify-center">
+                            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">
+                                <path d="M 20 50 Q 10 20 30 15 Q 50 5 70 15 Q 90 20 80 50 Q 95 70 80 85 Q 50 95 20 85 Q 5 70 20 50 Z" fill="#18181b" stroke="#27272a" stroke-width="3"/>
+                                <polygon points="25,20 15,0 35,12" fill="#09090b"/>
+                                <polygon points="75,20 85,0 65,12" fill="#09090b"/>
+                                <circle cx="38" cy="45" r="12" fill="#ffffff"/>
+                                <circle cx="62" cy="45" r="12" fill="#ffffff"/>
+                                <circle cx="40" cy="45" r="7" fill="#ef4444"/>
+                                <circle cx="64" cy="45" r="7" fill="#ef4444"/>
+                                <circle cx="42" cy="42" r="2.5" fill="#ffffff"/>
+                                <circle cx="66" cy="42" r="2.5" fill="#ffffff"/>
+                                <path d="M 40 68 Q 50 75 60 68" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+                                <polygon points="42,68 45,76 47,68" fill="#ffffff"/>
+                                <polygon points="53,68 55,76 58,68" fill="#ffffff"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="openMusicSelectModal()" class="interactive-btn p-3 rounded-xl bg-stone-900 border border-amber-800/60 text-amber-400 text-sm" title="Музика та Налаштування"><i class="fa-solid fa-guitar"></i></button>
+                    <button onclick="confirmResetProgress()" class="interactive-btn p-3 rounded-xl bg-red-950/80 border border-red-800/60 text-red-400 text-sm" title="Скидання"><i class="fa-solid fa-trash"></i></button>
+                </div>
             </div>
-        </div>
-        <div class="v001-build"><i class="fa-solid fa-circle"></i> ONLINE</div>
+        </header>
+
+        <!-- НАВІГАЦІЯ ТАВЕРНИ -->
+        <nav class="grid grid-cols-3 sm:grid-cols-6 gap-2 my-2">
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-amber-800 text-amber-100 border border-amber-500 font-medieval flex items-center justify-center gap-1.5 shadow-md">
+                🏰 Центр
+            </button>
+            <button onclick="switchTab('cards')" id="tab-cards" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
+                📜 Пергаменти
+            </button>
+            <button onclick="switchTab('exam')" id="tab-exam" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
+                ⚔️ Випробування
+            </button>
+            <button onclick="switchTab('inventory')" id="tab-inventory" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
+                🛡️ Герой
+            </button>
+            <button onclick="switchTab('cube')" id="tab-cube" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
+                🔮 Алхімія
+            </button>
+            <button onclick="switchTab('dictionary')" id="tab-dictionary" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
+                🏆 Трофеї
+            </button>
+        </nav>
+
+        <main class="w-full flex-1 flex flex-col justify-between space-y-4">
+            
+            <!-- СЕКЦІЯ СУВОЇВ -->
+            <section id="sec-cards" class="w-full space-y-4">
+                <div class="flex items-center justify-between tavern-panel px-5 py-3 rounded-xl text-xs sm:text-sm font-mono">
+                    <span id="card-counter-text" class="text-amber-400 font-bold">Сувій 1 / 84</span>
+                    <button onclick="openTamingTrial()" class="interactive-btn bg-amber-900/80 text-amber-200 border border-amber-600/70 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow">
+                        🏆 Освоїти Слово
+                    </button>
+                </div>
+
+                <div class="w-full h-72 sm:h-80 lg:h-96 perspective cursor-pointer group" onclick="flipCard()">
+                    <div id="card-inner" class="w-full h-full relative transform-style-3d transition-transform duration-500 rounded-3xl shadow-2xl">
+                        <!-- НІМЕЦЬКА СТОРОНА -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden tavern-panel rounded-3xl p-8 flex flex-col justify-between items-center text-center">
+                            <div class="w-full flex justify-between items-center text-xs font-mono text-amber-400/80">
+                                <span class="bg-amber-950 px-3 py-1 rounded-lg border border-amber-800">DEUTSCH 🇩🇪</span>
+                                <button onclick="speakWord(event)" class="interactive-btn text-amber-400 hover:text-amber-200 p-1 text-lg"><i class="fa-solid fa-volume-high"></i></button>
+                            </div>
+                            <div class="my-auto space-y-2">
+                                <div id="card-front-word" class="text-3xl sm:text-5xl font-medieval font-black text-amber-100 tracking-wide">...</div>
+                                <div id="card-front-grammar" class="text-xs font-mono text-amber-400 bg-amber-950/90 px-3 py-1 rounded-full border border-amber-800 inline-block">...</div>
+                                <div id="card-trophy-status" class="hidden text-xs font-bold text-yellow-400 font-mono mt-2">
+                                    🏆 Трофей розблоковано!
+                                </div>
+                            </div>
+                            <span class="text-xs text-amber-500/70 font-mono"><i class="fa-solid fa-hand-pointer"></i> Торкніться для перевороту</span>
+                        </div>
+                        <!-- УКРАЇНСЬКА СТОРОНА -->
+                        <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 parchment-scroll rounded-3xl p-8 flex flex-col justify-between items-center text-center">
+                            <div class="w-full flex justify-between items-center text-xs font-mono text-amber-200/80">
+                                <span class="bg-amber-950/80 px-3 py-1 rounded-lg border border-amber-800/60 font-bold">ПЕРЕКЛАД 🇺🇦</span>
+                            </div>
+                            <div class="my-auto space-y-3">
+                                <div id="card-back-emoji" class="text-5xl animate-bounce filter drop-shadow">📦</div>
+                                <div id="card-back-trans" class="text-2xl sm:text-4xl font-black font-medieval text-amber-100">...</div>
+                            </div>
+                            <span class="text-xs text-amber-400/70 font-mono">Торкніться для повернення</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="prevCard()" class="interactive-btn tavern-panel text-amber-200 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5"><i class="fa-solid fa-arrow-left"></i> Назад</button>
+                    <button onclick="flipCard()" class="interactive-btn tavern-panel text-amber-400 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5"><i class="fa-solid fa-rotate"></i> Оберт</button>
+                    <button onclick="nextCard()" class="interactive-btn bg-amber-800 text-amber-100 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 border border-amber-500">Далі <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </section>
+
+            <!-- СЕКЦІЯ ІСПИТУ -->
+            <section id="sec-exam" class="hidden w-full tavern-panel p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-amber-900/60 pb-3 font-mono text-xs sm:text-sm">
+                    <span class="text-amber-400 font-bold uppercase tracking-wider font-medieval">⚔️ Іспит Шинкаря</span>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 bg-stone-950 px-3 py-1 rounded-xl border border-amber-800/60">
+                            <div id="key-icon-container" class="text-xl">❌</div>
+                            <span id="key-name-text" class="text-xs font-bold text-stone-500">Немає ключа</span>
+                        </div>
+                        <button onclick="openChestRoulette()" id="open-chest-btn" class="interactive-btn bg-amber-600 text-stone-950 font-black px-3 py-1.5 rounded-lg text-xs font-medieval">Скриня 🎁</button>
+                    </div>
+                </div>
+                <div id="exam-box" class="space-y-4"></div>
+            </section>
+
+            <!-- СЕКЦІЯ ІНВЕНТАРЯ -->
+            <section id="sec-inventory" class="hidden w-full tavern-panel p-6 space-y-5">
+                <div>
+                    <h4 class="text-xs sm:text-sm font-mono text-amber-300 font-bold mb-3 border-b border-amber-900/60 pb-2">
+                        Екіпірування (<span id="current-hero-class-name" class="text-amber-100">Ронан</span>):
+                    </h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="hero-equip-slots-grid"></div>
+                </div>
+                <div class="border-t border-amber-900/60 pt-4">
+                    <h4 class="text-xs sm:text-sm font-mono text-amber-300 font-bold mb-3">
+                        Сховище (<span id="storage-count-text" class="text-yellow-400">0</span>/36):
+                    </h4>
+                    <div id="storage-grid" class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-9 gap-2 max-h-72 overflow-y-auto p-1"></div>
+                </div>
+            </section>
+
+            <!-- СЕКЦІЯ АЛХІМІЇ -->
+            <section id="sec-cube" class="hidden w-full tavern-panel p-6 space-y-4 text-center">
+                <h3 class="font-bold text-amber-300 font-medieval text-base border-b border-amber-900/60 pb-2">🔮 Алхімічний Переплав (9в1)</h3>
+                <div class="max-w-xs mx-auto bg-stone-950 p-3 rounded-2xl grid grid-cols-3 gap-2 border border-amber-900/70">
+                    <div onclick="removeCubeSlot(0)" id="cube-slot-0" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
+                    <div onclick="removeCubeSlot(1)" id="cube-slot-1" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
+                    <div onclick="removeCubeSlot(2)" id="cube-slot-2" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
+                    <div onclick="removeCubeSlot(3)" id="cube-slot-3" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
+                    <div onclick="removeCubeSlot(4)" id="cube-slot-4" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
+                    <div onclick="removeCubeSlot(5)" id="cube-slot-5" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
+                    <div onclick="removeCubeSlot(6)" id="cube-slot-6" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
+                    <div onclick="removeCubeSlot(7)" id="cube-slot-7" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
+                    <div onclick="removeCubeSlot(8)" id="cube-slot-8" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
+                </div>
+                <div class="flex gap-2 max-w-xs mx-auto">
+                    <button onclick="autoFillCube()" class="interactive-btn flex-1 bg-stone-900 text-amber-300 text-xs py-2.5 rounded-xl border border-amber-800/60">⚡ Авто</button>
+                    <button onclick="craftCubeTransmute()" class="interactive-btn flex-1 bg-amber-700 text-amber-100 text-xs font-bold py-2.5 rounded-xl border border-amber-500 font-medieval">Сплавити 🔮</button>
+                </div>
+            </section>
+
+            <!-- СЕКЦІЯ ТРОФЕЇВ -->
+            <section id="sec-dictionary" class="hidden w-full tavern-panel p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-amber-900/60 pb-3 gap-2">
+                    <h3 class="font-bold text-amber-300 font-medieval text-base">🏆 Колекція Слів (<span id="trophy-count-badge">0</span>/20)</h3>
+                    <input type="text" id="dict-search-input" oninput="filterDictionary()" placeholder="Пошук..." class="bg-stone-950 border border-amber-800/70 rounded-lg px-3 py-1 text-xs text-amber-100 focus:outline-none">
+                </div>
+                <div id="dict-words-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-96 overflow-y-auto pr-1"></div>
+            </section>
+
+        </main>
     </div>
 
-    <section class="v001-dashboard" aria-label="Головна панель">
-        <div class="v001-hero-card">
-            <div class="hero-avatar">🧠</div>
-            <div class="hero-copy">
-                <span class="eyebrow">LANGUAGE ADVENTURER</span>
-                <h1>Твій німецький квест</h1>
-                <p>Вчи слова, слухай вимову, проходь місії та готуйся до B1.</p>
+    <!-- МОДАЛКИ -->
+    <div id="hero-modal" class="fixed inset-0 bg-stone-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="tavern-panel rounded-3xl w-full max-w-md p-6 space-y-4 text-center border-2 border-amber-600">
+            <h3 class="font-bold text-lg text-amber-200 font-medieval">Обрати Героя Таверни</h3>
+            <div class="grid grid-cols-3 gap-2" id="hero-select-options-grid"></div>
+            <button onclick="closeHeroSelectModal()" class="interactive-btn text-xs text-amber-500 font-mono">Закрити</button>
+        </div>
+    </div>
+
+    <div id="trial-modal" class="fixed inset-0 bg-stone-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="tavern-panel rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl border-2 border-amber-600">
+            <div class="flex items-center justify-between border-b border-amber-900/60 pb-2">
+                <h3 class="font-bold text-sm text-amber-300 font-medieval">Випробування: <span id="trial-word-name" class="text-amber-100"></span></h3>
+                <button onclick="closeTrialModal()" class="text-amber-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <button class="v001-primary" onclick="openQuizModal()" aria-label="Почати швидкий тест">
-                <i class="fa-solid fa-play"></i>
-                <span>Почати</span>
-            </button>
+            <p class="text-xs text-amber-200/80 font-mono">Обери правильний переклад для розблокування Трофею!</p>
+            <div id="trial-opts" class="space-y-2"></div>
         </div>
+    </div>
 
-        <div class="v001-stat-grid">
-            <div class="v001-stat"><span>📚</span><b id="v001-word-count">0</b><small>слова</small></div>
-            <div class="v001-stat"><span>🔥</span><b id="v001-streak">0</b><small>streak</small></div>
-            <div class="v001-stat"><span>⚡</span><b id="v001-level">1</b><small>рівень</small></div>
-            <div class="v001-stat"><span>🎯</span><b id="v001-today">0</b><small>сьогодні</small></div>
-        </div>
-
-        <div class="v001-test-strip">
-            <div><span>🧪</span><div><b>PLAYTEST CENTER</b><small>Перевіряй фічі до наступного апдейту</small></div></div>
-            <button onclick="openPlaytestModal()">Запустити smoke-test <i class="fa-solid fa-arrow-right"></i></button>
-        </div>
-
-        <div class="v001-mode-grid">
-            <button class="v001-mode-card accent-blue" onclick="switchDisplayMode('game')">
-                <span class="mode-icon">🃏</span><div><b>Картки</b><small>Запам'ятовування</small></div><i class="fa-solid fa-chevron-right"></i>
-            </button>
-            <button class="v001-mode-card accent-purple" onclick="openLeitnerModal()">
-                <span class="mode-icon">🧠</span><div><b>Повторення</b><small>Leitner + recall</small></div><i class="fa-solid fa-chevron-right"></i>
-            </button>
-            <button class="v001-mode-card accent-amber" onclick="openDialoguesModal()">
-                <span class="mode-icon">💬</span><div><b>Говоріння</b><small>Діалоги B1</small></div><i class="fa-solid fa-chevron-right"></i>
-            </button>
-            <button class="v001-mode-card accent-pink" onclick="openBossRaidModal()">
-                <span class="mode-icon">⚔️</span><div><b>Битва</b><small>Boss / missions</small></div><i class="fa-solid fa-chevron-right"></i>
-            </button>
-        </div>
-    </section>
-
-    <!-- HEADER / NAVIGATION -->
-    <header class="w-full max-w-md flex justify-between items-center mb-4">
-        <div class="flex items-center gap-2">
-            <div class="glass-panel px-3.5 py-2 rounded-2xl border border-cyan-500/30 flex items-center gap-2 shadow-md">
-                <i class="fa-solid fa-shield-halved text-cyan-400"></i>
-                <span id="hero-level-label" class="text-xs font-black text-white">LVL 1</span>
+    <div id="roulette-modal" class="fixed inset-0 bg-stone-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div id="roulette-modal-card" class="tavern-panel rounded-3xl w-full max-w-md p-6 space-y-4 border-2 border-amber-600 text-center relative">
+            <div class="flex items-center justify-between border-b border-amber-900/60 pb-2 font-mono">
+                <h3 class="font-bold text-xs text-amber-300">Відкриття Скрині <span id="roulette-key-title" class="text-amber-100">LVL 1</span></h3>
+                <button onclick="closeRouletteModal()" id="roulette-close-btn" class="text-amber-400"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="glass-panel px-3.5 py-2 rounded-2xl border border-pink-500/30 flex items-center gap-2 shadow-md">
-                <i class="fa-solid fa-fire text-pink-400"></i>
-                <span id="hero-streak-label" class="text-xs font-black text-white">0x</span>
+            <div class="bg-stone-950/80 border border-amber-800/40 p-2 rounded-xl text-xs font-mono text-amber-400 font-bold" id="pity-counter-text">
+                ДО ГАРАНТОВАНОЇ ЛЕГЕНДАРКИ: 10 КРУТОК
             </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <button onclick="openProfileModal()" aria-label="Профіль" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Профіль та звання агента">
-                <i class="fa-solid fa-id-badge"></i>
-            </button>
-            <button onclick="openStatsModal()" aria-label="Статистика" class="interactive-btn glass-panel text-cyan-300 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
-                <i class="fa-solid fa-chart-pie text-cyan-400"></i>
-            </button>
-            <button onclick="openAchievementsModal()" aria-label="Досягнення" class="interactive-btn glass-panel text-yellow-400 px-3 py-2.5 rounded-xl border border-yellow-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
-                <i class="fa-solid fa-trophy"></i>
-            </button>
-            <button onclick="openHeroesModal()" aria-label="Таверна" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
-                <i class="fa-solid fa-beer-mug-empty"></i>
-            </button>
-            <button onclick="openSkillTreeModal()" aria-label="Навички" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Дерево навичок">
-                <i class="fa-solid fa-brain"></i>
-            </button>
-            <button onclick="openQuizModal()" aria-label="Бліц-тест" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
-                <i class="fa-solid fa-bolt"></i>
-            </button>
-            <button onclick="openArticleTrainerModal()" aria-label="Артиклі" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Тренажер артиклів">
-                <i class="fa-solid fa-book-bookmark"></i>
-            </button>
-            <button onclick="openDialoguesModal()" aria-label="Діалоги B1" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Рольові діалоги B1 (Szenarien)">
-                <i class="fa-solid fa-comments"></i>
-            </button>
-            <button onclick="openVerbsModal()" aria-label="Дієслова B1" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Арена дієслів B1 (Präteritum / Perfekt)">
-                <i class="fa-solid fa-bolt-lightning"></i>
-            </button>
-            <button onclick="openMatchModal()" aria-label="Меморі" class="interactive-btn glass-panel text-purple-400 px-3 py-2.5 rounded-xl border border-purple-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Меморі дуель слів">
-                <i class="fa-solid fa-puzzle-piece"></i>
-            </button>
-            <button onclick="openDictationModal()" aria-label="Диктант" class="interactive-btn glass-panel text-emerald-400 px-3 py-2.5 rounded-xl border border-emerald-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Аудіо-диктант">
-                <i class="fa-solid fa-headphones"></i>
-            </button>
-            <button onclick="openBossRaidModal()" aria-label="Бос-рейд" class="interactive-btn glass-panel text-pink-400 px-3 py-2.5 rounded-xl border border-pink-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Битва з Кібер-Босом">
-                <i class="fa-solid fa-dragon"></i>
-            </button>
-            <button onclick="openSentenceModal()" aria-label="Конструктор" class="interactive-btn glass-panel text-purple-400 px-3 py-2.5 rounded-xl border border-purple-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Конструктор речень B1">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-            </button>
-            <button onclick="openLeitnerModal()" aria-label="Лейтнер" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Інтервальне повторення (Лейтнер)">
-                <i class="fa-solid fa-layer-group"></i>
-            </button>
-            <button onclick="openSpeedRushModal()" aria-label="Раш" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Артикль-Раш (Speed Rush)">
-                <i class="fa-solid fa-bolt-lightning"></i>
-            </button>
-            <button onclick="openExamSimulator()" aria-label="Екзамен B1" class="interactive-btn glass-panel text-pink-400 px-3 py-2.5 rounded-xl border border-pink-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </button>
-            <button onclick="toggleAudioMute()" id="sound-master-btn-header" aria-label="Звук" class="interactive-btn glass-panel text-cyan-400 p-2.5 rounded-xl border border-cyan-500/30 hover:bg-slate-800">
-                <i id="sound-icon" class="fa-solid fa-volume-high"></i>
-            </button>
-            <button onclick="openSoundSettingsModal()" aria-label="Налаштування" class="interactive-btn glass-panel text-slate-300 p-2.5 rounded-xl border border-slate-700 hover:bg-slate-800">
-                <i class="fa-solid fa-gear"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- MAIN VIEW CONTAINER -->
-    <main class="w-full max-w-md flex-1 flex flex-col justify-center relative">
-        
-        <!-- MODE SWITCHER TABS -->
-        <div class="flex justify-center gap-2 mb-4">
-            <button onclick="switchDisplayMode('game')" id="mode-game-btn" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-black bg-cyan-400 text-slate-950 shadow-md shadow-cyan-400/20">КАРТКИ</button>
-            <button onclick="switchDisplayMode('compact')" id="mode-compact-btn" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-bold glass-panel text-slate-300 border border-slate-700">БЛОК</button>
-        </div>
-
-        <!-- GAME VIEW CONTAINER -->
-        <div id="game-view-container" class="space-y-4">
-            <!-- Theme Progress Header -->
-            <div class="glass-panel p-3.5 rounded-2xl border border-cyan-500/30 flex items-center justify-between">
-                <div class="text-xs font-bold text-slate-300">ПРОГРЕС ТЕМИ A2</div>
-                <div id="theme-progress-text" class="text-xs font-black text-cyan-400">0%</div>
-            </div>
-
-            <!-- DAILY QUESTS CONTAINER (Dashboard) -->
-            <div class="glass-panel p-4 rounded-3xl border border-cyan-500/30 space-y-3 shadow-md" id="daily-quests-container">
-                <div class="flex justify-between items-center pb-2 border-b border-cyan-500/20">
-                    <div class="flex items-center gap-2">
-                        <span class="text-base">🎯</span>
-                        <span class="text-xs font-black text-cyan-400 uppercase tracking-widest">Щоденні квести</span>
-                    </div>
-                    <span id="daily-quests-status" class="text-[10px] font-bold text-slate-400">0/3 виконано</span>
-                </div>
-                <div id="daily-quests-list" class="space-y-2.5"></div>
-                <div id="daily-bonus-container" class="hidden"></div>
-            </div>
-
-            <!-- FLASHCARD CONTAINER -->
-            <div class="perspective w-full h-[340px] cursor-pointer" onclick="flipCard()">
-                <div id="flashcard-inner" class="relative w-full h-full duration-500 transform-gpu preserve-3d shadow-[0_20px_50px_rgba(6,182,212,0.15)] rounded-3xl">
-                    
-                    <!-- FRONT FACE -->
-                    <div class="absolute inset-0 w-full h-full glass-panel border border-cyan-500/40 rounded-3xl p-6 flex flex-col justify-between backface-hidden">
-                        <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-black px-3 py-1.5 rounded-xl border border-cyan-500/30 text-cyan-300 uppercase tracking-widest bg-slate-900/40">DEUTSCH DE</span>
-                            <button onclick="event.stopPropagation(); speakWord();" aria-label="Озвучити" class="interactive-btn text-cyan-400 hover:text-white p-2 rounded-xl bg-slate-900/40 border border-cyan-500/20"><i class="fa-solid fa-volume-high text-sm speech-active-indicator"></i></button>
-                        </div>
-                        <div class="text-center space-y-3 my-auto">
-                            <div id="card-german" class="text-2xl sm:text-3xl font-black text-white tracking-wide leading-tight">Beispiel</div>
-                            <div>
-                                <span id="card-grammar" class="text-[11px] font-black px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 uppercase tracking-widest inline-block">Nomen</span>
-                            </div>
-                        </div>
-                        <div class="text-center text-[11px] text-slate-400 font-bold flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-hand-pointer text-cyan-400 text-xs"></i> Натисни для розвороту картки
-                        </div>
-                    </div>
-
-                    <!-- BACK FACE -->
-                    <div class="absolute inset-0 w-full h-full glass-panel border border-emerald-500/40 rounded-3xl p-6 flex flex-col justify-between backface-hidden [transform:rotateY(180deg)]">
-                        <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-black px-3 py-1.5 rounded-xl border border-emerald-500/30 text-emerald-300 uppercase tracking-widest bg-slate-900/40">ÜBERSETZUNG UA</span>
-                            <span id="card-back-grammar" class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nomen</span>
-                        </div>
-                        <div class="text-center space-y-3 my-auto">
-                            <div id="card-emoji" class="text-4xl mb-1">📌</div>
-                            <div id="card-ukrainian" class="text-2xl sm:text-3xl font-black text-emerald-400 tracking-wide leading-tight">приклад</div>
-                            <div id="card-hint" class="text-xs text-slate-300 italic max-w-xs mx-auto">Демонстрація чогось</div>
-                        </div>
-                        <div class="text-center text-[11px] text-slate-400 font-bold flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-rotate text-emerald-400 text-xs"></i> Натисни для повернення
-                        </div>
-                    </div>
-
+            <div class="flex items-center justify-center gap-3 bg-stone-950 p-2 rounded-xl border border-amber-900/40">
+                <div id="modal-key-icon" class="text-3xl">🗡️</div>
+                <div class="text-left font-mono">
+                    <div id="modal-key-name" class="text-xs font-bold text-amber-100">Іржавий залізняк</div>
+                    <div id="modal-key-chance" class="text-[10px] text-amber-400/80">Шанс порожнечі: 70%</div>
                 </div>
             </div>
-
-            <!-- CONTROLS ROW -->
-            <div class="grid grid-cols-5 gap-2 mt-5">
-                <button onclick="prevCard()" class="interactive-btn glass-panel text-slate-300 py-3 px-1 rounded-2xl text-[11px] font-bold border border-cyan-500/20 flex flex-col items-center shadow-md">
-                    <i class="fa-solid fa-arrow-left text-sm mb-1 text-cyan-400"></i> <span class="truncate">НАЗАД</span>
-                </button>
-                <button onclick="flipCard()" class="interactive-btn glass-panel text-cyan-400 py-3 px-1 rounded-2xl text-[11px] font-bold border border-cyan-500/20 flex flex-col items-center shadow-md">
-                    <i class="fa-solid fa-rotate text-sm mb-1"></i> <span class="truncate">ОБЕРТ</span>
-                </button>
-                <button onclick="speakWord()" class="interactive-btn glass-panel text-emerald-400 py-3 px-1 rounded-2xl text-[11px] font-bold border border-emerald-500/20 flex flex-col items-center shadow-md">
-                    <i class="fa-solid fa-volume-high text-sm mb-1"></i> <span class="truncate">АУДІО</span>
-                </button>
-                <button onclick="nextCard()" class="interactive-btn bg-cyan-400 text-slate-950 py-3 px-1 rounded-2xl text-[11px] font-black flex flex-col items-center shadow-[0_5px_15px_rgba(6,182,212,0.4)]">
-                    <i class="fa-solid fa-arrow-right text-sm mb-1"></i> <span class="truncate">ДАЛІ</span>
-                </button>
-                <button onclick="toggleBookmark()" id="card-bookmark-btn" aria-label="Обране" class="interactive-btn glass-panel text-slate-400 hover:text-yellow-400 py-3 px-1 rounded-2xl border border-slate-700 flex flex-col items-center shadow-md">
-                    <i class="fa-regular fa-star text-sm mb-1"></i> <span class="truncate">ЗІРКА</span>
-                </button>
+            <div class="roulette-container">
+                <div class="roulette-pointer"></div>
+                <div id="roulette-track" class="roulette-track"></div>
             </div>
-
-            <!-- SOUL HACK ACTION BUTTON -->
-            <button onclick="attackEnemyClick()" id="soul-hack-btn" class="interactive-btn w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(236,72,153,0.3)] mt-2">
-                <i class="fa-solid fa-bolt"></i> Зламати душу
+            <div id="roulette-result-box" class="min-h-[35px] text-xs font-mono font-bold text-amber-300 flex items-center justify-center">
+                Вставити ключ та прокрутити!
+            </div>
+            <button onclick="spinRouletteCSGO()" id="spin-btn" class="interactive-btn w-full bg-amber-600 hover:bg-amber-500 text-stone-950 font-black py-3 rounded-xl font-medieval text-sm uppercase">
+                Використати Ключ 🔑
             </button>
         </div>
+    </div>
 
-        <!-- COMPACT BLOCK VIEW -->
-        <div id="compact-block-view" class="hidden space-y-4 animate-[fade-in_0.3s_ease-out]">
-            <div class="glass-panel p-4 rounded-3xl border border-cyan-500/30 space-y-3">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-magnifying-glass text-cyan-400"></i>
-                    <input type="text" id="compact-search-input" oninput="filterCompactWords(this.value)" placeholder="Шукати слово..." class="w-full bg-transparent text-white text-xs font-bold placeholder-slate-500 focus:outline-none">
-                    <button onclick="clearCompactSearch()" aria-label="Очистити" class="interactive-btn text-slate-400 hover:text-white text-xs px-2"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <!-- Фільтри рідкості та обраного -->
-                <div class="flex flex-wrap gap-1.5 pt-2 border-t border-slate-800" id="rarity-filter-pills">
-                    <button onclick="setRarityFilter('all')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg bg-cyan-400 text-slate-950">ВСІ</button>
-                    <button onclick="setRarityFilter('звичайний')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-slate-300 border border-slate-700">ЗВИЧАЙНИЙ</button>
-                    <button onclick="setRarityFilter('рідкісний')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-cyan-400 border border-cyan-500/30">РІДКІСНИЙ</button>
-                    <button onclick="setRarityFilter('епічний')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-purple-400 border border-purple-500/30">ЕПІЧНИЙ</button>
-                    <button onclick="setRarityFilter('легендарний')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-yellow-400 border border-yellow-500/30">ЛЕГЕНДАРНИЙ</button>
-                    <button onclick="setRarityFilter('bookmarked')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-yellow-400 border border-yellow-500/30">⭐️ ОБРАНЕ</button>
-                </div>
+    <!-- МЕНЮ МУЗИКИ ТА НАЛАШТУВАННЯ ГУЧНОСТІ -->
+    <div id="music-modal" class="fixed inset-0 bg-stone-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="tavern-panel rounded-3xl w-full max-w-sm p-6 space-y-4 border border-amber-800">
+            <div class="flex items-center justify-between border-b border-amber-900/60 pb-2">
+                <h3 class="font-bold text-sm text-amber-300 font-medieval">🎵 Музика та Гучність Таверни</h3>
+                <button onclick="closeMusicModal()" class="text-amber-400"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div id="compact-words-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-12 max-h-[60vh] overflow-y-auto"></div>
-        </div>
-
-    </main>
-
-    <!-- SOUND SETTINGS MODAL -->
-    <div id="sound-settings-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-sm p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="sound-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-700/50">
-                <h3 class="font-black text-sm text-cyan-400 flex items-center gap-2 tracking-widest uppercase"><i class="fa-solid fa-sliders"></i> Налаштування</h3>
-                <button onclick="closeSoundSettingsModal()" aria-label="Закрити" class="interactive-btn text-slate-400 hover:text-white p-2 bg-slate-800/50 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            <!-- СЛАЙДЕРИ ГУЧНОСТІ -->
+            <div class="space-y-3 font-mono text-xs text-amber-200">
+                <div>
+                    <div class="flex justify-between mb-1"><span>🎚️ Гучність Музики:</span><b id="music-vol-val">50%</b></div>
+                    <input type="range" min="0" max="100" value="50" oninput="changeMusicVolume(this.value)" class="w-full accent-amber-600 cursor-pointer">
+                </div>
+                <div>
+                    <div class="flex justify-between mb-1"><span>🔊 Гучність Ефектів:</span><b id="sfx-vol-val">70%</b></div>
+                    <input type="range" min="0" max="100" value="70" oninput="changeSfxVolume(this.value)" class="w-full accent-amber-600 cursor-pointer">
+                </div>
             </div>
-            <div class="space-y-4 text-xs font-bold">
-                <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20">
-                    <span class="text-slate-200 uppercase tracking-wide">Система аудіо</span>
-                    <button onclick="toggleAudioMute()" id="sound-master-btn" class="interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-cyan-400 text-slate-950 shadow-md">УВІМКНЕНО</button>
-                </div>
-                <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20">
-                    <span class="text-slate-200 uppercase tracking-wide">Автоозвучка при овертоті</span>
-                    <button onclick="toggleAutoSpeak()" id="sound-autospeak-btn" class="interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-slate-800 text-slate-500">ВИМКНЕНО</button>
-                </div>
-                <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20">
-                    <span class="text-slate-200 uppercase tracking-wide">Швидкість вимови</span>
-                    <button onclick="toggleSpeechRate()" id="sound-rate-btn" class="interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-slate-800 text-cyan-400 border border-cyan-500/30">НОРМАЛЬНА (0.9X)</button>
-                </div>
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20 space-y-2">
-                    <div class="flex justify-between items-center text-slate-300">
-                        <span>Гучність ефектів</span>
-                        <span id="volume-val-label" class="text-cyan-400">50%</span>
-                    </div>
-                    <input type="range" min="0" max="100" value="50" id="sound-volume-slider" oninput="updateAudioVolume(this.value)" class="w-full accent-cyan-400 cursor-pointer">
-                </div>
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20 space-y-3">
-                    <div class="text-slate-300 uppercase tracking-wide">Резервна копія даних</div>
-                    <div class="flex gap-2">
-                        <button onclick="exportProgress()" class="interactive-btn bg-slate-800 text-cyan-300 py-2.5 px-3 rounded-xl font-bold text-[11px] flex-1 hover:bg-slate-700 flex items-center justify-center gap-1.5 border border-cyan-500/30">
-                            <i class="fa-solid fa-download"></i> ЕКСПОРТ
+
+            <!-- ВИБІР МУЗИЧНИХ ТРЕКІВ -->
+            <div class="space-y-2 font-mono text-xs border-t border-amber-900/60 pt-3">
+                <div class="text-[10px] text-amber-400 font-bold uppercase tracking-wider mb-1">Оберіть трек таверни:</div>
+                <button onclick="selectMusicStyle('tavern_lute')" class="interactive-btn w-full bg-stone-950 border border-amber-800/50 p-2.5 rounded-xl text-left font-bold text-amber-200">🪕 Перебори Лютні (Затишок)</button>
+                <button onclick="selectMusicStyle('bard_song')" class="interactive-btn w-full bg-stone-950 border border-amber-800/50 p-2.5 rounded-xl text-left font-bold text-amber-200">🎶 Пісня Бродячого Барда</button>
+                <button onclick="selectMusicStyle('tavern_flute')" class="interactive-btn w-full bg-stone-950 border border-amber-800/50 p-2.5 rounded-xl text-left font-bold text-amber-200">🪵 Дерев'яна Флейта та Камін</button>
+                <button onclick="selectMusicStyle('epic_tavern')" class="interactive-btn w-full bg-stone-950 border border-amber-800/50 p-2.5 rounded-xl text-left font-bold text-amber-200">🍻 Святковий Гіллястий Гімн</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getHeroSVG(cls) {
+            if (cls === 'knight') {
+                return `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M 25 35 Q 50 10 75 35 Q 80 20 50 15 Q 20 20 25 35 Z" fill="#271c19"/><circle cx="50" cy="42" r="22" fill="#fbcfe8"/><path d="M 28 32 Q 50 20 72 32 Z" fill="#3f2e2b"/><circle cx="41" cy="42" r="4" fill="#78350f"/><circle cx="59" cy="42" r="4" fill="#78350f"/><circle cx="42" cy="40" r="1.5" fill="#ffffff"/><circle cx="60" cy="40" r="1.5" fill="#ffffff"/><path d="M 45 52 Q 50 56 55 52" stroke="#9f1239" stroke-width="2" fill="none"/><path d="M 28 62 L 72 62 L 68 92 L 32 92 Z" fill="#94a3b8" stroke="#475569" stroke-width="2"/><circle cx="26" cy="66" r="8" fill="#64748b"/><circle cx="74" cy="66" r="8" fill="#64748b"/><rect x="76" y="45" width="4" height="35" fill="#cbd5e1" stroke="#475569"/><rect x="71" y="75" width="14" height="4" fill="#b45309"/></svg>`;
+            } else if (cls === 'archer') {
+                return `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M 22 60 Q 50 50 78 60 L 82 95 L 18 95 Z" fill="#14532d" stroke="#052e16" stroke-width="2"/><circle cx="50" cy="42" r="21" fill="#fde047"/><path d="M 22 40 Q 50 10 78 40 Q 85 65 75 45 Q 50 20 25 45 Z" fill="#f8fafc"/><path d="M 30 30 Q 50 18 70 30 L 65 42 Q 50 32 35 42 Z" fill="#f1f5f9"/><circle cx="40" cy="42" r="4.5" fill="#0284c7"/><circle cx="60" cy="42" r="4.5" fill="#0284c7"/><circle cx="41" cy="40" r="1.5" fill="#ffffff"/><circle cx="61" cy="40" r="1.5" fill="#ffffff"/><path d="M 46 52 Q 50 55 54 52" stroke="#052e16" stroke-width="2" fill="none"/><path d="M 75 30 Q 90 55 75 80" stroke="#78350f" stroke-width="4" fill="none"/><line x1="75" y1="30" x2="75" y2="80" stroke="#cbd5e1" stroke-width="1"/></svg>`;
+            } else {
+                return `<svg viewBox="0 0 100 100" class="w-full h-full"><polygon points="28,42 5,30 25,50" fill="#fde047"/><polygon points="72,42 95,30 75,50" fill="#fde047"/><circle cx="50" cy="42" r="21" fill="#fde047"/><path d="M 22 38 Q 50 12 78 38 Q 80 20 50 12 Q 20 20 22 38 Z" fill="#15803d"/><circle cx="40" cy="42" r="4.5" fill="#22c55e"/><circle cx="60" cy="42" r="4.5" fill="#22c55e"/><circle cx="41" cy="40" r="1.5" fill="#ffffff"/><circle cx="61" cy="40" r="1.5" fill="#ffffff"/><path d="M 25 60 Q 50 52 75 60 L 80 95 L 20 95 Z" fill="#581c87" stroke="#3b0764" stroke-width="2"/><line x1="78" y1="35" x2="78" y2="92" stroke="#78350f" stroke-width="4"/><polygon points="78,22 84,32 78,38 72,32" fill="#c084fc"/></svg>`;
+            }
+        }
+
+        const AudioEngine = {
+            sfxVolume: 0.7,
+            musicVolume: 0.5,
+            musicPlaying: false,
+            musicStyle: 'tavern_lute',
+            ctx: null,
+            musicTimer: null,
+            musicStep: 0,
+            spinInterval: null,
+            init() { 
+                try {
+                    if(!this.ctx) {
+                        const AC = window.AudioContext || window.webkitAudioContext;
+                        if(AC) this.ctx = new AC();
+                    }
+                    if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+                } catch(e) {}
+            },
+            play(freq=440, type='sine', d=0.08, volMultiplier=0.02) {
+                if(this.sfxVolume <= 0) return;
+                this.init();
+                if(!this.ctx) return;
+                try {
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator(); 
+                    const g = this.ctx.createGain();
+                    osc.type = type; osc.frequency.setValueAtTime(freq, now);
+                    let finalVol = volMultiplier * this.sfxVolume;
+                    g.gain.setValueAtTime(finalVol, now); 
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + d);
+                    osc.connect(g); g.connect(this.ctx.destination);
+                    osc.start(now); osc.stop(now + d);
+                } catch(e) {}
+            },
+            playHeroAttackSound(cls) {
+                if (cls === 'knight') {
+                    this.play(480, 'sine', 0.12, 0.025);
+                    setTimeout(() => this.play(720, 'sine', 0.15, 0.02), 40);
+                } else if (cls === 'archer') {
+                    this.play(550, 'triangle', 0.08, 0.025);
+                    setTimeout(() => this.play(850, 'sine', 0.1, 0.02), 30);
+                } else {
+                    this.play(320, 'sine', 0.15, 0.025);
+                    setTimeout(() => this.play(420, 'sine', 0.15, 0.02), 60);
+                }
+            },
+            playKeyBurnSound() {
+                this.play(220, 'sine', 0.3, 0.04);
+            },
+            startSpinSound() {
+                if(this.sfxVolume <= 0) return; this.init(); if(!this.ctx) return;
+                let currentDelay = 50; let pitch = 300;
+                const playClick = () => {
+                    if(!this.spinInterval) return;
+                    this.play(pitch, 'sine', 0.03, 0.015);
+                    pitch += 5; currentDelay *= 1.05;
+                    if(currentDelay < 400) this.spinInterval = setTimeout(playClick, currentDelay);
+                };
+                this.spinInterval = setTimeout(playClick, currentDelay);
+            },
+            stopSpinSound() { if(this.spinInterval) { clearTimeout(this.spinInterval); this.spinInterval = null; } },
+            playRarityRewardSound(rarityLevel) {
+                if (rarityLevel === 0) this.play(180, 'sine', 0.2, 0.03);
+                else if (rarityLevel <= 2) this.play(523.25, 'sine', 0.15, 0.03);
+                else if (rarityLevel <= 4) [440, 554.37, 659.25].forEach((f, i) => setTimeout(() => this.play(f, 'sine', 0.2, 0.03), i * 90));
+                else [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => setTimeout(() => this.play(f, 'sine', 0.3, 0.04), i * 90));
+            }
+        };
+
+        function changeMusicVolume(val) {
+            AudioEngine.musicVolume = val / 100;
+            document.getElementById("music-vol-val").innerText = `${val}%`;
+            if (AudioEngine.musicVolume > 0 && !AudioEngine.musicPlaying) {
+                AudioEngine.musicPlaying = true;
+                startMusicLoop();
+            }
+        }
+
+        function changeSfxVolume(val) {
+            AudioEngine.sfxVolume = val / 100;
+            document.getElementById("sfx-vol-val").innerText = `${val}%`;
+        }
+
+        function openMusicSelectModal() { document.getElementById("music-modal").classList.remove("opacity-0", "pointer-events-none"); }
+        function closeMusicModal() { document.getElementById("music-modal").classList.add("opacity-0", "pointer-events-none"); }
+        function selectMusicStyle(style) { 
+            AudioEngine.musicStyle = style; 
+            AudioEngine.musicPlaying = true; 
+            closeMusicModal(); 
+            startMusicLoop(); 
+        }
+
+        // Невеликі процедурні мелодії: працюють без зовнішніх аудіофайлів.
+        function startMusicLoop() {
+            AudioEngine.init();
+            if (AudioEngine.musicTimer) clearInterval(AudioEngine.musicTimer);
+            AudioEngine.musicStep = 0;
+
+            const tracks = {
+                tavern_lute: {
+                    notes: [293.66, 329.63, 392.00, 440.00, 392.00, 329.63, 246.94, 293.66],
+                    bass: [146.83, 164.81, 196.00, 174.61], tempo: 360, type: 'triangle'
+                },
+                bard_song: {
+                    notes: [261.63, 293.66, 329.63, 392.00, 440.00, 392.00, 329.63, 293.66],
+                    bass: [130.81, 164.81, 196.00, 146.83], tempo: 290, type: 'triangle'
+                },
+                tavern_flute: {
+                    notes: [392.00, 440.00, 493.88, 587.33, 659.25, 587.33, 493.88, 440.00],
+                    bass: [196.00, 220.00, 246.94, 220.00], tempo: 410, type: 'sine'
+                },
+                epic_tavern: {
+                    notes: [220.00, 277.18, 329.63, 440.00, 493.88, 440.00, 329.63, 277.18],
+                    bass: [110.00, 138.59, 164.81, 146.83], tempo: 240, type: 'square'
+                }
+            };
+
+            const track = tracks[AudioEngine.musicStyle] || tracks.tavern_lute;
+            const playMusicNote = (frequency, duration, type, volume, when) => {
+                const osc = AudioEngine.ctx.createOscillator();
+                const gain = AudioEngine.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(frequency, when);
+                gain.gain.setValueAtTime(0.0001, when);
+                gain.gain.exponentialRampToValueAtTime(volume * AudioEngine.musicVolume, when + 0.025);
+                gain.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+                osc.connect(gain); gain.connect(AudioEngine.ctx.destination);
+                osc.start(when); osc.stop(when + duration + 0.04);
+            };
+
+            AudioEngine.musicTimer = setInterval(() => {
+                if (AudioEngine.musicVolume <= 0 || !AudioEngine.ctx || !AudioEngine.musicPlaying) return;
+                const now = AudioEngine.ctx.currentTime;
+                const step = AudioEngine.musicStep++;
+                const note = track.notes[step % track.notes.length];
+                playMusicNote(note, track.tempo / 1000 * 0.9, track.type, 0.026, now);
+                if (step % 2 === 0) {
+                    const bass = track.bass[(step / 2) % track.bass.length];
+                    playMusicNote(bass, track.tempo / 1000 * 1.7, 'sine', 0.018, now);
+                }
+            }, track.tempo);
+        }
+
+        const masterVocabulary = [
+            { german: "der Witwer / die Witwe", grammar: "Nomen", ukrainian: "вдівець / вдова", emoji: "💔" },
+            { german: "das Stadtzentrum", grammar: "Nomen", ukrainian: "центр міста", emoji: "🏙️" },
+            { german: "der Stadtrand", grammar: "Nomen", ukrainian: "околиця міста", emoji: "🏡" },
+            { german: "sich wohlfühlen", grammar: "Verb", ukrainian: "почуватися добре", emoji: "😊" },
+            { german: "ausschlafen", grammar: "Verb", ukrainian: "виспатися", emoji: "🛌" },
+            { german: "die Disko", grammar: "Nomen", ukrainian: "дискотека", emoji: "🪩" },
+            { german: "ausgehen", grammar: "Verb", ukrainian: "виходити в світ", emoji: "🚶‍♂️" },
+            { german: "verbringen", grammar: "Verb", ukrainian: "проводити час", emoji: "⏳" },
+            { german: "die Wäsche", grammar: "Nomen", ukrainian: "білизна, прання", emoji: "🧺" },
+            { german: "unternehmen", grammar: "Verb", ukrainian: "здійснювати", emoji: "🚀" },
+            { german: "das Ding", grammar: "Nomen", ukrainian: "річ, штука", emoji: "📦" },
+            { german: "der See", grammar: "Nomen", ukrainian: "озеро", emoji: "🌊" },
+            { german: "trotzdem", grammar: "Adverb", ukrainian: "все одно", emoji: "💪" },
+            { german: "die Radtour", grammar: "Nomen", ukrainian: "велотур", emoji: "🚲" },
+            { german: "der Flohmarkt", grammar: "Nomen", ukrainian: "блошиний ринок", emoji: "🛍️" },
+            { german: "erkältet sein", grammar: "Verb", ukrainian: "бути застуженим", emoji: "🤧" },
+            { german: "ständig", grammar: "Adjektiv", ukrainian: "постійно", emoji: "🔄" },
+            { german: "weglegen", grammar: "Verb", ukrainian: "відкласти", emoji: "📲" },
+            { german: "der Vorschlag", grammar: "Nomen", ukrainian: "пропозиція", emoji: "💡" },
+            { german: "die Rundfahrt", grammar: "Nomen", ukrainian: "екскурсія", emoji: "🚌" },
+            { german: "einverstanden", grammar: "Adjektiv", ukrainian: "згодний", emoji: "🤝" },
+            { german: "positiv", grammar: "Adjektiv", ukrainian: "позитивний", emoji: "👍" },
+            { german: "reagieren", grammar: "Verb", ukrainian: "реагувати", emoji: "💬" },
+            { german: "negativ", grammar: "Adjektiv", ukrainian: "негативний", emoji: "👎" },
+            { german: "die Bar", grammar: "Nomen", ukrainian: "бар", emoji: "🍸" },
+            { german: "die Kultur", grammar: "Nomen", ukrainian: "культура", emoji: "🎭" },
+            { german: "die Natur", grammar: "Nomen", ukrainian: "природа", emoji: "🌲" },
+            { german: "die Oper", grammar: "Nomen", ukrainian: "опера", emoji: "🎼" },
+            { german: "bügeln", grammar: "Verb", ukrainian: "прасувати", emoji: "👔" },
+            { german: "wochentags", grammar: "Adverb", ukrainian: "у будні дні", emoji: "📅" },
+            { german: "die Eintrittskarte", grammar: "Nomen", ukrainian: "квиток", emoji: "🎟️" },
+            { german: "der Sender", grammar: "Nomen", ukrainian: "канал (ТБ / радіо)", emoji: "📺" },
+            { german: "mitspielen", grammar: "Verb", ukrainian: "грати разом", emoji: "🎲" },
+            { german: "das Fremdwort", grammar: "Nomen", ukrainian: "запозичене / іноземне слово", emoji: "🔤" },
+            { german: "der Veranstaltungskalender", grammar: "Nomen", ukrainian: "календар подій", emoji: "🗓️" },
+            { german: "der Treffpunkt", grammar: "Nomen", ukrainian: "місце зустрічі", emoji: "📍" },
+            { german: "das Rathaus", grammar: "Nomen", ukrainian: "ратуша", emoji: "🏛️" },
+            { german: "die Teilnahme", grammar: "Nomen", ukrainian: "участь", emoji: "🙋" },
+            { german: "kostenfrei", grammar: "Adjektiv", ukrainian: "безкоштовно", emoji: "🆓" },
+            { german: "auftreten", grammar: "Verb", ukrainian: "виступати", emoji: "🎤" },
+            { german: "die Bahn", grammar: "Nomen", ukrainian: "потяг, залізниця", emoji: "🚆" },
+            { german: "offen", grammar: "Adjektiv", ukrainian: "відкритий", emoji: "🚪" },
+            { german: "die Volkshochschule", grammar: "Nomen", ukrainian: "народна школа (VHS)", emoji: "🏫" },
+            { german: "die Politik", grammar: "Nomen", ukrainian: "політика", emoji: "🏛️" },
+            { german: "die Fotografie", grammar: "Nomen", ukrainian: "фотографія", emoji: "📷" },
+            { german: "die Literatur", grammar: "Nomen", ukrainian: "література", emoji: "📚" },
+            { german: "erforderlich", grammar: "Adjektiv", ukrainian: "необхідний", emoji: "❗" },
+            { german: "sich einschreiben", grammar: "Verb", ukrainian: "записуватися (на курс)", emoji: "✍️" },
+            { german: "das Semester", grammar: "Nomen", ukrainian: "семестр", emoji: "🎓" },
+            { german: "die Wanderung", grammar: "Nomen", ukrainian: "похід, піша прогулянка", emoji: "🥾" },
+            { german: "das Programm", grammar: "Nomen", ukrainian: "програма", emoji: "📋" },
+            { german: "der Fan", grammar: "Nomen", ukrainian: "фанат", emoji: "⭐" },
+            { german: "der Künstler / die Künstlerin", grammar: "Nomen", ukrainian: "артист / митець", emoji: "🎨" },
+            { german: "Europa", grammar: "Nomen", ukrainian: "Європа", emoji: "🌍" },
+            { german: "das Spielzeug", grammar: "Nomen", ukrainian: "іграшка", emoji: "🧸" },
+            { german: "die CD", grammar: "Nomen", ukrainian: "диск", emoji: "💿" },
+            { german: "die Renovierung", grammar: "Nomen", ukrainian: "косметичний ремонт", emoji: "🛠️" },
+            { german: "die Wiedereröffnung", grammar: "Nomen", ukrainian: "повторне відкриття", emoji: "🎉" },
+            { german: "annehmen", grammar: "Verb", ukrainian: "приймати", emoji: "✅" },
+            { german: "ablehnen", grammar: "Verb", ukrainian: "відхиляти, відмовляти", emoji: "❌" },
+            { german: "das Bedauern", grammar: "Nomen", ukrainian: "жаль, шкодування", emoji: "😔" },
+            { german: "der Gegensatz", grammar: "Nomen", ukrainian: "протилежність", emoji: "⚖️" },
+            { german: "die Wirklichkeit", grammar: "Nomen", ukrainian: "дійсність, реальність", emoji: "🌐" },
+            { german: "der Keller", grammar: "Nomen", ukrainian: "підвал", emoji: "🕯️" },
+            { german: "erraten", grammar: "Verb", ukrainian: "розгадати", emoji: "🧩" },
+            { german: "berühmt", grammar: "Adjektiv", ukrainian: "знаменитий, відомий", emoji: "🌟" },
+            { german: "der Ärger", grammar: "Nomen", ukrainian: "злість, неприємності", emoji: "😤" },
+            { german: "die Polizei", grammar: "Nomen", ukrainian: "поліція", emoji: "👮" },
+            { german: "herrlich", grammar: "Adjektiv", ukrainian: "чудовий, прекрасний", emoji: "✨" },
+            { german: "die Region", grammar: "Nomen", ukrainian: "регіон", emoji: "🗺️" },
+            { german: "der Kanal", grammar: "Nomen", ukrainian: "канал", emoji: "📡" },
+            { german: "die Werbung", grammar: "Nomen", ukrainian: "реклама", emoji: "📣" },
+            { german: "die Presse", grammar: "Nomen", ukrainian: "преса", emoji: "📰" },
+            { german: "die Bestellung", grammar: "Nomen", ukrainian: "замовлення", emoji: "📝" },
+            { german: "beantworten", grammar: "Verb", ukrainian: "відповідати (на щось)", emoji: "↩️" },
+            { german: "recherchieren", grammar: "Verb", ukrainian: "шукати інформацію в інтернеті", emoji: "🔎" },
+            { german: "der Anhang", grammar: "Nomen", ukrainian: "додаток, вкладення (у листі)", emoji: "📎" },
+            { german: "die Quelle", grammar: "Nomen", ukrainian: "джерело", emoji: "💧" },
+            { german: "herunterladen", grammar: "Verb", ukrainian: "завантажувати (з інтернету)", emoji: "⬇️" },
+            { german: "das Passwort", grammar: "Nomen", ukrainian: "пароль", emoji: "🔐" },
+            { german: "ändern", grammar: "Verb", ukrainian: "змінювати", emoji: "🔄" },
+            { german: "die Bankverbindung", grammar: "Nomen", ukrainian: "банківські реквізити", emoji: "🏦" },
+            { german: "das Girokonto", grammar: "Nomen", ukrainian: "поточний рахунок", emoji: "💳" },
+            { german: "geheim", grammar: "Adjektiv", ukrainian: "секретний, таємний", emoji: "🤫" }
+        ];
+
+        const KEY_LEVELS = [
+            { level: 1, name: "Іржавий залізняк", emoji: "🗡️", emptyChance: 70, legendChance: "0%", color: "#94a3b8" },
+            { level: 2, name: "Мідний перстень", emoji: "💍", emptyChance: 58, legendChance: "0.1%", color: "#b45309" },
+            { level: 3, name: "Бронзовий герб", emoji: "🛡️", emptyChance: 45, legendChance: "0.5%", color: "#d97706" },
+            { level: 4, name: "Срібний клинок", emoji: "⚔️", emptyChance: 32, legendChance: "1.5%", color: "#cbd5e1" },
+            { level: 5, name: "Позолочений лев", emoji: "🦁", emptyChance: 20, legendChance: "4%", color: "#eab308" },
+            { level: 6, name: "Платиновий фенікс", emoji: "🦅", emptyChance: 12, legendChance: "8%", color: "#38bdf8" },
+            { level: 7, name: "Рубіновий пломінь", emoji: "🔥", emptyChance: 5, legendChance: "16%", color: "#ef4444" },
+            { level: 8, name: "Смарагдова безодня", emoji: "🌀", emptyChance: 2, legendChance: "32%", color: "#10b981" },
+            { level: 9, name: "Сапфіровий шторм", emoji: "⚡", emptyChance: 0, legendChance: "55%", color: "#6366f1" },
+            { level: 10, name: "Абсолютний ефір", emoji: "👑", emptyChance: 0, legendChance: "100%", color: "#f97316" }
+        ];
+
+        const RARITIES = [
+            { level: 0, name: "Порожнеча / Сміття", color: "#64748b", bg: "rarity-0", multiplier: 0 },
+            { level: 1, name: "Звичайний", color: "#94a3b8", bg: "rarity-1", multiplier: 1 },
+            { level: 2, name: "Незвичайний", color: "#22c55e", bg: "rarity-2", multiplier: 2.5 },
+            { level: 3, name: "Рідкісний", color: "#38bdf8", bg: "rarity-3", multiplier: 5 },
+            { level: 4, name: "Епічний", color: "#a855f7", bg: "rarity-4", multiplier: 12 },
+            { level: 5, name: "Легендарний", color: "#eab308", bg: "rarity-5", multiplier: 28 },
+            { level: 6, name: "Космічний", color: "#ec4899", bg: "rarity-6", multiplier: 65 },
+            { level: 7, name: "Божественний", color: "#f97316", bg: "rarity-7", multiplier: 150 }
+        ];
+
+        const ITEM_TYPES = {
+            helm: { name: "Шолом", emoji: "🪖", slots: ["helm"] },
+            armor: { name: "Броня", emoji: "🛡️", slots: ["armor"] },
+            boots: { name: "Чоботи", emoji: "👢", slots: ["boots"] },
+            sword: { name: "Меч", emoji: "⚔️", slots: ["weapon"], classReq: "knight" },
+            bow: { name: "Лук", emoji: "🏹", slots: ["weapon"], classReq: "archer" },
+            staff: { name: "Посох", emoji: "🧙‍♂️", slots: ["weapon"], classReq: "mage" }
+        };
+
+        const HERO_CLASSES = {
+            knight: { name: "Ронан", title: "Лицар", allowedWeapon: "sword" },
+            archer: { name: "Скай", title: "Лучник", allowedWeapon: "bow" },
+            mage: { name: "Белл", title: "Маг", allowedWeapon: "staff" }
+        };
+
+        let state = {
+            heroClass: localStorage.getItem('rpg_hero_class') || 'knight',
+            heroLvl: parseInt(localStorage.getItem('rpg_hero_lvl') || '1'),
+            heroXp: parseInt(localStorage.getItem('rpg_hero_xp') || '0'),
+            gold: parseInt(localStorage.getItem('rpg_gold') || '0'),
+            trophies: JSON.parse(localStorage.getItem('rpg_trophies') || '[]'),
+            keyLvl: parseInt(localStorage.getItem('rpg_key_lvl') || '0'),
+            pityCounter: parseInt(localStorage.getItem('rpg_pity_counter') || '0'),
+            equipped: JSON.parse(localStorage.getItem('rpg_equipped') || '{"helm":null,"armor":null,"boots":null,"weapon":null}'),
+            storage: JSON.parse(localStorage.getItem('rpg_storage') || '[]'),
+            enemyHp: 50, maxEnemyHp: 50, enemyIdx: 1
+        };
+
+        let cubeSlots = [null, null, null, null, null, null, null, null, null];
+        let cards = [...masterVocabulary];
+        let cardIdx = 0;
+        let isFlipped = false;
+        let isSpinning = false;
+
+        function confirmResetProgress() {
+            if (confirm("Ви дійсно хочете скинути весь прогрес?")) {
+                localStorage.clear(); location.reload();
+            }
+        }
+
+        function renderHeroSelectModalGrid() {
+            const grid = document.getElementById("hero-select-options-grid");
+            if (!grid) return;
+            grid.innerHTML = `
+                <button onclick="selectHeroClass('knight')" class="interactive-btn bg-stone-950 border border-amber-700/60 p-3 rounded-2xl flex flex-col items-center space-y-1">
+                    <div class="w-12 h-12 flex items-center justify-center">${getHeroSVG('knight')}</div>
+                    <span class="font-bold text-xs text-amber-100 font-medieval">Ронан</span>
+                    <span class="text-[9px] text-amber-400/70 font-mono">Лицар</span>
+                </button>
+                <button onclick="selectHeroClass('archer')" class="interactive-btn bg-stone-950 border border-amber-700/60 p-3 rounded-2xl flex flex-col items-center space-y-1">
+                    <div class="w-12 h-12 flex items-center justify-center">${getHeroSVG('archer')}</div>
+                    <span class="font-bold text-xs text-amber-100 font-medieval">Скай</span>
+                    <span class="text-[9px] text-amber-400/70 font-mono">Лучник</span>
+                </button>
+                <button onclick="selectHeroClass('mage')" class="interactive-btn bg-stone-950 border border-amber-700/60 p-3 rounded-2xl flex flex-col items-center space-y-1">
+                    <div class="w-12 h-12 flex items-center justify-center">${getHeroSVG('mage')}</div>
+                    <span class="font-bold text-xs text-amber-100 font-medieval">Белл</span>
+                    <span class="text-[9px] text-amber-400/70 font-mono">Маг</span>
+                </button>
+            `;
+        }
+
+        function openHeroSelectModal() { 
+            renderHeroSelectModalGrid();
+            document.getElementById("hero-modal").classList.remove("opacity-0", "pointer-events-none"); 
+        }
+        function closeHeroSelectModal() { document.getElementById("hero-modal").classList.add("opacity-0", "pointer-events-none"); }
+
+        function selectHeroClass(clsKey) {
+            state.heroClass = clsKey;
+            localStorage.setItem('rpg_hero_class', clsKey);
+            if (state.equipped.weapon && state.equipped.weapon.classReq && state.equipped.weapon.classReq !== clsKey) {
+                state.storage.push(state.equipped.weapon);
+                state.equipped.weapon = null;
+            }
+            closeHeroSelectModal(); updateUI();
+        }
+
+        function calculateHeroAttack() {
+            let baseAtk = 10 + state.heroLvl * 5;
+            Object.values(state.equipped).forEach(item => { if (item) baseAtk += item.atk; });
+            return baseAtk;
+        }
+
+        function updateUI() {
+            const currentHero = HERO_CLASSES[state.heroClass];
+            document.getElementById("hero-chibi-container").innerHTML = getHeroSVG(state.heroClass);
+            document.getElementById("hero-title").innerText = currentHero.name;
+            document.getElementById("current-hero-class-name").innerText = currentHero.name;
+            document.getElementById("hero-lvl-badge").innerText = `LVL ${state.heroLvl}`;
+            document.getElementById("hero-xp-bar").style.width = `${(state.heroXp / (state.heroLvl * 100)) * 100}%`;
+            document.getElementById("gold-amount-text").innerText = state.gold;
+            document.getElementById("total-atk-text").innerText = calculateHeroAttack();
+            document.getElementById("trophy-count-badge").innerText = state.trophies.length;
+            
+            const keyContainer = document.getElementById("key-icon-container");
+            const keyNameEl = document.getElementById("key-name-text");
+            const openChestBtn = document.getElementById("open-chest-btn");
+
+            if (state.keyLvl <= 0) {
+                keyContainer.innerText = "❌"; keyNameEl.innerText = "Немає ключа"; keyNameEl.style.color = "#64748b";
+                if(openChestBtn) openChestBtn.style.opacity = "0.5";
+            } else {
+                const keyConfig = KEY_LEVELS[Math.min(state.keyLvl, 10) - 1];
+                keyContainer.innerText = keyConfig.emoji; keyNameEl.innerText = `LVL ${state.keyLvl} ${keyConfig.name}`;
+                keyNameEl.style.color = keyConfig.color;
+                if(openChestBtn) openChestBtn.style.opacity = "1";
+            }
+
+            const pityTextEl = document.getElementById("pity-counter-text");
+            if (pityTextEl) {
+                const remaining = 10 - state.pityCounter;
+                pityTextEl.innerText = remaining <= 0 ? "✨ ГАРАНТОВАНА ЛЕГЕНДАРКА НА НАСТУПНУ КРУТКУ!" : `ДО ГАРАНТОВАНОЇ ЛЕГЕНДАРКИ: ${remaining} КРУТОК`;
+            }
+
+            renderEquippedSlots(); renderStorageGrid(); renderCubeGrid(); renderDictionaryList();
+
+            localStorage.setItem('rpg_hero_lvl', state.heroLvl);
+            localStorage.setItem('rpg_hero_xp', state.heroXp);
+            localStorage.setItem('rpg_gold', state.gold);
+            localStorage.setItem('rpg_trophies', JSON.stringify(state.trophies));
+            localStorage.setItem('rpg_key_lvl', state.keyLvl);
+            localStorage.setItem('rpg_pity_counter', state.pityCounter);
+            localStorage.setItem('rpg_equipped', JSON.stringify(state.equipped));
+            localStorage.setItem('rpg_storage', JSON.stringify(state.storage));
+        }
+
+        setInterval(() => {
+            let dmg = calculateHeroAttack();
+            state.enemyHp -= dmg;
+            spawnAttackOrb();
+            AudioEngine.playHeroAttackSound(state.heroClass);
+            
+            const heroBox = document.getElementById("hero-chibi-container");
+            const monsterBox = document.getElementById("monster-chibi-svg");
+
+            if (heroBox) {
+                heroBox.classList.remove("anim-attack-ronan", "anim-attack-skye", "anim-attack-bell");
+                void heroBox.offsetWidth;
+                heroBox.classList.add(`anim-attack-${state.heroClass}`);
+            }
+
+            if (monsterBox) {
+                monsterBox.classList.remove("anim-monster-hurt");
+                void monsterBox.offsetWidth;
+                monsterBox.classList.add("anim-monster-hurt");
+            }
+
+            if (state.enemyHp <= 0) {
+                AudioEngine.play(800, 'sine', 0.15, 0.03);
+                state.heroXp += 35; state.gold += 15 + state.enemyIdx * 5;
+                if (state.heroXp >= state.heroLvl * 100) {
+                    state.heroXp -= state.heroLvl * 100; state.heroLvl++;
+                    if (typeof confetti === 'function') confetti({ particleCount: 60, spread: 70, origin: { y: 0.2 } });
+                }
+                state.enemyIdx++; state.maxEnemyHp = 50 + state.enemyIdx * 30; state.enemyHp = state.maxEnemyHp;
+            }
+
+            document.getElementById("enemy-hp-text").innerText = `${Math.max(0, state.enemyHp)}/${state.maxEnemyHp}`;
+            updateUI();
+        }, 1300);
+
+        function spawnAttackOrb() {
+            const heroAvatar = document.getElementById("hero-chibi-container");
+            const enemyBox = document.getElementById("monster-chibi-svg");
+            if (!heroAvatar || !enemyBox) return;
+
+            const hRect = heroAvatar.getBoundingClientRect();
+            const eRect = enemyBox.getBoundingClientRect();
+
+            const orb = document.createElement("div"); orb.className = "attack-orb";
+            orb.style.left = `${hRect.left + hRect.width / 2}px`; orb.style.top = `${hRect.top + hRect.height / 2}px`;
+            
+            const targetX = (eRect.left + eRect.width / 2) - (hRect.left + hRect.width / 2);
+            const targetY = (eRect.top + eRect.height / 2) - (hRect.top + hRect.height / 2);
+            
+            orb.style.setProperty('--target-x', `${targetX}px`); orb.style.setProperty('--target-y', `${targetY}px`);
+            document.body.appendChild(orb); setTimeout(() => orb.remove(), 400);
+        }
+
+        function manualClickAttack(e) {
+            AudioEngine.playHeroAttackSound(state.heroClass);
+            let dmg = calculateHeroAttack(); state.enemyHp -= dmg;
+
+            const floatDmg = document.createElement("div");
+            floatDmg.className = "click-float-dmg"; floatDmg.innerText = `-${dmg}`;
+            floatDmg.style.left = `${e.clientX - 12}px`; floatDmg.style.top = `${e.clientY - 25}px`;
+            document.body.appendChild(floatDmg); setTimeout(() => floatDmg.remove(), 600);
+
+            document.getElementById("enemy-hp-text").innerText = `${Math.max(0, state.enemyHp)}/${state.maxEnemyHp}`;
+        }
+
+        function renderEquippedSlots() {
+            const grid = document.getElementById("hero-equip-slots-grid");
+            const slots = [{ key: 'helm', label: 'Шолом 🪖' }, { key: 'armor', label: 'Броня 🛡️' }, { key: 'boots', label: 'Чоботи 👢' }, { key: 'weapon', label: 'Зброя 🗡️' }];
+            grid.innerHTML = slots.map(slot => {
+                const item = state.equipped[slot.key];
+                if (!item) return `<div class="bg-stone-950 border border-dashed border-amber-800/40 rounded-xl p-2 h-28 flex items-center justify-center text-xs text-amber-500/50">${slot.label}</div>`;
+                const rarity = RARITIES[item.rarityLevel];
+                return `<div onclick="unequipItem('${slot.key}')" class="${rarity.bg} border rounded-xl p-2 h-28 flex flex-col items-center justify-between text-center interactive-btn">
+                    <span class="text-2xl">${item.emoji}</span>
+                    <span class="text-[10px] font-bold text-white truncate w-full">${item.name}</span>
+                    <span class="text-[9px] font-mono font-bold text-yellow-300 bg-black/60 px-1 rounded">+${item.atk} ATK</span>
+                </div>`;
+            }).join('');
+        }
+
+        function renderStorageGrid() {
+            const grid = document.getElementById("storage-grid");
+            document.getElementById("storage-count-text").innerText = state.storage.length;
+            let html = '';
+            for (let i = 0; i < 36; i++) {
+                const item = state.storage[i];
+                if (!item) html += `<div class="bg-stone-950 border border-amber-900/30 rounded-lg h-20 flex items-center justify-center text-amber-800 text-[10px]">${i+1}</div>`;
+                else {
+                    const rarity = RARITIES[item.rarityLevel];
+                    html += `<div onclick="equipItemFromStorage(${i})" class="${rarity.bg} border rounded-lg h-20 flex flex-col items-center justify-between p-1 interactive-btn">
+                        <span class="text-xl">${item.emoji}</span>
+                        <span class="text-[9px] font-bold text-white truncate w-full leading-tight">${item.name}</span>
+                        <span class="text-[8px] font-mono text-yellow-300 bg-black/60 px-1 rounded">+${item.atk}</span>
+                    </div>`;
+                }
+            }
+            grid.innerHTML = html;
+        }
+
+        function equipItemFromStorage(index) {
+            const item = state.storage[index];
+            if (!item || item.rarityLevel === 0) return;
+            if (item.slotKey === 'weapon' && item.classReq && item.classReq !== state.heroClass) {
+                alert(`Цю зброю може одягнути лише ${HERO_CLASSES[item.classReq].name}!`); return;
+            }
+            AudioEngine.play(500, 'sine', 0.08);
+            const currentEquipped = state.equipped[item.slotKey];
+            state.equipped[item.slotKey] = item; state.storage.splice(index, 1);
+            if (currentEquipped) state.storage.push(currentEquipped);
+            updateUI();
+        }
+
+        function unequipItem(slotKey) {
+            const item = state.equipped[slotKey];
+            if (!item) return;
+            if (state.storage.length >= 36) { alert("Сховище переповнене!"); return; }
+            AudioEngine.play(350, 'sine', 0.06);
+            state.storage.push(item); state.equipped[slotKey] = null; updateUI();
+        }
+
+        function renderCubeGrid() {
+            for (let i = 0; i < 9; i++) {
+                const slotEl = document.getElementById(`cube-slot-${i}`);
+                const item = cubeSlots[i];
+                if (!item) {
+                    slotEl.className = "h-20 border border-dashed border-amber-800/40 rounded-xl flex items-center justify-center cursor-pointer text-amber-600 text-xs";
+                    slotEl.innerHTML = `<i class="fa-solid fa-plus opacity-40"></i>`;
+                } else {
+                    const rarity = RARITIES[item.rarityLevel];
+                    slotEl.className = `${rarity.bg} border h-20 rounded-xl flex flex-col items-center justify-between p-1 cursor-pointer`;
+                    slotEl.innerHTML = `<span class="text-xl">${item.emoji}</span><span class="text-[9px] font-bold text-white truncate w-full">${item.name}</span><span class="text-[8px] font-mono text-yellow-300">+${item.atk}</span>`;
+                }
+            }
+        }
+
+        function autoFillCube() {
+            const rarityCounts = {};
+            state.storage.forEach((item) => { if (item.rarityLevel > 0) rarityCounts[item.rarityLevel] = (rarityCounts[item.rarityLevel] || 0) + 1; });
+            let targetRarity = null;
+            for (let lvl = 1; lvl <= 6; lvl++) { if (rarityCounts[lvl] >= 9) { targetRarity = lvl; break; } }
+            if (!targetRarity) { alert("Потрібно 9 предметів одного рангу!"); return; }
+            cubeSlots = [null, null, null, null, null, null, null, null, null];
+            let filled = 0;
+            for (let i = state.storage.length - 1; i >= 0; i--) {
+                if (state.storage[i].rarityLevel === targetRarity) {
+                    cubeSlots[filled] = state.storage.splice(i, 1)[0]; filled++; if (filled === 9) break;
+                }
+            }
+            AudioEngine.play(600, 'sine', 0.1); updateUI();
+        }
+
+        function removeCubeSlot(index) {
+            const item = cubeSlots[index]; if (!item) return;
+            state.storage.push(item); cubeSlots[index] = null; updateUI();
+        }
+
+        function craftCubeTransmute() {
+            if (cubeSlots.some(s => s === null)) { alert("Заповни всі 9 слотів у Кубі!"); return; }
+            const firstRarity = cubeSlots[0].rarityLevel;
+            if (!cubeSlots.every(s => s.rarityLevel === firstRarity)) { alert("Усі 9 предметів повинні бути ОДНАКОВОГО рангу!"); return; }
+            AudioEngine.play(900, 'sine', 0.2); confetti({ particleCount: 150, spread: 100 });
+            const newItem = generateRandomEquipItem(firstRarity + 1);
+            cubeSlots = [null, null, null, null, null, null, null, null, null];
+            state.storage.push(newItem); alert(`🎉 Сплавлено: ${newItem.emoji} ${newItem.name}!`); updateUI();
+        }
+
+        function generateRandomEquipItem(forceRarityLvl = null, keyLevel = 1, isPityTriggered = false) {
+            let rarityLvl = forceRarityLvl;
+            if (rarityLvl === null) {
+                if (isPityTriggered) rarityLvl = [5, 5, 6, 7][Math.floor(Math.random() * 4)];
+                else {
+                    const safeKeyLvl = Math.max(1, Math.min(keyLevel, 10));
+                    const keyConfig = KEY_LEVELS[safeKeyLvl - 1];
+                    if (Math.random() * 100 < keyConfig.emptyChance) return { id: Date.now() + Math.random(), name: "Сміття", emoji: "💨", slotKey: null, classReq: null, rarityLevel: 0, atk: 0 };
+                    rarityLvl = Math.min(7, Math.floor(Math.random() * safeKeyLvl) + 1);
+                }
+            }
+            const rarity = RARITIES[rarityLvl];
+            const typeKeys = Object.keys(ITEM_TYPES);
+            const typeObj = ITEM_TYPES[typeKeys[Math.floor(Math.random() * typeKeys.length)]];
+            return {
+                id: Date.now() + Math.random(), name: `${typeObj.name} (${rarity.name})`, emoji: typeObj.emoji,
+                slotKey: typeObj.slots[0], classReq: typeObj.classReq || null, rarityLevel: rarityLvl, atk: Math.floor(15 * rarity.multiplier + Math.random() * 10)
+            };
+        }
+
+        function updateCard() {
+            const c = cards[cardIdx];
+            document.getElementById("card-front-word").innerText = c.german;
+            document.getElementById("card-front-grammar").innerText = c.grammar;
+            document.getElementById("card-back-trans").innerText = c.ukrainian;
+            document.getElementById("card-back-emoji").innerText = c.emoji;
+            document.getElementById("card-counter-text").innerText = `Сувій ${cardIdx + 1} / ${cards.length}`;
+            
+            const trophyStatusEl = document.getElementById("card-trophy-status");
+            if (trophyStatusEl) {
+                if (state.trophies.includes(c.german)) {
+                    trophyStatusEl.classList.remove("hidden");
+                } else {
+                    trophyStatusEl.classList.add("hidden");
+                }
+            }
+
+            document.getElementById("card-inner").classList.remove("rotate-y-180");
+            isFlipped = false;
+        }
+
+        function flipCard() { AudioEngine.play(380, 'sine', 0.05); isFlipped = !isFlipped; document.getElementById("card-inner").classList.toggle("rotate-y-180", isFlipped); }
+        function nextCard() { AudioEngine.play(440, 'sine', 0.04); cardIdx = (cardIdx + 1) % cards.length; updateCard(); }
+        function prevCard() { AudioEngine.play(440, 'sine', 0.04); cardIdx = (cardIdx - 1 + cards.length) % cards.length; updateCard(); }
+
+        function speakWord(e) {
+            if (e) e.stopPropagation();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(cards[cardIdx].german); u.lang = 'de-DE';
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        function openTamingTrial() {
+            AudioEngine.play(440, 'sine', 0.05);
+            const card = cards[cardIdx];
+            document.getElementById("trial-word-name").innerText = card.german;
+            const others = cards.filter(c => c.german !== card.german).sort(() => Math.random() - 0.5);
+            const opts = [card.ukrainian, others[0].ukrainian, others[1].ukrainian].sort(() => Math.random() - 0.5);
+
+            document.getElementById("trial-opts").innerHTML = opts.map(opt => `
+                <button onclick="resolveTrial('${opt}', '${card.ukrainian}')" class="interactive-btn w-full bg-stone-950 text-amber-100 p-3 rounded-xl border border-amber-800/60 text-xs font-mono text-left">
+                    👉 ${opt}
+                </button>
+            `).join('');
+            document.getElementById("trial-modal").classList.remove("opacity-0", "pointer-events-none");
+        }
+
+        function closeTrialModal() { document.getElementById("trial-modal").classList.add("opacity-0", "pointer-events-none"); }
+
+        function resolveTrial(selected, correct) {
+            closeTrialModal();
+            if (selected === correct) {
+                AudioEngine.play(650, 'sine', 0.2, 0.04);
+                const card = cards[cardIdx];
+                if (!state.trophies.includes(card.german)) state.trophies.push(card.german);
+                confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
+                updateCard(); updateUI();
+            } else AudioEngine.play(180, 'sine', 0.2, 0.02);
+        }
+
+        let lastExamWord = null;
+        function startExam() { renderNextExamQuestion(); }
+
+        function renderNextExamQuestion() {
+            let available = masterVocabulary.filter(w => !lastExamWord || w.german !== lastExamWord.german);
+            const card = available[Math.floor(Math.random() * available.length)]; lastExamWord = card;
+            const others = masterVocabulary.filter(c => c.german !== card.german).sort(() => Math.random() - 0.5);
+            const opts = [card.ukrainian, others[0].ukrainian, others[1].ukrainian, others[2].ukrainian].sort(() => Math.random() - 0.5);
+
+            document.getElementById("exam-box").innerHTML = `
+                <div class="text-sm font-bold text-amber-100 font-mono">Переклади: <span class="text-amber-400 font-extrabold">${card.german}</span> ${card.emoji}?</div>
+                <div class="grid grid-cols-1 gap-2">
+                    ${opts.map(opt => `
+                        <button onclick="checkExamAnswer(this, '${opt}', '${card.ukrainian}')" class="exam-btn interactive-btn bg-stone-950 text-amber-200 p-3 rounded-xl border border-amber-800/40 text-xs font-mono text-left">
+                            👉 ${opt}
                         </button>
-                        <label class="interactive-btn bg-slate-800 text-pink-300 py-2.5 px-3 rounded-xl font-bold text-[11px] flex-1 hover:bg-slate-700 flex items-center justify-center gap-1.5 cursor-pointer border border-pink-500/30">
-                            <i class="fa-solid fa-upload"></i> ІМПОРТ
-                            <input type="file" id="import-file-input" accept=".json" onchange="importProgress(event)" class="hidden">
-                        </label>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkExamAnswer(btnEl, selected, correct) {
+            const allBtns = document.querySelectorAll('.exam-btn'); allBtns.forEach(b => b.disabled = true);
+            if (selected === correct) {
+                btnEl.className = "exam-btn w-full bg-emerald-950/80 border border-emerald-500 text-emerald-200 p-3 rounded-xl text-xs font-mono text-left";
+                AudioEngine.play(520, 'sine', 0.1, 0.03);
+                if (state.keyLvl < 10) state.keyLvl++;
+                state.gold += 25; updateUI(); setTimeout(() => { renderNextExamQuestion(); }, 1000);
+            } else {
+                btnEl.className = "exam-btn w-full bg-red-950/80 border border-red-500 text-red-200 p-3 rounded-xl text-xs font-mono text-left";
+                if (state.keyLvl > 0) {
+                    AudioEngine.playKeyBurnSound();
+                    setTimeout(() => { state.keyLvl = 0; updateUI(); renderNextExamQuestion(); }, 900);
+                } else setTimeout(() => { renderNextExamQuestion(); }, 1000);
+            }
+        }
+
+        let rouletteGeneratedItems = [];
+
+        function openChestRoulette() {
+            if (isSpinning) return;
+            if (state.keyLvl <= 0) { alert("🔒 У вас немає ключа! Дайте відповідь у Іспиті."); return; }
+            AudioEngine.play(440, 'sine', 0.05);
+            const keyConfig = KEY_LEVELS[Math.min(state.keyLvl, 10) - 1];
+
+            document.getElementById("roulette-key-title").innerText = `LVL ${state.keyLvl} (${keyConfig.name})`;
+            document.getElementById("roulette-key-title").style.color = keyConfig.color;
+            document.getElementById("modal-key-icon").innerText = keyConfig.emoji;
+            document.getElementById("modal-key-name").innerText = keyConfig.name;
+            document.getElementById("modal-key-chance").innerText = `Шанс порожнечі: ${keyConfig.emptyChance}%`;
+            document.getElementById("roulette-result-box").innerText = "Натисни «Використати Ключ», щоб прокрутити!";
+            
+            const track = document.getElementById("roulette-track");
+            track.style.transition = "none"; track.style.transform = "translateX(0px)";
+
+            const isPityTriggered = state.pityCounter >= 9;
+            rouletteGeneratedItems = [];
+            let html = '';
+            for (let i = 0; i < 60; i++) {
+                let item = (i === 47 && isPityTriggered) ? generateRandomEquipItem(null, state.keyLvl, true) : generateRandomEquipItem(null, state.keyLvl, false);
+                rouletteGeneratedItems.push(item);
+                const rarity = RARITIES[item.rarityLevel];
+                html += `<div class="roulette-card ${rarity.bg}"><div class="text-2xl">${item.emoji}</div><div class="text-[9px] font-bold text-white mt-1 truncate w-full px-1">${item.name}</div></div>`;
+            }
+            track.innerHTML = html; updateUI();
+            document.getElementById("roulette-modal").classList.remove("opacity-0", "pointer-events-none");
+        }
+
+        function closeRouletteModal() { if (isSpinning) return; document.getElementById("roulette-modal").classList.add("opacity-0", "pointer-events-none"); }
+
+        function spinRouletteCSGO() {
+            if (isSpinning || state.keyLvl <= 0) return;
+            isSpinning = true;
+            const btn = document.getElementById("spin-btn"); btn.disabled = true;
+            AudioEngine.startSpinSound();
+            const track = document.getElementById("roulette-track");
+            const targetX = -(47 * 125) + (document.querySelector('.roulette-container').offsetWidth / 2) - 62.5;
+
+            track.style.transition = "transform 4.5s cubic-bezier(0.1, 0.85, 0.15, 1)";
+            track.style.transform = `translateX(${targetX}px)`;
+
+            setTimeout(() => {
+                AudioEngine.stopSpinSound();
+                const winningItem = rouletteGeneratedItems[47];
+                AudioEngine.playRarityRewardSound(winningItem.rarityLevel);
+
+                if (winningItem.rarityLevel >= 5) {
+                    confetti({ particleCount: 200, spread: 120 });
+                    state.pityCounter = 0;
+                } else if (winningItem.rarityLevel === 4) state.pityCounter = 0;
+                else state.pityCounter++;
+
+                if (winningItem.rarityLevel === 0) {
+                    document.getElementById("roulette-result-box").innerHTML = `<span class="text-stone-400">💨 Скриня виявилася ПОРОЖНЬОЮ!</span>`;
+                } else {
+                    state.storage.push(winningItem);
+                    const rarity = RARITIES[winningItem.rarityLevel];
+                    document.getElementById("roulette-result-box").innerHTML = `<span style="color: ${rarity.color}">🎉 ВИПАЛО: ${winningItem.emoji} ${winningItem.name}!</span>`;
+                }
+
+                state.heroXp += 150; state.keyLvl = 0; updateUI();
+                isSpinning = false; btn.disabled = false;
+            }, 4600);
+        }
+
+        function renderDictionaryList() { filterDictionary(); }
+
+        function filterDictionary() {
+            const query = (document.getElementById("dict-search-input")?.value || "").toLowerCase();
+            const listEl = document.getElementById("dict-words-list"); if (!listEl) return;
+            const filtered = masterVocabulary.filter(w => w.german.toLowerCase().includes(query) || w.ukrainian.toLowerCase().includes(query));
+
+            listEl.innerHTML = filtered.map(w => {
+                const isOwned = state.trophies.includes(w.german);
+                return `
+                    <div class="tavern-panel p-3 rounded-xl flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">${w.emoji}</span>
+                            <div>
+                                <div class="text-xs font-bold text-amber-100 font-mono">${w.german}</div>
+                                <div class="text-[10px] text-emerald-400 font-mono">${w.ukrainian}</div>
+                            </div>
+                        </div>
+                        <span class="text-[9px] font-mono px-2 py-0.5 rounded ${isOwned ? 'bg-amber-900/80 text-amber-300 font-bold border border-amber-600' : 'bg-stone-900 text-stone-600'}">
+                            ${isOwned ? '🏆 Трофей' : 'Немає'}
+                        </span>
                     </div>
-                </div>
-                <button onclick="closeSoundSettingsModal()" class="interactive-btn w-full bg-cyan-500 text-slate-950 py-3.5 rounded-2xl font-black text-xs mt-2 shadow-[0_5px_15px_rgba(6,182,212,0.3)]">ЗБЕРЕГТИ НАЛАШТУВАННЯ</button>
-            </div>
-        </div>
-    </div>
+                `;
+            }).join('');
+        }
 
-    <!-- STATS MODAL -->
-    <div id="stats-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="stats-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
-                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-chart-pie mr-2"></i> Статистика</h3>
-                <button onclick="closeStatsModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-4 text-xs">
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="glass-panel p-4 rounded-2xl border border-cyan-500/30 text-center">
-                        <div class="text-[10px] text-slate-400 uppercase font-bold mb-1">Зламано душ</div>
-                        <div id="stat-mastered-count" class="text-2xl font-black text-cyan-400">0 / 84</div>
-                    </div>
-                    <div class="glass-panel p-4 rounded-2xl border border-pink-500/30 text-center">
-                        <div class="text-[10px] text-slate-400 uppercase font-bold mb-1">Поточний Стрік</div>
-                        <div id="stat-streak-count" class="text-2xl font-black text-pink-400">0x</div>
-                    </div>
-                </div>
-                <div class="glass-panel p-4 rounded-2xl border border-slate-700 space-y-3">
-                    <div class="flex justify-between font-bold text-slate-300">
-                        <span>Рівень агента:</span>
-                        <span id="stat-level" class="text-cyan-400">LVL 1</span>
-                    </div>
-                    <div class="flex justify-between font-bold text-slate-300">
-                        <span>Досвід (XP):</span>
-                        <span id="stat-xp" class="text-pink-400">0 XP</span>
-                    </div>
-                    <div class="flex justify-between font-bold text-slate-300">
-                        <span>Обраних слів:</span>
-                        <span id="stat-bookmarks" class="text-yellow-400">0</span>
-                    </div>
-                </div>
-                <button onclick="closeStatsModal()" class="interactive-btn w-full bg-cyan-400 text-slate-950 py-3.5 rounded-xl font-black text-xs shadow-[0_5px_15px_rgba(6,182,212,0.4)]">ЗАКРИТИ СТАТИСТИКУ</button>
-            </div>
-        </div>
-    </div>
+        function switchTab(tab) {
+            AudioEngine.play(400, 'sine', 0.04);
+            ['cards', 'exam', 'inventory', 'cube', 'dictionary'].forEach(t => {
+                document.getElementById(`sec-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5";
+            });
+            document.getElementById(`sec-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).className = "interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-amber-800 text-amber-100 border border-amber-500 font-medieval flex items-center justify-center gap-1.5 shadow-md";
 
-    <!-- ACHIEVEMENTS MODAL -->
-    <div id="achievements-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-yellow-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(252,211,77,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="achievements-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-yellow-500/20">
-                <h3 class="font-black text-sm text-yellow-400 uppercase tracking-widest"><i class="fa-solid fa-trophy mr-2"></i> Досягнення агента</h3>
-                <button onclick="closeAchievementsModal()" aria-label="Закрити" class="interactive-btn text-yellow-400 hover:text-white p-2 bg-yellow-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="achievements-modal-content" class="space-y-3"></div>
-            <button onclick="closeAchievementsModal()" class="interactive-btn w-full bg-yellow-400 text-slate-950 py-3.5 rounded-xl font-black text-xs shadow-md mt-4">ЗАКРИТИ</button>
-        </div>
-    </div>
+            if (tab === 'exam') startExam();
+            if (tab === 'dictionary') renderDictionaryList();
+        }
 
-    <!-- QUICK QUIZ MODAL -->
-    <div id="quiz-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="quiz-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
-                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-bolt mr-2"></i> Бліц-тренування слів</h3>
-                <button onclick="closeQuizModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="quiz-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">⚡</div>
-                    <div class="text-sm font-bold text-slate-300">Швидка перевірка значень слів для закріплення в пам'яті!</div>
-                    <button onclick="startQuickQuiz()" class="interactive-btn w-full max-w-xs mx-auto bg-cyan-400 text-slate-950 py-3.5 rounded-2xl font-black text-xs shadow-md">ПОЧАТИ БЛІЦ</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        updateCard();
+        updateUI();
+    
+        // ============================================================
+        // DEUTSCH QUEST v0.002 — Command Center / Mastery / Daily Loop
+        // ============================================================
+        const DQ_VERSION = '0.002';
+        const DQ_SAVE_KEY = 'deutsch_quest_v002_meta';
+        const dqDefault = {
+            saveVersion: 2, lastDay: '', streak: 0, daily: {learn:0,battle:0,correct:0},
+            weeklyXP: 0, weeklyBattles: 0, weeklyCorrect: 0, mastery: {}, review: {}
+        };
+        let dqMeta;
+        try { dqMeta = Object.assign({}, dqDefault, JSON.parse(localStorage.getItem(DQ_SAVE_KEY) || '{}')); } catch(e) { dqMeta = {...dqDefault}; }
+        dqMeta.daily = Object.assign({...dqDefault.daily}, dqMeta.daily || {});
+        dqMeta.mastery = dqMeta.mastery || {}; dqMeta.review = dqMeta.review || {};
+        function dqSave(){ try{localStorage.setItem(DQ_SAVE_KEY, JSON.stringify(dqMeta));}catch(e){} }
+        function dqDay(){ return new Date().toISOString().slice(0,10); }
+        function dqResetDailyIfNeeded(){
+            const now=dqDay();
+            if(dqMeta.lastDay!==now){
+                const old=dqMeta.lastDay?new Date(dqMeta.lastDay):null, cur=new Date(now);
+                if(old){ const diff=Math.round((cur-old)/86400000); dqMeta.streak=(diff===1)?(dqMeta.streak||0)+1:1; } else dqMeta.streak=1;
+                dqMeta.lastDay=now; dqMeta.daily={learn:0,battle:0,correct:0}; dqSave();
+            }
+        }
+        function dqWeekKey(){ const d=new Date(); const x=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())); const day=x.getUTCDay()||7; x.setUTCDate(x.getUTCDate()+4-day); const y=x.getUTCFullYear(); const start=new Date(Date.UTC(y,0,1)); return `${y}-W${String(Math.ceil((((x-start)/86400000)+1)/7)).padStart(2,'0')}`; }
+        let dqWeek = localStorage.getItem('dq_week_key') || dqWeekKey();
+        if(dqWeek!==dqWeekKey()){ dqMeta.weeklyXP=0; dqMeta.weeklyBattles=0; dqMeta.weeklyCorrect=0; dqWeek=dqWeekKey(); localStorage.setItem('dq_week_key',dqWeek); dqSave(); }
+        dqResetDailyIfNeeded();
 
-    <!-- TAVERN HEROES MODAL -->
-    <div id="heroes-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-amber-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(245,158,11,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="heroes-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-amber-500/20">
-                <h3 class="font-black text-sm text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-beer-mug-empty mr-2"></i> Герої таверни</h3>
-                <button onclick="closeHeroesModal()" aria-label="Закрити" class="interactive-btn text-amber-400 hover:text-white p-2 bg-amber-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="heroes-modal-content" class="space-y-3"></div>
-            <button onclick="closeHeroesModal()" class="interactive-btn w-full bg-amber-500 text-slate-950 py-3.5 rounded-xl font-black text-xs shadow-md mt-4">ЗАКРИТИ ТАВЕРНУ</button>
-        </div>
-    </div>
+        function dqMasteryValue(word){ return Math.max(0,Math.min(5,Number(dqMeta.mastery[word]||0))); }
+        function dqSetMastery(word, correct){
+            const m=dqMasteryValue(word);
+            const next=correct?Math.min(5,m+1):Math.max(0,m-1);
+            dqMeta.mastery[word]=next;
+            const days=[1,2,4,7,14,30][next];
+            dqMeta.review[word]=Date.now()+days*86400000;
+            dqSave();
+        }
+        function dqCounts(){
+            const c=[0,0,0,0,0,0];
+            Object.keys(dqMeta.mastery).forEach(w=>c[dqMasteryValue(w)]++);
+            return c;
+        }
+        function dqDueCount(){
+            const now=Date.now();
+            return Object.keys(dqMeta.review).filter(w=>Number(dqMeta.review[w])<=now && dqMasteryValue(w)<5).length;
+        }
+        function dqPickWord(){
+            const due=masterVocabulary.filter(w=>Number(dqMeta.review[w.german]||0)<=Date.now() && dqMasteryValue(w.german)<5);
+            const pool=due.length?due:masterVocabulary.filter(w=>dqMasteryValue(w.german)<5);
+            return pool[Math.floor(Math.random()*Math.max(1,pool.length))] || masterVocabulary[0];
+        }
+        function dqMissionState(){
+            return [
+                {id:'learn', icon:'📖', text:'Переглянути 5 слів', goal:5, value:dqMeta.daily.learn},
+                {id:'battle', icon:'⚔️', text:'Завершити 1 Language Battle', goal:1, value:dqMeta.daily.battle},
+                {id:'correct', icon:'🎯', text:'Дати 10 правильних recall', goal:10, value:dqMeta.daily.correct}
+            ];
+        }
+        function dqRenderDashboard(){
+            dqResetDailyIfNeeded();
+            const c=dqCounts(), done=dqMissionState().filter(x=>x.value>=x.goal).length;
+            const el=id=>document.getElementById(id);
+            if(el('dq-streak')) el('dq-streak').textContent=`${dqMeta.streak||0} днів`;
+            if(el('dq-level')) el('dq-level').textContent=state.heroLvl||1;
+            if(el('dq-xp')) el('dq-xp').textContent=state.heroXp||0;
+            if(el('dq-coins')) el('dq-coins').textContent=state.gold||0;
+            if(el('dq-mastered')) el('dq-mastered').textContent=c[5]||0;
+            if(el('dq-daily-label')) el('dq-daily-label').textContent=`${done} / 3`;
+            if(el('dq-due')) el('dq-due').textContent=`${dqDueCount()} на повторення`;
+            if(el('dq-m0')) el('dq-m0').textContent=c[0]||0;
+            if(el('dq-m1')) el('dq-m1').textContent=(c[1]||0)+(c[2]||0)+(c[3]||0)+(c[4]||0);
+            if(el('dq-m5')) el('dq-m5').textContent=c[5]||0;
+            const rec=dqPickWord();
+            if(el('dq-recommendation')) el('dq-recommendation').innerHTML=`<b class="text-amber-200">${rec?.german||'—'}</b> — ${rec?.ukrainian||''}. Mastery: ${dqMasteryValue(rec?.german||'')}/5.`;
+            if(el('dq-weekly-label')) el('dq-weekly-label').textContent=`${Math.min(50,dqMeta.weeklyXP||0)} / 50 XP`;
+            if(el('dq-weekly-bar')) el('dq-weekly-bar').style.width=`${Math.min(100,(dqMeta.weeklyXP||0)*2)}%`;
+            if(el('dq-missions')) el('dq-missions').innerHTML=dqMissionState().map(x=>{
+                const ok=x.value>=x.goal, pct=Math.min(100,Math.round(x.value/x.goal*100));
+                return `<div class="dq-mission ${ok?'done':''}"><div class="check">${ok?'✓':x.icon}</div><div class="flex-1"><div class="flex justify-between gap-2 text-xs"><span class="text-amber-100 font-bold">${x.text}</span><span class="text-amber-400">${Math.min(x.value,x.goal)}/${x.goal}</span></div><div class="dq-progress mt-1"><i style="width:${pct}%"></i></div></div></div>`;
+            }).join('');
+        }
+        let dqBattle={open:false,wave:1,hp:100,word:null,locked:false};
+        function dqBoard(){
+            const b=document.getElementById('dq-battle-board'); if(!b)return;
+            b.innerHTML=Array.from({length:15},(_,i)=>`<div class="dq-cell ${i===7?'active':''}">${i===7?'🛡️':(i%4===0?'✨':'')}</div>`).join('');
+        }
+        function dqStartBattle(){
+            dqBattle={open:true,wave:1,hp:100,word:null,locked:false};
+            const m=document.getElementById('dq-battle-modal'); m.classList.remove('opacity-0','pointer-events-none'); dqBoard(); dqBattleQuestion();
+        }
+        function dqCloseBattle(){ document.getElementById('dq-battle-modal')?.classList.add('opacity-0','pointer-events-none'); dqBattle.open=false; }
+        function dqBattleQuestion(){
+            if(!dqBattle.open)return;
+            dqBattle.locked=false; dqBattle.word=dqPickWord();
+            const w=dqBattle.word, pool=masterVocabulary.filter(x=>x.german!==w.german);
+            const opts=[w,...pool.sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);
+            document.getElementById('dq-battle-wave').textContent=`Хвиля ${dqBattle.wave} / 5`;
+            document.getElementById('dq-battle-hp').textContent=`${Math.max(0,dqBattle.hp)} HP`;
+            document.getElementById('dq-battle-hpbar').style.width=`${Math.max(0,dqBattle.hp)}%`;
+            document.getElementById('dq-battle-word').textContent=w.german;
+            document.getElementById('dq-battle-prompt').textContent='Обери правильний переклад';
+            document.getElementById('dq-battle-result').textContent='';
+            document.getElementById('dq-battle-options').innerHTML=opts.map(o=>`<button class="interactive-btn bg-stone-950 text-amber-100 border border-amber-800/60 rounded-xl p-3 text-sm font-bold" onclick="dqAnswer('${String(o.german).replace(/'/g,"\\'")}')">${o.ukrainian}</button>`).join('');
+        }
+        function dqAnswer(german){
+            if(dqBattle.locked)return; dqBattle.locked=true;
+            const correct=german===dqBattle.word.german; const result=document.getElementById('dq-battle-result');
+            dqMeta.daily.correct += correct?1:0; dqMeta.daily.learn += 1; dqMeta.weeklyCorrect += correct?1:0;
+            dqSetMastery(german,correct);
+            if(correct){
+                dqBattle.hp=Math.max(0,dqBattle.hp-20);
+                dqMeta.weeklyXP += 5;
+                state.heroXp=(state.heroXp||0)+5; state.gold=(state.gold||0)+2;
+                result.innerHTML='<span class="text-emerald-400">⚔️ Влучання! +5 XP · +2 🪙</span>';
+            } else {
+                dqMeta.weeklyXP += 1; state.heroXp=(state.heroXp||0)+1;
+                result.innerHTML=`<span class="text-red-400">💥 Промах. Правильно: ${dqBattle.word.ukrainian}</span>`;
+            }
+            if(dqBattle.hp<=0){
+                dqBattle.wave++;
+                if(dqBattle.wave>5){
+                    dqMeta.daily.battle+=1; dqMeta.weeklyBattles+=1; state.gold=(state.gold||0)+15; state.heroXp=(state.heroXp||0)+25;
+                    dqSave(); if(typeof updateUI==='function')updateUI(); dqRenderDashboard();
+                    result.innerHTML='<span class="text-yellow-300">🏆 Перемога! +25 XP · +15 🪙</span>';
+                    setTimeout(dqCloseBattle,900); return;
+                }
+                dqBattle.hp=100;
+            }
+            dqSave(); if(typeof updateUI==='function')updateUI(); dqRenderDashboard();
+            setTimeout(dqBattleQuestion,650);
+        }
+        // Hook card browsing into the daily learning objective.
+        const dqOriginalNextCard = typeof nextCard==='function' ? nextCard : null;
+        const dqOriginalPrevCard = typeof prevCard==='function' ? prevCard : null;
+        if(dqOriginalNextCard){
+            nextCard=function(){ dqMeta.daily.learn=Math.min(99,dqMeta.daily.learn+1); dqSave(); dqOriginalNextCard(); dqRenderDashboard(); };
+        }
+        if(dqOriginalPrevCard){
+            prevCard=function(){ dqMeta.daily.learn=Math.min(99,dqMeta.daily.learn+1); dqSave(); dqOriginalPrevCard(); dqRenderDashboard(); };
+        }
+        const dqOriginalSwitchTab=typeof switchTab==='function'?switchTab:null;
+        if(dqOriginalSwitchTab){
+            switchTab=function(tab){
+                if(tab==='dashboard'){ ['dashboard','cards','exam','inventory','cube','dictionary'].forEach(t=>document.getElementById(`sec-${t}`)?.classList.add('hidden'));
+                    ['dashboard','cards','exam','inventory','cube','dictionary'].forEach(t=>document.getElementById(`tab-${t}`)?.classList.remove('bg-amber-800','text-amber-100','border-amber-500','shadow-md'));
+                    document.getElementById('sec-dashboard')?.classList.remove('hidden');
+                    document.getElementById('tab-dashboard')?.classList.add('bg-amber-800','text-amber-100','border-amber-500','shadow-md');
+                    dqRenderDashboard(); return;
+                }
+                dqOriginalSwitchTab(tab); document.getElementById('sec-dashboard')?.classList.add('hidden'); document.getElementById('tab-dashboard')?.classList.remove('bg-amber-800','text-amber-100','border-amber-500','shadow-md');
+                dqRenderDashboard();
+            };
+        }
+        setTimeout(dqRenderDashboard,50);
 
-    <!-- ARTICLE TRAINER MODAL -->
-    <div id="article-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-amber-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(245,158,11,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="article-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-amber-500/20">
-                <h3 class="font-black text-sm text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-book-bookmark mr-2"></i> Тренажер артиклів</h3>
-                <button onclick="closeArticleTrainerModal()" aria-label="Закрити" class="interactive-btn text-amber-400 hover:text-white p-2 bg-amber-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="article-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">der · die · das</div>
-                    <div class="text-sm font-bold text-slate-300">Тренажер рід іменників (Der / Die / Das).</div>
-                    <button onclick="startArticleSession()" class="interactive-btn w-full max-w-xs mx-auto bg-amber-400 text-slate-950 py-3.5 rounded-2xl font-black text-xs shadow-md">ПОЧАТИ ТРЕНУВАННЯ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MATCH MEMORY MODAL -->
-    <div id="match-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-purple-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(168,85,247,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="match-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-purple-500/20">
-                <h3 class="font-black text-sm text-purple-400 uppercase tracking-widest"><i class="fa-solid fa-puzzle-piece mr-2"></i> Меморі-дуель слів</h3>
-                <button onclick="closeMatchModal()" aria-label="Закрити" class="interactive-btn text-purple-400 hover:text-white p-2 bg-purple-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="match-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">🧩</div>
-                    <div class="text-sm font-bold text-slate-300">Меморі-дуель слів!</div>
-                    <button onclick="startMatchSession()" class="interactive-btn w-full max-w-xs mx-auto bg-purple-500 text-white py-3.5 rounded-2xl font-black text-xs shadow-md">ПОЧАТИ ДУЕЛЬ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- AUDIO DICTATION MODAL -->
-    <div id="dictation-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-emerald-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(16,185,129,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="dictation-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-emerald-500/20">
-                <h3 class="font-black text-sm text-emerald-400 uppercase tracking-widest"><i class="fa-solid fa-headphones mr-2"></i> Аудіо-диктант</h3>
-                <button onclick="closeDictationModal()" aria-label="Закрити" class="interactive-btn text-emerald-400 hover:text-white p-2 bg-emerald-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="dictation-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">🎧</div>
-                    <div class="text-sm font-bold text-slate-300">Аудіо-диктант!</div>
-                    <button onclick="startDictationSession()" class="interactive-btn w-full max-w-xs mx-auto bg-emerald-500 text-slate-950 py-3.5 rounded-2xl font-black text-xs shadow-md">ПОЧАТИ ДИКТАНТ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- AGENT SKILL TREE MODAL -->
-    <div id="skills-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="skills-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
-                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-brain mr-2"></i> Дерево навичок агента</h3>
-                <button onclick="closeSkillTreeModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="skills-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">🧠</div>
-                    <div class="text-sm font-bold text-slate-300">Дерево навичок агента</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- CYBER BOSS RAID MODAL -->
-    <div id="boss-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-pink-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(236,72,153,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="boss-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-pink-500/20">
-                <h3 class="font-black text-sm text-pink-400 uppercase tracking-widest"><i class="fa-solid fa-dragon mr-2"></i> Кібер-Бос Рейд</h3>
-                <button onclick="closeBossRaidModal()" aria-label="Закрити" class="interactive-btn text-pink-400 hover:text-white p-2 bg-pink-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="boss-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">👾</div>
-                    <div class="text-sm font-bold text-slate-300">Кібер-Бос рейд!</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SENTENCE BUILDER MODAL -->
-    <div id="sentence-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-purple-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(168,85,247,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="sentence-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-purple-500/20">
-                <h3 class="font-black text-sm text-purple-400 uppercase tracking-widest"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Конструктор речень B1</h3>
-                <button onclick="closeSentenceModal()" aria-label="Закрити" class="interactive-btn text-purple-400 hover:text-white p-2 bg-purple-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="sentence-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">🧩</div>
-                    <div class="text-sm font-bold text-slate-300">Конструктор речень B1</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- LEITNER BOX MODAL -->
-    <div id="leitner-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="leitner-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
-                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-layer-group mr-2"></i> Інтервальне повторення (Лейтнер)</h3>
-                <button onclick="closeLeitnerModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="leitner-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">📦</div>
-                    <div class="text-sm font-bold text-slate-300">Метод Лейтнера</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PROFILE & TITLES MODAL -->
-    <div id="profile-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="profile-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
-                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-id-badge mr-2"></i> Профіль та звання агента</h3>
-                <button onclick="closeProfileModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="profile-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">🛡️</div>
-                    <div class="text-sm font-bold text-slate-300">Профіль агента</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SPEED RUSH MODAL -->
-    <div id="speedrush-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-amber-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(245,158,11,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="speedrush-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-amber-500/20">
-                <h3 class="font-black text-sm text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-bolt-lightning mr-2"></i> Артикль-Раш (Speed Rush)</h3>
-                <button onclick="closeSpeedRushModal()" aria-label="Закрити" class="interactive-btn text-amber-400 hover:text-white p-2 bg-amber-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="speedrush-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">⚡</div>
-                    <div class="text-sm font-bold text-slate-300">Артикль-Раш</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- EXAM SIMULATOR MODAL -->
-    <div id="exam-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-pink-500/40 rounded-3xl w-full max-w-lg p-6 shadow-[0_20px_50px_rgba(236,72,153,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="exam-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-pink-500/20">
-                <h3 class="font-black text-sm text-pink-400 uppercase tracking-widest"><i class="fa-solid fa-graduation-cap mr-2"></i> Симулятор B1 Іспиту</h3>
-                <button onclick="closeExamSimulator()" aria-label="Закрити" class="interactive-btn text-pink-400 hover:text-white p-2 bg-pink-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="exam-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">🎓</div>
-                    <div class="text-sm font-bold text-slate-300">Перевір готовність до іспиту B1! Тест складається з 10 випадкових питань.</div>
-                    <button onclick="startExamSession()" class="interactive-btn w-full max-w-xs mx-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white py-4 rounded-2xl font-black text-sm shadow-[0_10px_25px_rgba(236,72,153,0.4)]">ПОЧАТИ ТЕСТ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-        <!-- B1 DIALOGUES & SCENARIOS MODAL -->
-    <div id="dialogues-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="dialogues-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
-                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-comments mr-2"></i> Життєві діалоги B1</h3>
-                <button onclick="closeDialoguesModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="dialogues-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">💬</div>
-                    <div class="text-sm font-bold text-slate-300">Рольові сценарії B1 для підготовки до розмовної частини іспиту!</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-        <!-- B1 VERBS ARENA MODAL -->
-    <div id="verbs-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-amber-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(245,158,11,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="verbs-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-amber-500/20">
-                <h3 class="font-black text-sm text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-bolt-lightning mr-2"></i> Арена дієслів B1</h3>
-                <button onclick="closeVerbsModal()" aria-label="Закрити" class="interactive-btn text-amber-400 hover:text-white p-2 bg-amber-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="verbs-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">⚡📚</div>
-                    <div class="text-sm font-bold text-slate-300">Тренування граматичних форм дієслів для рівня B1!</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TOAST NOTIFICATION CONTAINER -->
-    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-    <script type="module" src="js/app.js"></script>
-
-    <nav class="v001-bottom-nav" aria-label="Основна навігація">
-        <button class="active" onclick="switchDisplayMode('game')"><i class="fa-solid fa-house"></i><span>Головна</span></button>
-        <button onclick="openQuizModal()"><i class="fa-solid fa-bolt"></i><span>Тест</span></button>
-        <button onclick="openLeitnerModal()"><i class="fa-solid fa-rotate"></i><span>Review</span></button>
-        <button onclick="openStatsModal()"><i class="fa-solid fa-chart-simple"></i><span>Прогрес</span></button>
-        <button onclick="openSoundSettingsModal()"><i class="fa-solid fa-sliders"></i><span>Ще</span></button>
-    </nav>
-
-    <div id="v001-live-region" class="sr-only" aria-live="polite"></div>
-
+    </script>
 </body>
 </html>
