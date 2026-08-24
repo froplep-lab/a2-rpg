@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DEUTSCH QUEST — B1 RPG v0.002</title>
+    <title>DEUTSCH QUEST — B1 RPG v0.003 · DICE ARENA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -181,6 +181,30 @@
         .dq-cell.active{border-color:#f59e0b;box-shadow:0 0 16px rgba(245,158,11,.28),inset 0 0 12px rgba(0,0,0,.55)}
         .dq-streak-flame{font-size:2rem;filter:drop-shadow(0 0 10px rgba(245,158,11,.55))}
         @media(max-width:760px){.dq-dashboard-grid{grid-template-columns:1fr}.dq-battle-board{max-width:430px}}
+
+        /* v0.003 — DEUTSCH DICE ARENA */
+        .dd-shell{background:radial-gradient(circle at 50% 0%,rgba(124,58,237,.12),transparent 38%),linear-gradient(180deg,rgba(10,5,20,.98),rgba(5,3,9,.98));border:1px solid rgba(168,85,247,.35);border-radius:1.5rem;box-shadow:inset 0 0 40px rgba(0,0,0,.5),0 18px 45px rgba(0,0,0,.45)}
+        .dd-hud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.55rem}
+        .dd-chip{background:rgba(15,8,24,.9);border:1px solid rgba(168,85,247,.28);border-radius:.85rem;padding:.65rem .55rem;text-align:center}
+        .dd-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.5rem;max-width:620px;margin:auto}
+        .dd-cell{position:relative;aspect-ratio:1;border-radius:1rem;border:1px solid rgba(168,85,247,.22);background:radial-gradient(circle at 50% 25%,rgba(91,33,182,.28),rgba(15,7,23,.98));display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset 0 0 16px rgba(0,0,0,.65),0 0 0 rgba(0,0,0,0);transition:transform .16s,border-color .16s,box-shadow .16s}
+        .dd-cell:active{transform:scale(.97)}
+        .dd-cell.selected{border-color:#fbbf24;box-shadow:0 0 18px rgba(251,191,36,.4),inset 0 0 16px rgba(0,0,0,.65)}
+        .dd-cell.empty{opacity:.55}
+        .dd-die{width:84%;height:84%;border-radius:22%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;border:2px solid rgba(255,255,255,.14);box-shadow:0 8px 16px rgba(0,0,0,.35),inset 0 0 18px rgba(255,255,255,.05);font-weight:900}
+        .dd-die .symbol{font-size:clamp(1.4rem,4vw,2.5rem);line-height:1}
+        .dd-die .lvl{position:absolute;right:5px;top:5px;font-size:.65rem;background:rgba(0,0,0,.45);padding:.18rem .3rem;border-radius:.4rem}
+        .dd-die .word{position:absolute;bottom:5px;left:5px;right:5px;font-size:.55rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.8}
+        .dd-common{background:linear-gradient(145deg,#344054,#111827);border-color:#94a3b8}.dd-rare{background:linear-gradient(145deg,#064e3b,#0f172a);border-color:#34d399}.dd-epic{background:linear-gradient(145deg,#4c1d95,#111827);border-color:#c084fc}.dd-legendary{background:linear-gradient(145deg,#7c2d12,#111827);border-color:#fbbf24}
+        .dd-enemies{display:flex;gap:.4rem;overflow-x:auto;padding:.3rem .1rem;scrollbar-width:none}.dd-enemies::-webkit-scrollbar{display:none}
+        .dd-enemy{min-width:62px;background:rgba(20,8,15,.9);border:1px solid rgba(239,68,68,.35);border-radius:.85rem;padding:.45rem;text-align:center;position:relative}.dd-enemy.boss{border-color:#fbbf24;box-shadow:0 0 18px rgba(251,191,36,.18)}
+        .dd-enemy .ehp{height:5px;background:#1a0a0a;border-radius:99px;overflow:hidden;margin-top:.25rem}.dd-enemy .ehp i{display:block;height:100%;background:linear-gradient(90deg,#ef4444,#f87171);border-radius:99px}
+        .dd-toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(10px);background:rgba(14,7,21,.96);border:1px solid rgba(168,85,247,.5);color:#f5e9ff;padding:.75rem 1rem;border-radius:999px;z-index:120;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 8px 30px rgba(0,0,0,.45);font-size:.8rem;font-weight:800;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}.dd-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+        .dd-question{background:linear-gradient(145deg,rgba(31,16,47,.98),rgba(9,4,15,.98));border:1px solid rgba(192,132,252,.35);border-radius:1.15rem;padding:1rem}
+        .dd-answer{background:rgba(10,6,15,.95);border:1px solid rgba(168,85,247,.27);border-radius:.8rem;padding:.7rem;font-size:.82rem;font-weight:800;text-align:left;transition:transform .15s,border-color .15s,background .15s}.dd-answer:hover{transform:translateY(-1px);border-color:#c084fc}.dd-answer.correct{border-color:#34d399;background:rgba(6,78,59,.35)}.dd-answer.wrong{border-color:#ef4444;background:rgba(127,29,29,.3)}
+        .dd-action{min-height:46px;border-radius:.9rem;font-weight:900;border:1px solid rgba(168,85,247,.35);display:flex;align-items:center;justify-content:center;gap:.45rem}
+        @media(max-width:760px){.dd-hud{grid-template-columns:repeat(3,minmax(0,1fr))}.dd-board{gap:.35rem}.dd-cell{border-radius:.75rem}.dd-die{border-radius:20%}.dd-die .word{display:none}.dd-answer{padding:.75rem}}
+
         @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
     </style>
@@ -251,9 +275,12 @@
         </header>
 
         <!-- НАВІГАЦІЯ ТАВЕРНИ -->
-        <nav class="grid grid-cols-3 sm:grid-cols-6 gap-2 my-2">
+        <nav class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 my-2">
             <button onclick="switchTab('dashboard')" id="tab-dashboard" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-amber-800 text-amber-100 border border-amber-500 font-medieval flex items-center justify-center gap-1.5 shadow-md">
                 🏰 Центр
+            </button>
+            <button onclick="switchTab('dice')" id="tab-dice" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-violet-300/80 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
+                🎲 Dice Arena
             </button>
             <button onclick="switchTab('cards')" id="tab-cards" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
                 📜 Пергаменти
@@ -274,6 +301,72 @@
 
         <main class="w-full flex-1 flex flex-col justify-between space-y-4">
             
+
+            <!-- DEUTSCH DICE ARENA v0.003 -->
+            <section id="sec-dice" class="hidden w-full dd-shell p-3 sm:p-5 space-y-4">
+                <div class="flex items-center justify-between gap-3 border-b border-violet-900/50 pb-3">
+                    <div>
+                        <div class="text-[10px] uppercase tracking-[.22em] text-violet-300/70 font-mono">DEUTSCH QUEST</div>
+                        <h2 class="text-xl sm:text-2xl font-cinzel font-black text-violet-100">🎲 DICE ARENA</h2>
+                        <p class="text-[11px] sm:text-xs text-violet-200/70 font-mono">5×3 • Roll • Spawn • Merge • Learn • Destroy</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="ddShowHowToPlay()" class="dd-action px-3 bg-stone-950 text-violet-200 text-xs">❔ Правила</button>
+                        <button onclick="ddResetBattle()" class="dd-action px-3 bg-red-950/50 text-red-300 text-xs">↺ Скинути бій</button>
+                    </div>
+                </div>
+                <div class="dd-hud">
+                    <div class="dd-chip"><div class="text-[10px] text-slate-400">🌊 WAVE</div><b id="dd-wave" class="text-violet-200">1/10</b></div>
+                    <div class="dd-chip"><div class="text-[10px] text-slate-400">❤️ BASE</div><b id="dd-base" class="text-red-300">100</b></div>
+                    <div class="dd-chip"><div class="text-[10px] text-slate-400">💧 MANA</div><b id="dd-mana" class="text-cyan-300">30</b></div>
+                    <div class="dd-chip"><div class="text-[10px] text-slate-400">⚔️ POWER</div><b id="dd-power" class="text-amber-300">0</b></div>
+                    <div class="dd-chip"><div class="text-[10px] text-slate-400">🔥 COMBO</div><b id="dd-combo" class="text-emerald-300">x0</b></div>
+                </div>
+                <div class="grid lg:grid-cols-[1.35fr_.65fr] gap-4">
+                    <div class="space-y-3">
+                        <div class="tavern-panel p-3 rounded-2xl">
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <div class="text-xs text-violet-200 font-bold">Вороги</div>
+                                <div class="text-[10px] text-violet-300/60 font-mono">Правильні відповіді заряджають наступну атаку</div>
+                            </div>
+                            <div id="dd-enemies" class="dd-enemies"></div>
+                        </div>
+                        <div class="tavern-panel p-3 sm:p-4 rounded-2xl">
+                            <div class="flex items-center justify-between mb-3 gap-3">
+                                <div class="text-xs font-bold text-violet-200">Battle Board</div>
+                                <div class="text-[10px] text-violet-300/60 font-mono" id="dd-board-help">Обери кубик → такий самий → MERGE</div>
+                            </div>
+                            <div id="dd-board" class="dd-board"></div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="ddRoll()" class="dd-action bg-violet-700 hover:bg-violet-600 text-white">🎲 ROLL <span id="dd-roll-cost">5</span></button>
+                            <button onclick="ddStartWave()" id="dd-wave-btn" class="dd-action bg-amber-700 hover:bg-amber-600 text-white">⚔️ START WAVE</button>
+                            <button onclick="ddAutoMerge()" class="dd-action bg-cyan-800 hover:bg-cyan-700 text-cyan-50">⚡ AUTO MERGE</button>
+                        </div>
+                    </div>
+                    <aside class="space-y-3">
+                        <div class="dd-question">
+                            <div class="flex items-center justify-between gap-2 mb-2"><span class="text-[10px] uppercase tracking-widest text-violet-300/70 font-mono">LANGUAGE POWER</span><span id="dd-question-timer" class="text-[10px] text-amber-300 font-mono">READY</span></div>
+                            <div id="dd-question-word" class="text-xl font-cinzel font-black text-white">Запусти хвилю</div>
+                            <div id="dd-question-prompt" class="text-xs text-violet-200/70 mt-1">Тут з'явиться німецьке слово.</div>
+                            <div id="dd-answer-grid" class="grid grid-cols-1 gap-2 mt-3"></div>
+                            <div id="dd-question-result" class="min-h-[30px] mt-2 text-xs font-bold"></div>
+                        </div>
+                        <div class="tavern-panel p-4 rounded-2xl space-y-2">
+                            <div class="flex items-center justify-between text-xs"><span class="text-violet-200 font-bold">🃏 Колода</span><b id="dd-deck-count" class="text-violet-300">0</b></div>
+                            <div id="dd-deck" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
+                        </div>
+                        <div class="tavern-panel p-4 rounded-2xl space-y-2 text-xs">
+                            <div class="flex justify-between"><span class="text-slate-400">XP</span><b id="dd-xp" class="text-amber-300">0</b></div>
+                            <div class="flex justify-between"><span class="text-slate-400">Coins</span><b id="dd-coins" class="text-yellow-300">0</b></div>
+                            <div class="flex justify-between"><span class="text-slate-400">Mastery hit</span><b id="dd-mastery" class="text-emerald-300">0</b></div>
+                            <div class="flex justify-between"><span class="text-slate-400">Best wave</span><b id="dd-best" class="text-violet-300">0</b></div>
+                        </div>
+                    </aside>
+                </div>
+                <div class="text-[10px] text-violet-300/50 font-mono text-center">Prototype Battle Engine • mobile-first • no external assets</div>
+            </section>
+
             <!-- СЕКЦІЯ СУВОЇВ -->
             <section id="sec-cards" class="w-full space-y-4">
                 <div class="flex items-center justify-between tavern-panel px-5 py-3 rounded-xl text-xs sm:text-sm font-mono">
@@ -384,6 +477,20 @@
         </main>
     </div>
 
+
+    <div id="dd-help-modal" class="fixed inset-0 bg-stone-950/90 backdrop-blur-md z-[80] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
+        <div class="dd-shell w-full max-w-lg p-5 space-y-4 border border-violet-700/40">
+            <div class="flex items-center justify-between"><h3 class="text-lg font-cinzel font-black text-violet-100">🎲 Як грати</h3><button onclick="ddCloseHowToPlay()" class="text-violet-300 text-xl">×</button></div>
+            <div class="grid gap-2 text-xs text-violet-100/80">
+                <div class="dd-mission"><div class="check">1</div><div><b>ROLL</b><br>витрачай Mana та випадково створюй бойові кубики.</div></div>
+                <div class="dd-mission"><div class="check">2</div><div><b>MERGE</b><br>натисни два кубики одного типу — отримай сильніший рівень.</div></div>
+                <div class="dd-mission"><div class="check">3</div><div><b>LANGUAGE POWER</b><br>правильний переклад дає наступній атаці великий бонус.</div></div>
+                <div class="dd-mission"><div class="check">4</div><div><b>WAVE / BOSS</b><br>переживи 10 хвиль. Кожна 5-та — бос.</div></div>
+            </div>
+            <button onclick="ddCloseHowToPlay()" class="dd-action w-full bg-violet-700 text-white">Почати бій</button>
+        </div>
+    </div>
+    <div id="dd-toast" class="dd-toast"></div>
     <!-- МОДАЛКИ -->
     <div id="hero-modal" class="fixed inset-0 bg-stone-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
         <div class="tavern-panel rounded-3xl w-full max-w-md p-6 space-y-4 text-center border-2 border-amber-600">
@@ -1252,7 +1359,7 @@
         updateUI();
     
         // ============================================================
-        // DEUTSCH QUEST v0.002 — Command Center / Mastery / Daily Loop
+        // DEUTSCH QUEST v0.003 — Command Center / Mastery / Daily Loop
         // ============================================================
         const DQ_VERSION = '0.002';
         const DQ_SAVE_KEY = 'deutsch_quest_v002_meta';
@@ -1407,5 +1514,154 @@
         setTimeout(dqRenderDashboard,50);
 
     </script>
+
+<script>
+// ============================================================
+// DEUTSCH QUEST v0.003 — DICE ARENA / LANGUAGE AS GAMEPLAY
+// ============================================================
+(() => {
+  const DD_VERSION='0.003';
+  const DD_KEY='deutsch_dice_v003';
+  const SAVE_KEY='deutsch_quest_v003_meta';
+  const diceTypes=[
+    {id:'lex',name:'Lexicon',icon:'📖',cls:'dd-common',base:7,rate:1400,role:'balanced'},
+    {id:'art',name:'Article',icon:'⚜️',cls:'dd-rare',base:9,rate:1650,role:'precision'},
+    {id:'verb',name:'Verb',icon:'⚔️',cls:'dd-epic',base:13,rate:1850,role:'burst'},
+    {id:'echo',name:'Echo',icon:'🔊',cls:'dd-rare',base:8,rate:1100,role:'rapid'},
+    {id:'guard',name:'Shield',icon:'🛡️',cls:'dd-common',base:5,rate:1200,role:'support'},
+    {id:'boss',name:'B1 Core',icon:'💎',cls:'dd-legendary',base:17,rate:2100,role:'legend'}
+  ];
+  const defaultBattle={version:3,board:Array(15).fill(null),mana:30,wave:1,base:100,running:false,spawnTimer:null,attackTimer:null,qTimer:null,selected:-1,combo:0,power:0,bestWave:0,masteryHits:0,rolls:0,wins:0,activeQuestion:null,nextQuestionAt:0,deckCounts:{}};
+  let battle={...defaultBattle,board:[...defaultBattle.board],deckCounts:{}};
+  try { battle=Object.assign({...defaultBattle},JSON.parse(localStorage.getItem(DD_KEY)||'{}')); battle.board=Array.isArray(battle.board)?battle.board.slice(0,15):Array(15).fill(null); while(battle.board.length<15)battle.board.push(null); } catch(e) { battle={...defaultBattle,board:Array(15).fill(null)}; }
+  let questionTimer=null;
+  const $=id=>document.getElementById(id);
+  function persist(){ try{ localStorage.setItem(DD_KEY,JSON.stringify({...battle,running:false,spawnTimer:null,attackTimer:null,qTimer:null})); }catch(e){} }
+  function meta(){
+    try{let m=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}'); if(!m.daily)m.daily={learn:0,battle:0,correct:0}; if(!m.mastery)m.mastery={}; if(!m.review)m.review={}; return m;}catch(e){return {mastery:{},review:{},daily:{learn:0,battle:0,correct:0}}}
+  }
+  const cloneWord=w=>({german:w.german,ukrainian:w.ukrainian,emoji:w.emoji||'📘',sentence:w.sentence||'',grammar:w.grammar||'',id:w.id});
+  function pickWord(){
+    const m=meta(), now=Date.now();
+    const due=masterVocabulary.filter(w=>Number(m.review?.[w.german]||0)<=now && Number(m.mastery?.[w.german]||0)<5);
+    const pool=(due.length?due:masterVocabulary.filter(w=>Number(m.mastery?.[w.german]||0)<5));
+    return cloneWord((pool.length?pool:masterVocabulary)[Math.floor(Math.random()*(pool.length?pool:masterVocabulary).length)]);
+  }
+  function wordForDie(type){
+    const filtered=masterVocabulary.filter(w=>type==='art'?/^Nomen/.test(w.grammar||''):type==='verb'?/Verb/i.test(w.grammar||''):true);
+    const p=filtered.length?filtered:masterVocabulary; return cloneWord(p[Math.floor(Math.random()*p.length)]);
+  }
+  function rarityForLevel(lvl){return lvl>=5?'legendary':lvl>=3?'epic':lvl>=2?'rare':'common'}
+  function dieStat(d){const t=diceTypes.find(x=>x.id===d.type)||diceTypes[0]; return Math.round(t.base*d.level*(1+Math.min(4,d.level-1)*0.12));}
+  function maxDiceLevel(){return 5}
+  function showToast(msg){const t=$('dd-toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>t.classList.remove('show'),1600)}
+  function render(){
+    const board=$('dd-board'); if(!board)return;
+    board.innerHTML=battle.board.map((d,i)=>{
+      if(!d)return `<button class="dd-cell empty" onclick="ddSelectCell(${i})"><span class="text-violet-300/20 text-xl">+</span></button>`;
+      const t=diceTypes.find(x=>x.id===d.type)||diceTypes[0]; const sel=battle.selected===i?'selected':'';
+      return `<button class="dd-cell ${sel}" onclick="ddSelectCell(${i})"><div class="dd-die ${t.cls}"><div class="symbol">${t.icon}</div><div class="lvl">Lv.${d.level}</div><div class="word">${d.word.german}</div></div></button>`;
+    }).join('');
+    $('dd-wave').textContent=`${battle.wave}/10`; $('dd-base').textContent=battle.base; $('dd-mana').textContent=battle.mana; $('dd-power').textContent=battle.power; $('dd-combo').textContent=`x${battle.combo}`; $('dd-best').textContent=battle.bestWave||0;
+    $('dd-xp').textContent=state.heroXp||0; $('dd-coins').textContent=state.gold||0; $('dd-mastery').textContent=battle.masteryHits||0; $('dd-roll-cost').textContent=Math.max(3,5+Math.floor((battle.wave-1)/3));
+    $('dd-wave-btn').disabled=battle.running; $('dd-wave-btn').style.opacity=battle.running?'.5':'1';
+    renderEnemies(); renderDeck();
+  }
+  let enemies=[];
+  function buildWave(){
+    const count=5+Math.min(7,Math.floor(battle.wave/2)); enemies=Array.from({length:count},(_,i)=>{const boss=battle.wave%5===0&&i===count-1;return {id:i,hp:boss?220+battle.wave*24:55+battle.wave*18,max:boss?220+battle.wave*24:55+battle.wave*18,emoji:boss?'👹':['👻','🧟','🦂','🦇'][i%4],boss}}); renderEnemies(); }
+  function renderEnemies(){
+    const el=$('dd-enemies');if(!el)return; el.innerHTML=enemies.map(e=>`<div class="dd-enemy ${e.boss?'boss':''}"><div class="text-xl">${e.emoji}</div><div class="text-[9px] font-black text-red-200 truncate">${e.boss?'BOSS':'W'+battle.wave}</div><div class="ehp"><i style="width:${Math.max(0,e.hp/e.max*100)}%"></i></div></div>`).join('');
+  }
+  function renderDeck(){
+    const el=$('dd-deck'); if(!el)return;
+    const grouped={}; battle.board.filter(Boolean).forEach(d=>{grouped[d.type]=(grouped[d.type]||0)+1;});
+    $('dd-deck-count').textContent=Object.values(grouped).reduce((a,b)=>a+b,0);
+    el.innerHTML=diceTypes.map(t=>{const c=grouped[t.id]||0;return `<div class="flex items-center justify-between bg-stone-950/80 border border-violet-900/30 rounded-lg px-3 py-2"><span>${t.icon} ${t.name}</span><b class="text-violet-300">×${c}</b></div>`}).join('');
+  }
+  function addDie(){
+    const empty=battle.board.map((d,i)=>d?null:i).filter(i=>i!==null); if(!empty.length){showToast('Немає вільної клітинки — MERGE!');return false;}
+    const type=diceTypes[Math.floor(Math.random()*diceTypes.length)]; const idx=empty[Math.floor(Math.random()*empty.length)]; battle.board[idx]={type:type.id,level:1,word:wordForDie(type.id),charge:0}; battle.rolls++; return true;
+  }
+  function ddRoll(){
+    const cost=Math.max(3,5+Math.floor((battle.wave-1)/3)); if(battle.mana<cost){showToast('Недостатньо Mana 💧');return}
+    battle.mana-=cost; let spawned=1; if(battle.combo>=3)spawned=2; for(let i=0;i<spawned;i++) addDie(); AudioEngine?.play?.(520,'triangle',.08,.03); render(); persist();
+  }
+  function ddSelectCell(i){
+    const d=battle.board[i]; if(!d){battle.selected=-1;return render();}
+    if(battle.selected<0){battle.selected=i;render();return}
+    if(battle.selected===i){battle.selected=-1;render();return}
+    const a=battle.board[battle.selected], b=d;
+    if(a.type===b.type && a.level===b.level && a.level<maxDiceLevel()){
+      b.level++; b.word=wordForDie(b.type); battle.board[battle.selected]=null; battle.selected=-1; battle.combo=Math.min(9,battle.combo+1); battle.power+=dieStat(b); showToast(`MERGE! ${diceTypes.find(t=>t.id===b.type)?.icon||'🎲'} Lv.${b.level}`); AudioEngine?.play?.(820,'square',.12,.04);
+    } else { battle.selected=i; showToast('Потрібні 2 однакові кубики одного рівня'); }
+    render();persist();
+  }
+  function ddAutoMerge(){
+    let merged=0;
+    for(let pass=0;pass<10;pass++){
+      let changed=false;
+      outer:for(let i=0;i<15;i++){const a=battle.board[i];if(!a||a.level>=maxDiceLevel())continue;for(let j=i+1;j<15;j++){const b=battle.board[j];if(b&&b.type===a.type&&b.level===a.level){a.level++;a.word=wordForDie(a.type);battle.board[j]=null;battle.combo=Math.min(9,battle.combo+1);battle.power+=dieStat(a);merged++;changed=true;break outer;}}}
+      if(!changed)break;
+    }
+    battle.selected=-1; render(); persist(); showToast(merged?`⚡ Auto Merge: ${merged}`:'Немає доступних merge');
+  }
+  function totalDps(){return battle.board.filter(Boolean).reduce((s,d)=>s+Math.max(1,dieStat(d)),0)}
+  function attackTick(){
+    if(!battle.running)return;
+    if(!enemies.length){finishWave();return;}
+    const dps=Math.max(4,Math.round(totalDps()/2));
+    const target=enemies.find(e=>e.hp>0); if(!target)return;
+    const mult=1+(battle.power/100)+Math.min(0.8,battle.combo*0.05); target.hp-=Math.round(dps*mult);
+    if(target.hp<=0){state.heroXp=(state.heroXp||0)+4;state.gold=(state.gold||0)+1;battle.power=Math.max(0,battle.power-10);showToast(`⚔️ ${target.boss?'BOSS знищено!':'Ворог переможений'} +4 XP`); enemies=enemies.filter(e=>e.hp>0)}
+    if(enemies.length===0)finishWave();
+    renderEnemies(); if(typeof updateUI==='function')updateUI(); persist();
+  }
+  function startQuestion(){
+    if(!battle.running)return; const w=pickWord(); const pool=masterVocabulary.filter(x=>x.german!==w.german); const opts=[w,...pool.sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5); battle.activeQuestion={word:w,opts}; battle.nextQuestionAt=Date.now()+12000;
+    $('dd-question-word').textContent=w.german; $('dd-question-prompt').textContent='Удар: обери правильний переклад'; $('dd-question-timer').textContent='12s'; $('dd-question-result').textContent='';
+    $('dd-answer-grid').innerHTML=opts.map(o=>`<button class="dd-answer" onclick="ddAnswer('${String(o.german).replace(/'/g,"\\'")}')">${o.emoji||'📘'} ${o.ukrainian}</button>`).join('');
+    clearInterval(questionTimer); questionTimer=setInterval(()=>{const left=Math.max(0,Math.ceil((battle.nextQuestionAt-Date.now())/1000));$('dd-question-timer').textContent=`${left}s`;if(left<=0){clearInterval(questionTimer);$('dd-question-result').innerHTML='<span class="text-red-400">⏳ Пропущено — ворог атакує!</span>';battle.combo=0;setTimeout(startQuestion,650)}},250);
+  }
+  function ddAnswer(german){
+    if(!battle.activeQuestion)return; clearInterval(questionTimer); const q=battle.activeQuestion; const correct=german===q.word.german; const m=meta(); m.mastery=m.mastery||{}; m.review=m.review||{}; const old=Number(m.mastery[q.word.german]||0); const next=correct?Math.min(5,old+1):Math.max(0,old-1); m.mastery[q.word.german]=next; m.review[q.word.german]=Date.now()+[1,2,4,7,14,30][next]*86400000; m.daily=m.daily||{learn:0,battle:0,correct:0}; m.daily.learn=(m.daily.learn||0)+1; if(correct)m.daily.correct=(m.daily.correct||0)+1; try{localStorage.setItem(SAVE_KEY,JSON.stringify(m))}catch(e){}
+    battle.masteryHits += correct?1:0; battle.power += correct?(next>=4?32:22):0; battle.combo=correct?Math.min(9,battle.combo+1):0;
+    const buttons=[...$('dd-answer-grid').children];buttons.forEach(b=>{b.disabled=true;if(b.textContent.includes(q.word.ukrainian))b.classList.add('correct')});
+    $('dd-question-result').innerHTML=correct?`<span class="text-emerald-400">⚡ ПРАВИЛЬНО! +${next>=4?32:22} Language Power • Mastery ${next}/5</span>`:`<span class="text-red-400">💥 Ні. Правильно: ${q.word.ukrainian}</span>`;
+    state.heroXp=(state.heroXp||0)+(correct?6:1); if(correct)state.gold=(state.gold||0)+2; if(typeof updateUI==='function')updateUI(); render(); persist(); setTimeout(()=>{battle.activeQuestion=null;startQuestion()},850);
+  }
+  function ddStartWave(){
+    if(battle.running){showToast('Хвиля вже йде');return}
+    if(battle.wave>10){ddFinishRun();return}
+    if(!battle.board.some(Boolean)){addDie();addDie();}
+    buildWave(); battle.running=true; $('dd-wave-btn').textContent='⏳ WAVE RUNNING'; clearInterval(battle.attackTimer); battle.attackTimer=setInterval(attackTick,950); clearTimeout(battle.qTimer); battle.qTimer=setTimeout(startQuestion,700); render(); showToast(`🌊 Хвиля ${battle.wave} почалась`); persist();
+  }
+  function finishWave(){
+    if(!battle.running)return; clearInterval(battle.attackTimer); battle.running=false; clearInterval(questionTimer); battle.bestWave=Math.max(battle.bestWave,battle.wave); const rewards=20+battle.wave*4; state.heroXp=(state.heroXp||0)+rewards; state.gold=(state.gold||0)+Math.ceil(rewards/4); battle.mana=Math.min(40,battle.mana+8); const m=meta();m.daily=m.daily||{learn:0,battle:0,correct:0};m.daily.battle=(m.daily.battle||0)+1;try{localStorage.setItem(SAVE_KEY,JSON.stringify(m))}catch(e){}; if(battle.wave>=10){ddFinishRun();return}
+    $('dd-wave-btn').textContent='⚔️ START WAVE'; showToast(`🏆 Хвиля ${battle.wave} завершена +${rewards} XP`); battle.wave++; battle.base=Math.max(25,battle.base); battle.power=Math.max(0,battle.power-15); render();persist(); if(typeof updateUI==='function')updateUI();
+  }
+  function ddFinishRun(){
+    battle.running=false; clearInterval(battle.attackTimer); clearInterval(questionTimer); battle.wave=10; battle.wins++; state.heroXp=(state.heroXp||0)+100; state.gold=(state.gold||0)+50; showToast('👑 RUN COMPLETE! +100 XP • +50 🪙'); render();persist();
+  }
+  function ddResetBattle(){
+    clearInterval(battle.attackTimer);clearInterval(questionTimer);battle={...defaultBattle,board:Array(15).fill(null),mana:30,wave:1,base:100,running:false,power:0,combo:0,bestWave:battle.bestWave||0,masteryHits:0,rolls:0,wins:battle.wins||0};buildWave();render();persist();showToast('Арена скинута');
+  }
+  function ddShowHowToPlay(){$('dd-help-modal')?.classList.remove('opacity-0','pointer-events-none')}
+  function ddCloseHowToPlay(){$('dd-help-modal')?.classList.add('opacity-0','pointer-events-none')}
+  window.ddRoll=ddRoll;window.ddSelectCell=ddSelectCell;window.ddAutoMerge=ddAutoMerge;window.ddStartWave=ddStartWave;window.ddAnswer=ddAnswer;window.ddResetBattle=ddResetBattle;window.ddShowHowToPlay=ddShowHowToPlay;window.ddCloseHowToPlay=ddCloseHowToPlay;
+  // Final tab router: preserve all old screens and add Dice Arena.
+  const originalSwitch=window.switchTab;
+  window.switchTab=function(tab){
+    AudioEngine?.play?.(420,'sine',.035,.02);
+    const tabs=['dice','dashboard','cards','exam','inventory','cube','dictionary'];
+    tabs.forEach(t=>{document.getElementById(`sec-${t}`)?.classList.add('hidden');const b=document.getElementById(`tab-${t}`);if(b)b.className='interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-violet-300/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5';});
+    document.getElementById(`sec-${tab}`)?.classList.remove('hidden'); const active=document.getElementById(`tab-${tab}`); if(active)active.className='interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-violet-700 text-white border border-violet-400 font-medieval flex items-center justify-center gap-1.5 shadow-md';
+    if(tab!=='dice'&&typeof originalSwitch==='function'){try{originalSwitch(tab)}catch(e){}}
+    if(tab==='dice'){buildWave();render();}
+  };
+  setTimeout(()=>{buildWave();render();window.switchTab('dice')},120);
+})();
+</script>
+
 </body>
 </html>
