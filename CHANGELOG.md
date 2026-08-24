@@ -1,28 +1,31 @@
 # Changelog
 
-## v0.011 — Learning Foundation
-
-### Removed
-- Random Dice.
-- Battle systems.
-- RPG combat/progression.
-- Enemy/wave/boss logic.
-- Game-oriented UI and rewards.
+## v0.012 — Premium Vocabulary Foundation
 
 ### Added
-- Clean learning-first navigation.
-- Refined Anki/SRS card experience.
-- Card reveal animation.
-- German word pronunciation.
-- German example-sentence pronunciation.
-- Voice selection and speech speed.
-- Optional auto-speak.
-- More pleasant learning guidance and session feedback.
+- Next-generation Anki-style mobile UI matching the provided reference.
+- Progress card with circular daily progress and 7-day activity bars.
+- 24-card learning sessions.
+- Two primary actions: Remembered / Forgot.
+- Smooth flashcard flip for contextual example view.
+- Favorite words.
+- German voice controls and automatic pronunciation option.
+- Collection search and custom-word modal.
+- Statistics: totals, mastery levels, due reviews, accuracy, seven-day activity.
+- Kursbuch 8 “Am Wochenende” vocabulary appended to the structured word database.
+- Emoji attached to every newly added course word.
 
-### Improved
-- Mobile-first card layout.
-- Telegram Mini App navigation.
-- Safe-area handling.
-- Offline behavior.
-- Progress/session clarity.
-- Codebase focus and maintainability.
+### Removed
+- Dice.
+- Battle systems.
+- RPG combat.
+- Enemy/wave/game mechanics.
+
+### Fixed
+- Simplified navigation to reduce accidental actions.
+- Improved SRS flow and daily history tracking.
+- Improved Telegram/back navigation and safe-area handling.
+- Service worker cache version updated to v0.012.
+
+### Design
+Dark premium, violet/blue electric accent, lightweight glassmorphism, mobile-first responsive layout, reduced-motion support.

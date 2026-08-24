@@ -1,60 +1,35 @@
-# GESTALT — Deutsch Learning v0.011
+# GESTALT — v0.012
 
-Telegram-first, mobile-first застосунок для приємного вивчення німецьких слів.
+Premium mobile-first German vocabulary trainer for PC, Android, iPhone and Telegram Mini Apps.
 
-## Основа продукту
-**Картка → Спроба згадати → Переклад → Приклад → Озвучка → SRS → Повторення**
+## Core
+- Premium dark learning UI inspired by the provided reference.
+- 24-card study sessions.
+- Two-action review: **Запам'ятав / Забув**.
+- Smooth 3D card flip to contextual example.
+- German pronunciation with browser speech synthesis and voice selection.
+- Ukrainian translation, grammar, phonetic guide, hints and example sentence.
+- SRS intervals: 1 / 2 / 4 / 7 / 14 / 30 days.
+- Mastery 0–5, streaks, daily history and progress statistics.
+- Collections, search, favorites and custom words.
+- The supplied **Kursbuch 8 — Am Wochenende** vocabulary has been appended and enriched with emojis and study examples.
+- Telegram Mini App safe-area, BackButton and CloudStorage sync.
+- Offline cache and PWA manifest.
 
-Ця версія навмисно очищена від бойових, Dice, RPG та інших ігрових систем. Фокус — якість навчання.
+## Removed from the active product
+Dice, battles, waves, RPG combat and game-mode UI are intentionally excluded from v0.012. The product foundation is vocabulary learning.
 
-## Основні можливості
-- 287 базових німецьких слів A2/B1.
-- Власні слова користувача.
-- SRS: 1 / 2 / 4 / 7 / 14 / 30 днів.
-- Чотири оцінки: Не знаю / Складно / Добре / Легко.
-- Німецька озвучка слова та прикладу через SpeechSynthesis.
-- Вибір німецького голосу та швидкості.
-- Автоматична озвучка після відкриття картки.
-- Пошук словника.
-- Mastery 0–5.
-- XP, streak, щоденна ціль.
-- Export / Import прогресу.
-- localStorage + Telegram CloudStorage fallback.
-- PWA / offline cache.
-- Telegram Mini App: BackButton, MainButton, safe-area, theme, haptic feedback.
-
-## Видалено
-У цій версії більше немає:
-- Random Dice.
-- Battle / waves / enemies / boss.
-- RPG combat / mana / power / board.
-- Ігрових нагород, пов'язаних із боєм.
-- UI-механік, які відволікають від навчання.
-
-## Telegram
-1. Розгорни застосунок на публічному HTTPS.
-2. Вкажи `MINI_APP_URL` у `.env`.
-3. Вкажи `BOT_TOKEN` тільки на сервері.
-4. Для production webhook можна використати `WEBHOOK_URL` та `WEBHOOK_SECRET`.
-
-## Локальний запуск
+## Run
 ```bash
-npm test
-npm run check
 npm start
 ```
+Open `http://localhost:8080`.
 
-Відкрити `http://127.0.0.1:8080/`.
+## Telegram
+Set `BOT_TOKEN` and `MINI_APP_URL` in `.env` for the included server entry point.
 
-## QA
-Automated checks покривають:
-- JS syntax.
-- server syntax.
-- JSON parse.
-- DOM references.
-- local paths.
-- service-worker assets.
-- SRS / storage sanity.
-- HTTP smoke test.
-
-Реальний iPhone/Android та фізичний Telegram-клієнт потребують on-device перевірки після розгортання.
+## Validation
+```bash
+npm run check
+npm test
+```

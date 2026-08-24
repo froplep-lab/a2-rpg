@@ -1,27 +1,32 @@
-# GESTALT Autonomous Development Context v0.011
+# GESTALT Autonomous Agent Context — v0.012
 
-## Product mission
-Build a calm, reliable German-learning app where the core loop is cards, recall, translation, examples, pronunciation and spaced repetition.
+Product goal: create a premium, lightweight vocabulary trainer for German learning.
 
-## Hard rule
-Do not reintroduce Dice, battle, RPG combat, enemies, waves, game economy or unrelated gameplay until the learning foundation is stable and explicitly requested.
+## Product foundation
+1. Flashcards are the core product.
+2. Pleasant learning loop: see word → recall → remember/forgot → next word.
+3. Translation, pronunciation and example sentence are first-class features.
+4. SRS must be understandable and persistent.
+5. UI must feel premium, calm and fast.
+6. Mobile-first, but responsive on desktop.
+7. Telegram Mini App compatibility is required.
 
-## Priorities
-1. Stable card flow.
-2. Pleasant pronunciation.
-3. Accurate translation/example presentation.
-4. SRS correctness.
-5. Mobile/Telegram compatibility.
-6. Accessibility and motion comfort.
-7. Performance and offline reliability.
+## Explicitly removed
+Dice, battle, RPG combat and unrelated game systems are not part of the active foundation.
 
-## Release discipline
-Before each ZIP:
-- syntax checks
-- JSON validation
-- DOM/reference audit
-- local asset audit
-- service worker audit
-- storage migration audit
-- HTTP smoke test
-- ZIP integrity
+## Content rule
+Structured vocabulary lives in `/data/words.json`. Existing content must be preserved. New vocabulary should be appended, not replace the old vocabulary.
+
+## QA
+Before each release:
+- syntax check JS/server
+- validate JSON
+- test HTTP server and static assets
+- check DOM references
+- check offline cache
+- verify Telegram fallbacks
+- test SRS transitions
+- verify ZIP integrity
+
+## Design direction
+Use the provided mobile screenshot as the primary visual reference: dark premium, electric violet/blue, large rounded flashcard, two primary answer buttons, floating bottom navigation, soft ambient glow, minimal motion.

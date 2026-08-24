@@ -10,7 +10,7 @@ const MINI_APP_URL=(process.env.MINI_APP_URL||'').replace(/\/$/,'');
 const WEBHOOK_URL=(process.env.WEBHOOK_URL||'').replace(/\/$/,'');
 const WEBHOOK_PATH='/telegram/webhook';
 const WEBHOOK_SECRET=process.env.WEBHOOK_SECRET||'';
-const VERSION='0.011';
+const VERSION='0.012';
 if(MINI_APP_URL&& !/^https:\/\//i.test(MINI_APP_URL))console.warn('MINI_APP_URL should use HTTPS for Telegram Mini App deployment');
 const jsonHeaders={'content-type':'application/json; charset=utf-8','cache-control':'no-store'};
 
@@ -41,13 +41,13 @@ async function handleUpdate(update){
   const text=String(m.text||'');
   if(/^\/start(?:@[^\s]+)?(?:\s+(.+))?/i.test(text)){
     const deep=text.match(/^\/start(?:@[^\s]+)?(?:\s+(.+))?/i)?.[1]||'';
-    const caption=deep?`Вітаю у GESTALT. Параметр запуску: ${deep}`:'Вітаю у GESTALT — вчи німецьку через SRS, картки та озвучку.';
+    const caption=deep?`Вітаю у GESTALT. Параметр запуску: ${deep}`:'Вітаю у GESTALT — вчи німецьку через картки, переклад та озвучку.';
     const reply=MINI_APP_URL?{inline_keyboard:[[{text:'📚 Відкрити GESTALT',web_app:{url:MINI_APP_URL}}]]}:undefined;
     return api('sendMessage',{chat_id:m.chat.id,text:caption,reply_markup:reply});
   }
   if(/^\/app(?:@[^\s]+)?/i.test(text)){
     const reply=MINI_APP_URL?{inline_keyboard:[[{text:'📚 Відкрити GESTALT',web_app:{url:MINI_APP_URL}}]]}:undefined;
-    return api('sendMessage',{chat_id:m.chat.id,text:'Відкрий GESTALT у Mini App.',reply_markup:reply});
+    return api('sendMessage',{chat_id:m.chat.id,text:'Відкрий застосунок GESTALT у Telegram.',reply_markup:reply});
   }
   if(/^\/(help|settings)(?:@[^\s]+)?/i.test(text)){
     return api('sendMessage',{chat_id:m.chat.id,text:'/start — запустити GESTALT\n/app — відкрити гру\n/help — допомога\n/settings — налаштування\n\nУ GESTALT: Слова → Картки → Озвучка → SRS → Прогрес.'});
