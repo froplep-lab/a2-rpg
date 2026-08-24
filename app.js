@@ -106,7 +106,7 @@ const rarities = [
 
 const slangPhrases = ["Bock drauf!", "Digga, läuft!", "Sheesh!", "Ehrenmann!", "Voll cringe!"];
 
-let cards = []; // Масив слів буде завантажено з words.json
+let cards = [];
 let currentIndex = 0;
 let isFlipped = false;
 let isShuffled = false;
