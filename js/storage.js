@@ -17,6 +17,26 @@ const DEFAULT_PROGRESS = {
     settings: { sound: true, volume: 50, speechRate: 0.9, autoSpeak: false }
 };
 
+export const StorageEngine = {
+    get(key, defaultValue = null) {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY + '_' + key);
+            if (!raw) return defaultValue;
+            return JSON.parse(raw);
+        } catch (e) {
+            console.warn("[StorageEngine] get error:", e);
+            return defaultValue;
+        }
+    },
+    set(key, value) {
+        try {
+            localStorage.setItem(STORAGE_KEY + '_' + key, JSON.stringify(value));
+        } catch (e) {
+            console.error("[StorageEngine] set error:", e);
+        }
+    }
+};
+
 export function getProgress() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -24,7 +44,6 @@ export function getProgress() {
         const parsed = JSON.parse(raw);
         return { ...DEFAULT_PROGRESS, ...parsed };
     } catch (e) {
-        console.warn("[Storage] Error reading progress, fallback to default:", e);
         return { ...DEFAULT_PROGRESS };
     }
 }
@@ -32,7 +51,5 @@ export function getProgress() {
 export function setProgress(data) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-        console.error("[Storage] Failed to save progress (QuotaExceeded or private mode):", e);
-    }
+    } catch (e) {}
 }
