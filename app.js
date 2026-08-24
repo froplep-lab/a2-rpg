@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.7.1";
+const APP_VERSION = "v1.7.2";
 
 const AudioEngine = {
     ctx: null,
@@ -386,9 +386,6 @@ function speakWord(e) {
 }
 
 // Robust German speech engine.
-// 1) Tries browser TTS with an explicitly selected German voice.
-// 2) If no German voice is available or browser TTS fails, falls back to remote German TTS audio.
-// 3) Never passes Ukrainian/Russian UI text to the voice engine.
 let germanVoices = [];
 let currentTtsAudio = null;
 
@@ -461,7 +458,6 @@ function speakWithBrowserGermanVoice(text) {
             const synth = window.speechSynthesis;
             synth.cancel();
             const voice = getBestGermanVoice();
-            // Do not use a non-German system voice as a fallback.
             if (!voice) {
                 reject(new Error('No German voice installed'));
                 return;
@@ -474,7 +470,6 @@ function speakWithBrowserGermanVoice(text) {
             utterance.volume = 1;
             utterance.onend = () => resolve(true);
             utterance.onerror = (event) => reject(new Error(event?.error || 'German TTS error'));
-            // Some mobile browsers populate voices asynchronously. Retry once after a short delay.
             synth.speak(utterance);
             setTimeout(() => {
                 if (synth.speaking || synth.pending) resolve(true);
@@ -490,7 +485,6 @@ async function speakGermanText(text) {
     const cleanText = normalizeGermanText(text);
     if (!cleanText) return;
 
-    // Prefer the local German voice because it works better inside Telegram's WebView.
     try {
         await speakWithBrowserGermanVoice(cleanText);
         return;
@@ -498,7 +492,6 @@ async function speakGermanText(text) {
         console.warn('German browser voice unavailable:', localErr);
     }
 
-    // Remote German TTS fallback.
     try {
         await playRemoteGermanAudio(cleanText);
         return;
@@ -506,7 +499,6 @@ async function speakGermanText(text) {
         console.warn('German remote TTS unavailable:', remoteErr);
     }
 
-    // Last attempt: ask the browser again after voices have had time to load.
     if ('speechSynthesis' in window) {
         setTimeout(() => {
             try {
@@ -526,11 +518,9 @@ async function speakGermanText(text) {
     }
 }
 
-// Backwards-compatible public name used by the existing HTML/JS buttons.
 function speakCompactWord(text) {
     const raw = normalizeGermanText(text);
     if (!raw) return;
-    // If a full sentence is passed, keep the whole sentence. For dictionary entries, strip article/variants.
     const looksLikeSentence = /[.!?]/.test(raw) || /\s/.test(raw) && raw.length > 35;
     const clean = looksLikeSentence ? raw : getCleanGermanWord(raw);
     speakGermanText(clean);
@@ -538,6 +528,13 @@ function speakCompactWord(text) {
 
 function speakSentence(sentence) {
     speakGermanText(sentence);
+}
+
+function speakMarathonSentence(idx) {
+    const w = marathonWords[idx];
+    if (w && w.sentence) {
+        speakSentence(w.sentence);
+    }
 }
 
 function speakTrialWord() {
@@ -575,7 +572,7 @@ function renderMarathonQuestion() {
         <div class="bg-slate-950 p-5 rounded-2xl border border-cyan-500/30 mb-5 relative shadow-inner">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs uppercase tracking-wider text-cyan-400 font-bold">Приклад у реченні:</span>
-                <button onclick="speakSentence(${JSON.stringify(w.sentence)})" class="interactive-btn bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 px-3 py-1.5 rounded-xl border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5">
+                <button onclick="speakMarathonSentence(${marathonIndex})" class="interactive-btn bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 px-3 py-1.5 rounded-xl border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5">
                     <i class="fa-solid fa-volume-high text-pink-400"></i> Речення
                 </button>
             </div>
@@ -849,6 +846,7 @@ function closeAchievementsModal() {
 }
 
 function claimAchievement(id, reward) {
+    if (claimedAchievements.includes(id)) return;
     AudioEngine.play('success');
     claimedAchievements.push(id);
     localStorage.setItem('a2_achievements', JSON.stringify(claimedAchievements));
@@ -1035,7 +1033,7 @@ function inspectSoul(ger, ukr, gram, emoji, rarity) {
     const modal = document.getElementById("soul-inspect-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("soul-inspect-box");
-    if (box) box.classList.remove("scale-95");
+    if (box) box.classList.add("scale-95");
 }
 
 function closeSoulInspect() {
@@ -1051,7 +1049,7 @@ function openInventoryModal() {
     const modal = document.getElementById("inventory-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("inventory-box");
-    if (box) box.classList.remove("scale-95");
+    if (box) box.classList.add("scale-95");
 }
 
 function closeInventoryModal() {
