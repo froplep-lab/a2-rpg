@@ -62,21 +62,3 @@ export function renderHeroesModalContent() {
 }
 
 window.selectHero = setActiveHero;
-
-import { toggleModal } from './utils.js';
-
-export function openHeroesModal() {
-    AudioEngine.play('click');
-    Haptics.trigger('light');
-    renderHeroesModalContent();
-    toggleModal("heroes-modal", "heroes-box", true);
-}
-
-export function closeHeroesModal() {
-    AudioEngine.play('click');
-    Haptics.trigger('light');
-    toggleModal("heroes-modal", "heroes-box", false);
-}
-
-window.openHeroesModal = openHeroesModal;
-window.closeHeroesModal = closeHeroesModal;
