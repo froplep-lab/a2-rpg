@@ -1,248 +1,28 @@
 <!DOCTYPE html>
-<html lang="uk" class="dark">
+<html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DE B1 RPG Studio — Німецька мова</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/animations.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Random Deutsch Cards</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/ui.css">
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 selection:bg-cyan-500 selection:text-slate-950">
-
-    <!-- HEADER / NAVIGATION -->
-    <header class="w-full max-w-md flex justify-between items-center mb-4">
-        <div class="flex items-center gap-2">
-            <div class="glass-panel px-3.5 py-2 rounded-2xl border border-cyan-500/30 flex items-center gap-2 shadow-md">
-                <i class="fa-solid fa-shield-halved text-cyan-400"></i>
-                <span id="hero-level-label" class="text-xs font-black text-white">LVL 1</span>
-            </div>
-            <div class="glass-panel px-3.5 py-2 rounded-2xl border border-pink-500/30 flex items-center gap-2 shadow-md">
-                <i class="fa-solid fa-fire text-pink-400"></i>
-                <span id="hero-streak-label" class="text-xs font-black text-white">0x</span>
-            </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <button onclick="openStatsModal()" aria-label="Статистика" class="interactive-btn glass-panel text-cyan-300 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
-                <i class="fa-solid fa-chart-pie text-cyan-400"></i>
-            </button>
-            <button onclick="openExamSimulator()" aria-label="Екзамен B1" class="interactive-btn glass-panel text-pink-400 px-3 py-2.5 rounded-xl border border-pink-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
-                <i class="fa-solid fa-graduation-cap"></i>
-            </button>
-            <button onclick="toggleAudioMute()" id="sound-master-btn-header" aria-label="Звук" class="interactive-btn glass-panel text-cyan-400 p-2.5 rounded-xl border border-cyan-500/30 hover:bg-slate-800">
-                <i id="sound-icon" class="fa-solid fa-volume-high"></i>
-            </button>
-            <button onclick="openSoundSettingsModal()" aria-label="Налаштування" class="interactive-btn glass-panel text-slate-300 p-2.5 rounded-xl border border-slate-700 hover:bg-slate-800">
-                <i class="fa-solid fa-gear"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- MAIN VIEW CONTAINER -->
-    <main class="w-full max-w-md flex-1 flex flex-col justify-center relative">
-        
-        <!-- MODE SWITCHER TABS -->
-        <div class="flex justify-center gap-2 mb-4">
-            <button onclick="switchDisplayMode('game')" id="mode-game-btn" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-black bg-cyan-400 text-slate-950 shadow-md shadow-cyan-400/20">КАРТКИ</button>
-            <button onclick="switchDisplayMode('compact')" id="mode-compact-btn" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-bold glass-panel text-slate-300 border border-slate-700">БЛОК</button>
-        </div>
-
-        <!-- GAME VIEW CONTAINER -->
-        <div id="game-view-container" class="space-y-4">
-            <!-- Theme Progress Header -->
-            <div class="glass-panel p-3.5 rounded-2xl border border-cyan-500/30 flex items-center justify-between">
-                <div class="text-xs font-bold text-slate-300">ПРОГРЕС ТЕМИ A2</div>
-                <div id="theme-progress-text" class="text-xs font-black text-cyan-400">0%</div>
-            </div>
-
-            <!-- FLASHCARD CONTAINER -->
-            <div class="perspective w-full h-[320px] cursor-pointer" onclick="flipCard()">
-                <div id="flashcard-inner" class="relative w-full h-full duration-500 transform-gpu preserve-3d shadow-[0_20px_50px_rgba(6,182,212,0.15)] rounded-3xl">
-                    
-                    <!-- FRONT FACE -->
-                    <div class="absolute inset-0 w-full h-full glass-panel border border-cyan-500/40 rounded-3xl p-6 flex flex-col justify-between backface-hidden">
-                        <div class="flex justify-between items-center">
-                            <span id="card-rarity-badge" class="text-[10px] font-black px-2.5 py-1 rounded-md border border-cyan-500/30 text-cyan-300 uppercase">ЗВИЧАЙНИЙ</span>
-                            <span id="card-index-indicator" class="text-xs font-bold text-slate-400">1 / 84</span>
-                        </div>
-                        <div class="text-center space-y-3">
-                            <div id="card-emoji" class="text-6xl mb-1">📌</div>
-                            <div id="card-german" class="text-2xl font-black text-white tracking-wide">Beispiel</div>
-                            <div id="card-grammar" class="text-xs font-bold text-pink-400 uppercase tracking-widest">Nomen, n.</div>
-                        </div>
-                        <div class="text-center text-[11px] text-slate-400 font-bold">Натисни, щоб перевернути</div>
-                    </div>
-
-                    <!-- BACK FACE -->
-                    <div class="absolute inset-0 w-full h-full glass-panel border border-pink-500/40 rounded-3xl p-6 flex flex-col justify-between backface-hidden rotate-y-180">
-                        <div class="flex justify-between items-center">
-                            <span class="text-[10px] font-black px-2.5 py-1 rounded-md border border-pink-500/30 text-pink-300 uppercase">ПЕРЕКЛАД</span>
-                            <span class="text-xs font-bold text-slate-400">А2 ЛЕКСИКА</span>
-                        </div>
-                        <div class="text-center space-y-3">
-                            <div id="card-ukrainian" class="text-2xl font-black text-emerald-400">приклад</div>
-                            <div id="card-hint" class="text-xs text-slate-300 italic">Демонстрація чогось</div>
-                            <div id="card-sentence" class="text-[11px] text-cyan-300 bg-slate-900/50 p-2.5 rounded-xl border border-cyan-500/20">Das ist ein Beispiel.</div>
-                        </div>
-                        <div class="text-center text-[11px] text-slate-400 font-bold">Зворотний бік картки</div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- CONTROLS ROW -->
-            <div class="grid grid-cols-5 gap-2 mt-5">
-                <button onclick="prevCard()" class="interactive-btn glass-panel text-slate-300 py-3 px-1 rounded-2xl text-[11px] font-bold border border-cyan-500/20 flex flex-col items-center shadow-md">
-                    <i class="fa-solid fa-arrow-left text-sm mb-1 text-cyan-400"></i> <span class="truncate">НАЗАД</span>
-                </button>
-                <button onclick="flipCard()" class="interactive-btn glass-panel text-cyan-400 py-3 px-1 rounded-2xl text-[11px] font-bold border border-cyan-500/20 flex flex-col items-center shadow-md">
-                    <i class="fa-solid fa-rotate text-sm mb-1"></i> <span class="truncate">ОБЕРТ</span>
-                </button>
-                <button onclick="speakWord()" class="interactive-btn glass-panel text-emerald-400 py-3 px-1 rounded-2xl text-[11px] font-bold border border-emerald-500/20 flex flex-col items-center shadow-md">
-                    <i class="fa-solid fa-volume-high text-sm mb-1"></i> <span class="truncate">АУДІО</span>
-                </button>
-                <button onclick="nextCard()" class="interactive-btn bg-cyan-400 text-slate-950 py-3 px-1 rounded-2xl text-[11px] font-black flex flex-col items-center shadow-[0_5px_15px_rgba(6,182,212,0.4)]">
-                    <i class="fa-solid fa-arrow-right text-sm mb-1"></i> <span class="truncate">ДАЛІ</span>
-                </button>
-                <button onclick="toggleBookmark()" id="card-bookmark-btn" aria-label="Обране" class="interactive-btn glass-panel text-slate-400 hover:text-yellow-400 py-3 px-1 rounded-2xl border border-slate-700 flex flex-col items-center shadow-md">
-                    <i class="fa-regular fa-star text-sm mb-1"></i> <span class="truncate">ЗІРКА</span>
-                </button>
-            </div>
-
-            <!-- SOUL HACK ACTION BUTTON -->
-            <button onclick="attackEnemyClick()" id="soul-hack-btn" class="interactive-btn w-full bg-gradient-to-r from-pink-600 to-purple-600 text-white py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(236,72,153,0.3)] mt-2">
-                <i class="fa-solid fa-bolt"></i> Зламати душу
-            </button>
-        </div>
-
-        <!-- COMPACT BLOCK VIEW -->
-        <div id="compact-block-view" class="hidden space-y-4 animate-[fade-in_0.3s_ease-out]">
-            <div class="glass-panel p-4 rounded-3xl border border-cyan-500/30 space-y-3">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-magnifying-glass text-cyan-400"></i>
-                    <input type="text" id="compact-search-input" oninput="filterCompactWords(this.value)" placeholder="Шукати слово..." class="w-full bg-transparent text-white text-xs font-bold placeholder-slate-500 focus:outline-none">
-                    <button onclick="clearCompactSearch()" aria-label="Очистити" class="interactive-btn text-slate-400 hover:text-white text-xs px-2"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <!-- Фільтри рідкості та обраного -->
-                <div class="flex flex-wrap gap-1.5 pt-2 border-t border-slate-800" id="rarity-filter-pills">
-                    <button onclick="setRarityFilter('all')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg bg-cyan-400 text-slate-950">ВСІ</button>
-                    <button onclick="setRarityFilter('звичайний')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-slate-300 border border-slate-700">ЗВИЧАЙНИЙ</button>
-                    <button onclick="setRarityFilter('рідкісний')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-cyan-400 border border-cyan-500/30">РІДКІСНИЙ</button>
-                    <button onclick="setRarityFilter('епічний')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-purple-400 border border-purple-500/30">ЕПІЧНИЙ</button>
-                    <button onclick="setRarityFilter('легендарний')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-yellow-400 border border-yellow-500/30">ЛЕГЕНДАРНИЙ</button>
-                    <button onclick="setRarityFilter('bookmarked')" class="interactive-btn text-[10px] font-black px-2.5 py-1 rounded-lg glass-panel text-yellow-400 border border-yellow-500/30">⭐️ ОБРАНЕ</button>
-                </div>
-            </div>
-            
-            <div id="compact-words-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-12 max-h-[60vh] overflow-y-auto"></div>
-        </div>
-
-    </main>
-
-    <!-- SOUND SETTINGS MODAL -->
-    <div id="sound-settings-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-sm p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="sound-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-700/50">
-                <h3 class="font-black text-sm text-cyan-400 flex items-center gap-2 tracking-widest uppercase"><i class="fa-solid fa-sliders"></i> Налаштування</h3>
-                <button onclick="closeSoundSettingsModal()" aria-label="Закрити" class="interactive-btn text-slate-400 hover:text-white p-2 bg-slate-800/50 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-4 text-xs font-bold">
-                <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20">
-                    <span class="text-slate-200 uppercase tracking-wide">Система аудіо</span>
-                    <button onclick="toggleAudioMute()" id="sound-master-btn" class="interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-cyan-400 text-slate-950 shadow-md">УВІМКНЕНО</button>
-                </div>
-                <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20">
-                    <span class="text-slate-200 uppercase tracking-wide">Автоозвучка при овертоті</span>
-                    <button onclick="toggleAutoSpeak()" id="sound-autospeak-btn" class="interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-slate-800 text-slate-500">ВИМКНЕНО</button>
-                </div>
-                <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20">
-                    <span class="text-slate-200 uppercase tracking-wide">Швидкість вимови</span>
-                    <button onclick="toggleSpeechRate()" id="sound-rate-btn" class="interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-slate-800 text-cyan-400 border border-cyan-500/30">НОРМАЛЬНА (0.9X)</button>
-                </div>
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20 space-y-2">
-                    <div class="flex justify-between items-center text-slate-300">
-                        <span>Гучність ефектів</span>
-                        <span id="volume-val-label" class="text-cyan-400">50%</span>
-                    </div>
-                    <input type="range" min="0" max="100" value="50" id="sound-volume-slider" oninput="updateAudioVolume(this.value)" class="w-full accent-cyan-400 cursor-pointer">
-                </div>
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20 space-y-3">
-                    <div class="text-slate-300 uppercase tracking-wide">Резервна копія даних</div>
-                    <div class="flex gap-2">
-                        <button onclick="exportProgress()" class="interactive-btn bg-slate-800 text-cyan-300 py-2.5 px-3 rounded-xl font-bold text-[11px] flex-1 hover:bg-slate-700 flex items-center justify-center gap-1.5 border border-cyan-500/30">
-                            <i class="fa-solid fa-download"></i> ЕКСПОРТ
-                        </button>
-                        <label class="interactive-btn bg-slate-800 text-pink-300 py-2.5 px-3 rounded-xl font-bold text-[11px] flex-1 hover:bg-slate-700 flex items-center justify-center gap-1.5 cursor-pointer border border-pink-500/30">
-                            <i class="fa-solid fa-upload"></i> ІМПОРТ
-                            <input type="file" id="import-file-input" accept=".json" onchange="importProgress(event)" class="hidden">
-                        </label>
-                    </div>
-                </div>
-                <button onclick="closeSoundSettingsModal()" class="interactive-btn w-full bg-cyan-500 text-slate-950 py-3.5 rounded-2xl font-black text-xs mt-2 shadow-[0_5px_15px_rgba(6,182,212,0.3)]">ЗБЕРЕГТИ НАЛАШТУВАННЯ</button>
-            </div>
-        </div>
+<body>
+  <div id="app">
+    <div id="screen-home" class="screen active"></div>
+    <div id="screen-collection" class="screen"></div>
+    <div id="screen-trial" class="screen"></div>
+    <div id="screen-rewards" class="screen"></div>
+    <div id="game-container" class="screen">
+      <div id="battle-hud">
+        <button id="btn-back-home" class="btn-secondary">🏠 Home</button>
+        <div id="wave-info">Wave: 1/3</div>
+        <div id="heart-hp">❤️ 100</div>
+      </div>
     </div>
-
-    <!-- STATS MODAL -->
-    <div id="stats-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="stats-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
-                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-chart-pie mr-2"></i> Статистика</h3>
-                <button onclick="closeStatsModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-4 text-xs">
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="glass-panel p-4 rounded-2xl border border-cyan-500/30 text-center">
-                        <div class="text-[10px] text-slate-400 uppercase font-bold mb-1">Зламано душ</div>
-                        <div id="stat-mastered-count" class="text-2xl font-black text-cyan-400">0 / 84</div>
-                    </div>
-                    <div class="glass-panel p-4 rounded-2xl border border-pink-500/30 text-center">
-                        <div class="text-[10px] text-slate-400 uppercase font-bold mb-1">Поточний Стрік</div>
-                        <div id="stat-streak-count" class="text-2xl font-black text-pink-400">0x</div>
-                    </div>
-                </div>
-                <div class="glass-panel p-4 rounded-2xl border border-slate-700 space-y-3">
-                    <div class="flex justify-between font-bold text-slate-300">
-                        <span>Рівень агента:</span>
-                        <span id="stat-level" class="text-cyan-400">LVL 1</span>
-                    </div>
-                    <div class="flex justify-between font-bold text-slate-300">
-                        <span>Досвід (XP):</span>
-                        <span id="stat-xp" class="text-pink-400">0 XP</span>
-                    </div>
-                    <div class="flex justify-between font-bold text-slate-300">
-                        <span>Обраних слів:</span>
-                        <span id="stat-bookmarks" class="text-yellow-400">0</span>
-                    </div>
-                </div>
-                <button onclick="closeStatsModal()" class="interactive-btn w-full bg-cyan-400 text-slate-950 py-3.5 rounded-xl font-black text-xs shadow-[0_5px_15px_rgba(6,182,212,0.4)]">ЗАКРИТИ СТАТИСТИКУ</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- EXAM SIMULATOR MODAL -->
-    <div id="exam-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-pink-500/40 rounded-3xl w-full max-w-lg p-6 shadow-[0_20px_50px_rgba(236,72,153,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="exam-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-pink-500/20">
-                <h3 class="font-black text-sm text-pink-400 uppercase tracking-widest"><i class="fa-solid fa-graduation-cap mr-2"></i> Симулятор B1 Іспиту</h3>
-                <button onclick="closeExamSimulator()" aria-label="Закрити" class="interactive-btn text-pink-400 hover:text-white p-2 bg-pink-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="exam-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">🎓</div>
-                    <div class="text-sm font-bold text-slate-300">Перевір готовність до іспиту B1! Тест складається з 10 випадкових питань.</div>
-                    <button onclick="startExamSession()" class="interactive-btn w-full max-w-xs mx-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white py-4 rounded-2xl font-black text-sm shadow-[0_10px_25px_rgba(236,72,153,0.4)]">ПОЧАТИ ТЕСТ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TOAST NOTIFICATION CONTAINER -->
-    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-    <script type="module" src="js/app.js"></script>
+    <div id="perf-monitor" class="perf-panel">FPS: 60 | Entities: 0</div>
+  </div>
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>
