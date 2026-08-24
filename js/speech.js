@@ -12,40 +12,39 @@ export const SpeechEngine = {
         if (this.isSupported()) {
             try {
                 window.speechSynthesis.cancel();
-                if (window._speechTimeout) {
-                    clearTimeout(window._speechTimeout);
-                    window._speechTimeout = null;
-                }
-            } catch (e) {}
+            } catch (e) {
+                console.warn("[SpeechEngine] Cancel error:", e);
+            }
         }
     },
 
     speak(text, rate = 0.9, onStart = null, onEnd = null) {
         if (!this.isSupported()) {
+            showToast("Аудіовимова не підтримується цим браузером", "info");
             if (onEnd) onEnd();
             return;
         }
 
-        this.cancel();
+        try {
+            window.speechSynthesis.cancel();
+        } catch (e) {}
 
+        const cleanText = text.replace(/^(der|die|das)\s+/i, '').trim();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'de-DE';
         utterance.rate = rate;
         utterance.pitch = 1.0;
 
         const setBestVoice = () => {
-            try {
-                const voices = window.speechSynthesis.getVoices();
-                if (voices && voices.length > 0) {
-                    const deVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('de'));
-                    const bestVoice = deVoices.find(v => v.lang.toLowerCase() === 'de-DE' || v.lang.toLowerCase() === 'de_de') ||
-                                      deVoices[0] ||
-                                      voices.find(v => v.name && v.name.toLowerCase().includes('german'));
-                    if (bestVoice) {
-                        utterance.voice = bestVoice;
-                    }
+            const voices = window.speechSynthesis.getVoices();
+            if (voices && voices.length > 0) {
+                // Find best de-DE or de voice
+                const bestVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE') ||
+                                  voices.find(v => v.lang.startsWith('de') || v.lang.includes('de'));
+                if (bestVoice) {
+                    utterance.voice = bestVoice;
                 }
-            } catch (e) {}
+            }
         };
 
         setBestVoice();
@@ -57,29 +56,32 @@ export const SpeechEngine = {
         }
 
         utterance.onstart = () => {
-            document.querySelectorAll('.speech-active-indicator').forEach(el => el.classList.add('text-cyan-400'));
+            document.querySelectorAll('.speech-active-indicator').forEach(el => el.classList.add('animate-pulse', 'text-cyan-400'));
             if (onStart) onStart();
         };
 
         utterance.onend = () => {
-            document.querySelectorAll('.speech-active-indicator').forEach(el => el.classList.remove('text-cyan-400'));
+            document.querySelectorAll('.speech-active-indicator').forEach(el => el.classList.remove('animate-pulse', 'text-cyan-400'));
             if (onEnd) onEnd();
         };
 
-        utterance.onerror = () => {
-            document.querySelectorAll('.speech-active-indicator').forEach(el => el.classList.remove('text-cyan-400'));
+        utterance.onerror = (e) => {
+            console.warn("[SpeechEngine] Utterance error:", e);
+            document.querySelectorAll('.speech-active-indicator').forEach(el => el.classList.remove('animate-pulse', 'text-cyan-400'));
             if (onEnd) onEnd();
         };
 
         window._currentUtterance = utterance;
         
-        window._speechTimeout = setTimeout(() => {
+        // Slight timeout for mobile Safari/WebView reliability
+        setTimeout(() => {
             try {
                 window.speechSynthesis.speak(utterance);
             } catch (err) {
+                console.error("[SpeechEngine] Speak call exception:", err);
                 if (onEnd) onEnd();
             }
-        }, 20);
+        }, 50);
     }
 };
 
