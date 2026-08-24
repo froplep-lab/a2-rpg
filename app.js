@@ -375,24 +375,43 @@ function speakWord(e) {
     }
 }
 
-// 100% НАДІЙНИЙ ГІБРИДНИЙ РУШІЙ ОЗВУЧКИ (GOOGLE TTS + SYSTEM FALLBACK)
+// НАДІЙНИЙ ГІБРИДНИЙ РУШІЙ ОЗВУЧКИ З ПРИМУСОВИМ НІМЕЦЬКИМ ГОЛОСОМ
 function speakCompactWord(wordStr) {
     let cleanText = wordStr.split('/')[0];
     cleanText = cleanText.split(',')[0];
     cleanText = cleanText.replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
     
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=de&client=tw-ob`;
-    const audio = new Audio(audioUrl);
-    
-    audio.play().catch(e => {
-        console.log("Google TTS error, fallback to SpeechSynthesis:", e);
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.lang = 'de-DE';
-            window.speechSynthesis.speak(utterance);
+    // Спочатку пробуємо вбудований Web Speech API з точним пошуком німецького голосу
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'de-DE';
+        
+        const voices = window.speechSynthesis.getVoices();
+        const germanVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang.startsWith('de'));
+        if (germanVoice) {
+            utterance.voice = germanVoice;
         }
-    });
+        
+        utterance.onerror = () => {
+            playGoogleTts(cleanText);
+        };
+        
+        window.speechSynthesis.speak(utterance);
+        
+        // Якщо голоси ще не завантажилися, дублюємо через Google TTS у фоні для надійності на телефоні
+        if (!germanVoice && voices.length === 0) {
+            playGoogleTts(cleanText);
+        }
+    } else {
+        playGoogleTts(cleanText);
+    }
+}
+
+function playGoogleTts(text) {
+    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=de&client=tw-ob`;
+    const audio = new Audio(audioUrl);
+    audio.play().catch(e => console.log("TTS fallback error:", e));
 }
 
 function speakTrialWord() {
@@ -893,7 +912,7 @@ function openInventoryModal() {
     const modal = document.getElementById("inventory-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("inventory-box");
-    if (box) box.classList.add("scale-95");
+    if (box) box.classList.remove("scale-95");
 }
 
 function closeInventoryModal() {
@@ -901,6 +920,16 @@ function closeInventoryModal() {
     if (modal) modal.classList.add("opacity-0", "pointer-events-none");
     const box = document.getElementById("inventory-box");
     if (box) box.classList.add("scale-95");
+}
+
+// ФУНКЦІЯ СКИДАННЯ ПРОГРЕСУ ТА КЕШУ
+function resetProgress() {
+    if (confirm("⚠️ Увага! Ти дійсно хочеш скинути весь свій прогрес, рівень та зламані душі?")) {
+        AudioEngine.play('error');
+        const keys = Object.keys(localStorage).filter(k => k.startsWith('a2_'));
+        keys.forEach(k => localStorage.removeItem(k));
+        window.location.reload();
+    }
 }
 
 function renderClasses() {
@@ -941,6 +970,11 @@ function renderGear() {
         <div>
             <div class="text-[10px] text-slate-400 mb-1.5 font-medium">Візор:</div>
             <button onclick="toggleVisor()" class="interactive-btn w-full p-2.5 rounded-xl border ${hero.visor ? 'border-pink-500 bg-pink-500/20 text-pink-300' : 'border-slate-800 bg-slate-950 text-slate-400'} text-left text-xs font-bold">Cyber Visor [${hero.visor ? 'ACTIVE' : 'OFF'}]</button>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-800">
+            <button onclick="resetProgress()" class="interactive-btn w-full bg-pink-500/20 hover:bg-pink-500/30 text-pink-400 border border-pink-500/40 p-3 rounded-2xl font-bold text-xs flex items-center justify-center gap-2">
+                <i class="fa-solid fa-trash-can"></i> Скинути весь прогрес гри
+            </button>
         </div>
     `;
 }
