@@ -1,3 +1,5 @@
+import { checkAchievement } from './achievements.js';
+import { progressQuest } from './quests.js';
 import { cards, currentIndex, isFlipped, masteredWords, bookmarkedWords, setCurrentIndex, setIsFlipped } from './state.js';
 import { StorageEngine } from './storage.js';
 import { AudioEngine, autoSpeakOnFlip } from './audio.js';
@@ -47,6 +49,10 @@ export function flipCard(forceReset = false) {
     setIsFlipped(!isFlipped);
     inner.style.transform = isFlipped ? "rotateY(180deg)" : "rotateY(0deg)";
 
+    if (isFlipped) {
+        progressQuest('review_cards', 1);
+    }
+
     if (isFlipped && autoSpeakOnFlip) {
         speakWord();
     }
@@ -56,6 +62,7 @@ export function nextCard() {
     AudioEngine.play('click');
     Haptics.trigger('light');
     setCurrentIndex((currentIndex + 1) % cards.length);
+    progressQuest('review_cards', 1);
     updateCard();
 }
 
@@ -63,6 +70,7 @@ export function prevCard() {
     AudioEngine.play('click');
     Haptics.trigger('light');
     setCurrentIndex((currentIndex - 1 + cards.length) % cards.length);
+    progressQuest('review_cards', 1);
     updateCard();
 }
 
@@ -102,7 +110,10 @@ export function attackEnemyClick() {
     
     AudioEngine.play('success');
     Haptics.trigger('success');
-    addXp(25);
+    addXp(25, 'master');
+    progressQuest('learn_words', 1);
+    checkAchievement('first_hack', 1);
+    checkAchievement('vocab_master', 1);
     updateMasteredUI();
     window._isCompactDirty = true;
     showToast(`⚡ Душу слова "${card.german}" успішно зламано!`, 'success');
@@ -117,6 +128,8 @@ export function toggleBookmark() {
         showToast('Видалено з обраного', 'info');
     } else {
         bookmarkedWords.add(card.german);
+        progressQuest('bookmark_words', 1);
+        checkAchievement('collector', 1);
         showToast('Додано в обране ⭐️', 'success');
     }
     StorageEngine.set('a2_bookmarks', Array.from(bookmarkedWords));

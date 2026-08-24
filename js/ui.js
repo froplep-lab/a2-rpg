@@ -50,3 +50,39 @@ export function importProgress(event) {
     };
     reader.readAsText(file);
 }
+import { initAchievements, renderAchievementsModalContent } from './achievements.js';
+
+export function openAchievementsModal() {
+    AudioEngine.play('click');
+    Haptics.trigger('light');
+    renderAchievementsModalContent();
+    toggleModal("achievements-modal", "achievements-box", true);
+}
+
+export function closeAchievementsModal() {
+    AudioEngine.play('click');
+    Haptics.trigger('light');
+    toggleModal("achievements-modal", "achievements-box", false);
+}
+
+window.openAchievementsModal = openAchievementsModal;
+window.closeAchievementsModal = closeAchievementsModal;
+window.renderAchievementsUI = renderAchievementsModalContent;
+
+import { initHeroes, renderHeroesModalContent } from './heroes.js';
+
+export function openHeroesModal() {
+    AudioEngine.play('click');
+    Haptics.trigger('light');
+    renderHeroesModalContent();
+    toggleModal("heroes-modal", "heroes-box", true);
+}
+
+export function closeHeroesModal() {
+    AudioEngine.play('click');
+    Haptics.trigger('light');
+    toggleModal("heroes-modal", "heroes-box", false);
+}
+
+window.openHeroesModal = openHeroesModal;
+window.closeHeroesModal = closeHeroesModal;

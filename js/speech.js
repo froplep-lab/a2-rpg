@@ -1,3 +1,4 @@
+import { progressQuest } from './quests.js';
 import { cards, currentIndex } from './state.js';
 import { currentSpeechRate } from './audio.js';
 import { showToast } from './utils.js';
@@ -52,5 +53,6 @@ export function speakWord() {
     const card = cards[currentIndex];
     if (card && SpeechEngine.isSupported()) {
         SpeechEngine.speak(card.german, currentSpeechRate);
+        progressQuest('listen_words', 1);
     }
 }
