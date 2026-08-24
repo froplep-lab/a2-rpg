@@ -1,0 +1,10 @@
+{
+  "name": "Deutsch Dice — Learn & Defend",
+  "short_name": "Deutsch Dice",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#070b15",
+  "theme_color": "#070b15",
+  "orientation": "any",
+  "description": "A German vocabulary tower-defense learning game."
+}
