@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GESTALT — Deutsch Quest / B1 RPG v0.005 · Dice Arena</title>
+    <title>GESTALT — Deutsch Quest · v0.006</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -335,289 +335,128 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
 
 
 <body id="app-body">
-<div class="g-app">
-  <aside class="g-sidebar">
-    <div class="g-brand">
-      <div class="g-brand-mark">G</div>
-      <div><h1>GESTALT</h1><p>LANGUAGE RPG • A2 → B1</p></div>
-    </div>
-    <div class="g-nav" id="desktop-nav">
+<div class="v006-app">
+  <aside class="v006-side">
+    <div class="v006-brand"><h1>GESTALT</h1><p>VČI SLOVA · ПРОКАЧУЙ СЕБЕ · ВРЯТУЙ СВІТ</p></div>
+    <div class="v006-nav">
       <button data-screen="dashboard" onclick="gNav('dashboard')" class="active"><span class="ico">⌂</span>Головна</button>
-      <button data-screen="cards" onclick="gNav('cards')"><span class="ico">▣</span>Слова</button>
-      <button data-screen="cards" onclick="gNav('cards')"><span class="ico">◈</span>Картки</button>
-      <button data-screen="dice" onclick="gNav('dice')"><span class="ico">◉</span>Dice</button>
+      <button data-screen="words" onclick="gNav('words')"><span class="ico">▣</span>Вивчення слів</button>
+      <button data-screen="anki" onclick="gNav('anki')"><span class="ico">▤</span>Картки Anki</button>
+      <button data-screen="dice" onclick="gNav('dice')"><span class="ico">◉</span>Random Dice</button>
+      <button data-screen="upgrade" onclick="gNav('upgrade')"><span class="ico">⬆</span>Прокачка карт</button>
+      <button data-screen="rpg" onclick="gNav('rpg')"><span class="ico">♜</span>RPG прогрес</button>
       <button data-screen="quests" onclick="gNav('quests')"><span class="ico">◇</span>Квести</button>
       <button data-screen="shop" onclick="gNav('shop')"><span class="ico">◆</span>Магазин</button>
+      <button data-screen="stats" onclick="gNav('stats')"><span class="ico">▥</span>Статистика</button>
+      <button data-screen="worlds" onclick="gNav('worlds')"><span class="ico">✦</span>Світи</button>
       <button data-screen="profile" onclick="gNav('profile')"><span class="ico">◌</span>Профіль</button>
       <button data-screen="settings" onclick="gNav('settings')"><span class="ico">⚙</span>Налаштування</button>
     </div>
-    <div class="g-side-footer">
-      HTML • CSS • JS<br>Offline-ready shell<br>Telegram-compatible<br>Dark / Light theme
-    </div>
+    <div class="v006-platform">ПК + телефон<br>Offline-ready · Telegram-compatible<br>Dark / Light · Safe area · Touch-first</div>
   </aside>
 
-  <main class="g-workspace">
-    <header class="g-main-head">
-      <div>
-        <div class="g-mobile-only" style="font-size:9px;color:#6e8389;letter-spacing:.18em;margin-bottom:3px">GESTALT</div>
-        <h2 id="g-page-title">Вивчення слів</h2>
-        <p id="g-page-subtitle">Додавай слова, повторюй їх та прокачуй картки через gameplay.</p>
+  <main class="v006-main">
+    <div class="v006-top">
+      <div style="width:180px"></div>
+      <div class="v006-logo"><h1>GESTALT</h1><p>ВЧИ СЛОВА. ПРОКАЧУЙ СЕБЕ. ВРЯТУЙ СВІТ.</p></div>
+      <div class="v006-resources">
+        <div class="v006-res">🪙 <b id="g-gold">0</b></div><div class="v006-res">◈ <b id="g-gems">0</b></div><div class="v006-res">◉ <b id="g-energy">5</b></div>
       </div>
-      <div class="g-head-actions">
-        <div class="g-resources">
-          <div class="g-resource">🪙 <b id="g-gold">0</b></div>
-          <div class="g-resource">◆ <b id="g-gems">0</b></div>
-          <div class="g-resource">◉ <b id="g-energy">5</b></div>
-        </div>
-        <button class="g-iconbtn" onclick="openMusicSelectModal()" title="Звук">♫</button>
-        <button class="g-iconbtn g-mobile-only" onclick="gNav('profile')" title="Профіль">☰</button>
-      </div>
-    </header>
-
-    <div class="g-tabs" id="top-tabs">
-      <button data-screen="dashboard" onclick="gNav('dashboard')" class="active">Огляд</button>
-      <button data-screen="cards" onclick="gNav('cards')">Вчити</button>
-      <button data-screen="dice" onclick="gNav('dice')">Random Dice</button>
-      <button data-screen="quests" onclick="gNav('quests')">Щоденні</button>
     </div>
 
-    <section id="sec-dashboard" class="g-screen active">
-      <div class="g-statrow">
-        <div class="g-statbox"><div class="lbl">ВСЬОГО СЛІВ</div><div class="val" id="g-total-words">0</div></div>
-        <div class="g-statbox"><div class="lbl">ВИВЧЕНО</div><div class="val" id="g-mastered-words">0</div><div class="g-progress"><i id="g-master-progress"></i></div></div>
-        <div class="g-statbox"><div class="lbl">В ПРОЦЕСІ</div><div class="val" id="g-learning-words">0</div></div>
-        <div class="g-statbox"><div class="lbl">НОВІ</div><div class="val" id="g-new-words">0</div></div>
+    <section id="sec-dashboard" class="v006-screen active">
+      <div class="v006-section-head"><div><h2>1. ГОЛОВНА</h2><p>Твій прогрес та світ гри</p></div><button class="v006-btn" onclick="gNav('settings')">⚙</button></div>
+      <div class="v006-map">
+        <div class="v006-map-title"><div class="hero"><div class="v006-avatar" id="g-home-avatar"></div><div><strong id="g-home-hero">Wanderer</strong><span>Рівень <b id="g-home-level">1</b> • <span id="g-home-xp">0</span> / 100 XP</span></div></div><div><span>STREAK</span><strong id="g-home-streak">0</strong></div></div>
+        <button class="v006-landmark lm-words" onclick="gNav('words')"><b>📖</b><span>СЛОВА</span></button>
+        <button class="v006-landmark lm-cards" onclick="gNav('anki')"><b>🃏</b><span>КАРТКИ</span></button>
+        <button class="v006-landmark lm-dice" onclick="gNav('dice')"><b>🎲</b><span>DICE</span></button>
+        <button class="v006-landmark lm-quest" onclick="gNav('quests')"><b>🏆</b><span>КВЕСТИ</span></button>
+        <button class="v006-landmark lm-castle" onclick="gNav('rpg')"><b>🏰</b><span>RPG</span></button>
+        <button class="v006-landmark lm-tower" onclick="gNav('worlds')"><b>🗼</b><span>СВІТИ</span></button>
+        <div class="v006-travel"><button class="v006-btn gold" style="width:100%" onclick="gContinueJourney()">ПРОДОВЖИТИ ПОДОРОЖ</button></div>
       </div>
-
-      <div class="g-panel" style="padding:8px 10px;margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-          <div><b style="font-size:10px;color:#d7b66e">🔥 STREAK</b><span id="g-streak" style="font-size:11px;color:#b5c4c5;margin-left:7px">0 днів</span></div>
-          <div style="font-size:9px;color:#70838a">До повторення: <b id="g-due" style="color:#e0ce9f">0</b></div>
-          <button class="g-btn gold" onclick="gNav('cards')">Почати повторення</button>
-        </div>
-      </div>
-
-      <div class="g-grid-main">
-        <div>
-          <div class="g-panel" style="margin-bottom:12px;overflow:hidden">
-            <div class="g-panel-head"><div><h3>Картка слова</h3><span>Ваша наступна одиниця прогресу</span></div><button class="g-iconbtn" style="width:34px;height:32px" onclick="gSpeakFeatured(event)">🔊</button></div>
-            <div class="g-word-card">
-              <span class="g-word-label">GERMAN • B1</span>
-              <div class="g-word-title" id="g-feature-word">Wunder</div>
-              <div class="g-word-phon" id="g-feature-grammar">[ˈvʊndɐ] • Nomen</div>
-              <div class="g-word-meaning" id="g-feature-meaning">Диво, чудо</div>
-              <div class="g-word-example" id="g-feature-example">Das ist ein Wunder!<br><em>Це справжнє диво!</em></div>
-              <div class="g-word-actions">
-                <button class="g-btn" onclick="gReview(false)">↻ Знову</button>
-                <button class="g-btn" onclick="gHard()">Складно</button>
-                <button class="g-btn green" onclick="gReview(true)">Добре</button>
-                <button class="g-btn blue" onclick="gEasy()">Легко</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="g-panel">
-            <div class="g-panel-head"><div><h3>Квести</h3><span>Твої задачі на сьогодні</span></div><button class="g-btn" onclick="gNav('quests')">Всі</button></div>
-            <div id="g-home-quests">
-              <div class="g-quest-row"><div class="qicon">📖</div><div class="qtext"><b>Вчитель слів</b><span>Вивчи 20 нових слів</span></div><div class="qreward">XP 200<strong>🪙 100</strong></div></div>
-              <div class="g-quest-row"><div class="qicon">⭐</div><div class="qtext"><b>Майстер карток</b><span>Переглянь 50 карток</span></div><div class="qreward">XP 300<strong>🪙 150</strong></div></div>
-              <div class="g-quest-row"><div class="qicon">◉</div><div class="qtext"><b>Dice виклик</b><span>Використай Random Dice 10 разів</span></div><div class="qreward">XP 150<strong>🪙 75</strong></div></div>
-              <div class="g-quest-row"><div class="qicon">☾</div><div class="qtext"><b>Щоденне тренування</b><span>Вивчай слова 7 днів поспіль</span></div><div class="qreward">XP 250<strong>🪙 125</strong></div></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="g-rightcol">
-          <div class="g-upgrade">
-            <div class="g-card-mini">
-              <div class="g-mini-card">
-                <small id="g-upgrade-rarity">RARE</small>
-                <b id="g-upgrade-word">Haus</b>
-                <span class="star" id="g-upgrade-stars">★★★☆☆</span>
-              </div>
-              <div>
-                <h4>Прокачка картки</h4>
-                <div style="font-size:10px;color:#7e9096">Рівень <b id="g-card-level">3 / 5</b></div>
-                <div class="g-progress"><i id="g-card-xpbar" style="width:64%"></i></div>
-                <div class="line"><span>+ Досвід</span><b id="g-bonus-xp">+30% XP</b></div>
-                <div class="line"><span>+ Золото</span><b id="g-bonus-gold">+20%</b></div>
-                <div class="line"><span>+ Шанс Dice</span><b id="g-bonus-dice">+15%</b></div>
-                <button class="g-btn gold" style="width:100%;margin-top:10px" onclick="gUpgradeCard()">Покращити 🪙 <span id="g-upgrade-cost">750</span></button>
-              </div>
-            </div>
-          </div>
-
-          <div class="g-panel">
-            <div class="g-panel-head"><div><h3>Світи</h3><span>Нова область відкривається з рівнем</span></div></div>
-            <div class="g-worlds">
-              <button class="g-world" onclick="gWorldToast('Зелений луг')"><strong>Зелений луг</strong><span>Легкий рівень</span></button>
-              <button class="g-world" onclick="gWorldToast('Темний ліс')"><strong>Темний ліс</strong><span>Середній рівень</span></button>
-              <button class="g-world" onclick="gWorldToast('Забута фортеця')"><strong>Забута фортеця</strong><span>Складний рівень</span></button>
-              <button class="g-world" onclick="gWorldToast('Небесна вежа')"><strong>Небесна вежа</strong><span>Експертний рівень</span></button>
-            </div>
-          </div>
-
-          <div class="g-panel" style="padding:12px">
-            <div style="font-size:9px;color:#76888e;letter-spacing:.12em;margin-bottom:8px">РЕКОМЕНДАЦІЯ</div>
-            <div id="g-recommendation" style="font:700 14px Georgia,serif;color:#e8d8b4">—</div>
-            <div style="font-size:9px;color:#76888e;margin-top:5px">Слово з найвищим пріоритетом повторення.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="g-footerbar">
-        <div class="g-footer-item"><b>▣ ПК + Телефон</b>Responsive UI</div>
-        <div class="g-footer-item"><b>◌ Offline</b>Local save</div>
-        <div class="g-footer-item"><b>◈ Backup ready</b>Google Drive-ready flow</div>
-        <div class="g-footer-item"><b>⌁ Без фреймворків</b>HTML / CSS / JS</div>
+      <div class="v006-quick-grid">
+        <button class="v006-quick" onclick="gNav('words')"><b>📖</b><span>ВИВЧЕННЯ СЛІВ</span><small>додавай слова та приклади</small></button>
+        <button class="v006-quick" onclick="gNav('anki')"><b>🃏</b><span>КАРТКИ ANKI</span><small>довготривале запамʼятовування</small></button>
+        <button class="v006-quick" onclick="gNav('dice')"><b>🎲</b><span>RANDOM DICE</span><small>випадкова карта + бонус</small></button>
+        <button class="v006-quick" onclick="gNav('quests')"><b>🏆</b><span>КВЕСТИ ТА СВІТ</span><small>досвід, нагороди, нові області</small></button>
       </div>
     </section>
 
-    <section id="sec-cards" class="g-screen">
-      <div class="g-panel" style="overflow:hidden">
-        <div class="g-panel-head"><div><h3>Картки / Anki</h3><span>Spaced repetition • Mastery 0–5</span></div><div style="font-size:10px;color:#71858b" id="card-counter-text">Слово 1</div></div>
-        <div style="padding:14px">
-          <div class="g-word-card" style="min-height:340px" onclick="flipCard()">
-            <span class="g-word-label">DEUTSCH 🇩🇪</span>
-            <div class="g-word-title" id="card-front-word">Wunder</div>
-            <div class="g-word-phon" id="card-front-grammar">Nomen</div>
-            <div style="margin-top:26px;color:#6f848a;font-size:11px">Торкнися, щоб перевернути</div>
-            <div id="card-back-emoji" class="compat"></div>
-            <div id="card-back-trans" class="compat"></div>
-            <div id="card-trophy-status" class="compat"></div>
-          </div>
-          <div class="g-word-actions" style="margin-top:12px">
-            <button class="g-btn" onclick="prevCard()">← Назад</button>
-            <button class="g-btn gold" onclick="flipCard()">Оберт</button>
-            <button class="g-btn" onclick="nextCard()">Далі →</button>
-            <button class="g-btn green" onclick="openTamingTrial()">Освоїти слово</button>
-            <button class="g-iconbtn" onclick="speakWord(event)">🔊</button>
-          </div>
-        </div>
+    <section id="sec-words" class="v006-screen">
+      <div class="v006-section-head"><div><h2>2. ВИВЧЕННЯ СЛІВ</h2><p>Додавай слова та вчи їх</p></div><button class="v006-btn gold" onclick="gNav('anki')">Почати повторення</button></div>
+      <div class="v006-grid-3" style="margin-bottom:9px">
+        <div class="v006-stat"><small>ВСЬОГО СЛІВ</small><strong id="g-total-words">0</strong></div><div class="v006-stat"><small>ВИВЧЕНО</small><strong id="g-mastered-words">0</strong></div><div class="v006-stat"><small>В ПРОЦЕСІ / НОВІ</small><strong><span id="g-learning-words">0</span> / <span id="g-new-words">0</span></strong></div>
+      </div>
+      <div class="v006-card v006-panel" style="margin-bottom:9px">
+        <div class="v006-add"><input id="g-add-word" class="v006-input" placeholder="Німецьке слово"><input id="g-add-meaning" class="v006-input" placeholder="Переклад"><input id="g-add-example" class="v006-input" placeholder="Приклад речення"><button class="v006-btn gold full" onclick="gAddWord()">+ Додати слово</button></div>
+        <div style="display:flex;gap:6px;align-items:center"><input id="g-word-search" class="v006-input" placeholder="Пошук слова..." oninput="gRenderWordList()"><button class="v006-btn" onclick="gClearWordSearch()">Очистити</button></div>
+      </div>
+      <div class="v006-card v006-panel"><div class="v006-section-head" style="padding-top:0"><div><h2 style="font-size:14px">Моя колекція</h2><p>Mastery • повторення • приклади</p></div><div style="font-size:9px;color:#70838a">Due: <b id="g-due">0</b></div></div><div id="g-word-list" class="v006-word-list"></div></div>
+    </section>
+
+    <section id="sec-anki" class="v006-screen">
+      <div class="v006-section-head"><div><h2>3. КАРТКИ (ANKI)</h2><p>Інтелектуальна система повторення (SRS)</p></div><button class="v006-btn" onclick="gAnkiShuffle()">↻</button></div>
+      <div class="v006-anki">
+        <div><div class="v006-anki-card"><div id="g-anki-front" class="word">Wunder</div><div id="g-anki-phon" class="trans">[ˈvʊndɐ] • Nomen</div><div id="g-anki-back" class="trans">Диво, чудо</div><div id="g-anki-ex" class="ex">Das ist ein Wunder!<br>Це справжнє диво.</div><button class="v006-btn blue" style="margin-top:18px" onclick="gSpeakAnki()">🔊 Озвучити</button></div><div class="v006-anki-actions"><button class="v006-btn red" onclick="gAnkiRate(0)">Не знаю</button><button class="v006-btn" onclick="gAnkiRate(2)">Складно</button><button class="v006-btn green" onclick="gAnkiRate(4)">Добре</button><button class="v006-btn blue" onclick="gAnkiRate(5)">Легко</button></div></div>
+        <div class="v006-anki-stats"><div class="v006-card v006-mini-panel"><div class="v006-row"><span>Карток у колекції</span><b id="g-anki-total">0</b></div><div class="v006-row" style="margin-top:7px"><span>Вивчено</span><b id="g-anki-learned">0</b></div><div class="v006-row" style="margin-top:7px"><span>Помилок</span><b id="g-anki-errors">0</b></div></div><div class="v006-card v006-mini-panel"><div class="v006-row"><span>Серія</span><b id="g-anki-streak">0 днів</b></div><div class="v006-row" style="margin-top:7px"><span>Наступне повторення</span><b id="g-anki-next">сьогодні</b></div><div class="v006-statbar" style="margin-top:9px"><i id="g-anki-progress"></i></div></div><div class="v006-card v006-mini-panel"><button class="v006-btn gold" style="width:100%" onclick="gNav('upgrade')">Прокачати картку</button><button class="v006-btn" style="width:100%;margin-top:7px" onclick="gNav('stats')">Статистика</button></div></div>
       </div>
     </section>
 
-    <section id="sec-dice" class="g-screen">
-      <div class="g-dice-shell" style="padding:13px">
-        <div class="g-panel-head" style="border-bottom-color:rgba(216,170,88,.12);padding-left:2px;padding-right:2px"><div><h3>Random Dice Arena</h3><span>Roll • Spawn • Merge • Learn • Destroy</span></div><div style="display:flex;gap:6px"><button class="g-btn" onclick="ddShowHowToPlay()">Правила</button><button class="g-btn red" onclick="ddResetBattle()">Скинути</button></div></div>
-        <div class="dd-hud" style="margin-top:10px">
-          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">WAVE</div><b id="dd-wave" style="color:#d9c58f">1/10</b></div>
-          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">BASE</div><b id="dd-base" style="color:#de8a7f">100</b></div>
-          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">MANA</div><b id="dd-mana" style="color:#74bad0">30</b></div>
-          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">POWER</div><b id="dd-power" style="color:#e5c47a">0</b></div>
-          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">COMBO</div><b id="dd-combo" style="color:#7fca96">x0</b></div>
-        </div>
-        <div class="g-grid-main" style="margin-top:10px">
-          <div>
-            <div class="g-panel" style="padding:12px;margin-bottom:10px"><div class="g-panel-head" style="padding:0 0 9px"><h3>Вороги</h3><span>Language Power заряджає атаки</span></div><div id="dd-enemies" class="dd-enemies"></div></div>
-            <div class="g-panel" style="padding:12px"><div class="g-panel-head" style="padding:0 0 9px"><h3>Battle Board • 5 × 3</h3><span id="dd-board-help">Обери однакові кубики для MERGE</span></div><div id="dd-board" class="dd-board"></div></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px">
-              <button class="g-btn gold" onclick="ddRoll()" style="width:100%">🎲 ROLL <span id="dd-roll-cost">5</span></button>
-              <button class="g-btn" onclick="ddStartWave()" id="dd-wave-btn" style="width:100%">⚔ START WAVE</button>
-              <button class="g-btn blue" onclick="ddAutoMerge()" style="width:100%">⚡ AUTO MERGE</button>
-            </div>
-          </div>
-          <aside class="g-rightcol">
-            <div id="dd-question" class="g-panel" style="padding:13px">
-              <div class="g-panel-head" style="padding:0 0 10px"><h3>Language Power</h3><span id="dd-question-timer">READY</span></div>
-              <div id="dd-question-word" style="font:700 25px Georgia,serif;color:#f2e4c5">Запусти хвилю</div>
-              <div id="dd-question-prompt" style="font-size:10px;color:#71858b;margin-top:5px">Тут з’явиться німецьке слово.</div>
-              <div id="dd-answer-grid" style="display:grid;gap:7px;margin-top:11px"></div>
-              <div id="dd-question-result" style="min-height:28px;margin-top:7px;font-size:10px"></div>
-            </div>
-            <div class="g-panel" style="padding:13px"><div class="g-panel-head" style="padding:0 0 8px"><h3>Колода</h3><span id="dd-deck-count">0</span></div><div id="dd-deck" class="space-y-2"></div></div>
-            <div class="g-panel" style="padding:13px"><div class="line" style="display:flex;justify-content:space-between;font-size:10px;color:#77888e"><span>XP</span><b id="dd-xp" style="color:#e1c67f">0</b></div><div class="line" style="display:flex;justify-content:space-between;font-size:10px;color:#77888e;margin-top:7px"><span>Coins</span><b id="dd-coins" style="color:#e4c472">0</b></div><div class="line" style="display:flex;justify-content:space-between;font-size:10px;color:#77888e;margin-top:7px"><span>Mastery hit</span><b id="dd-mastery" style="color:#7fca96">0</b></div><div class="line" style="display:flex;justify-content:space-between;font-size:10px;color:#77888e;margin-top:7px"><span>Best wave</span><b id="dd-best" style="color:#d7bb78">0</b></div></div>
-          </aside>
-        </div>
-      </div>
-    </section>
+    <section id="sec-dice" class="v006-screen v006-dice-wrap"><div class="v006-section-head"><div><h2>4. RANDOM DICE</h2><p>Кинь кубик і отримуй випадкову карту для тренування та бонусів</p></div></div><div class="g-dice-shell" style="padding:13px">
+      <div class="g-panel-head" style="padding:0 0 9px;border:0"><div><h3>Dice Arena</h3><span>Roll • Spawn • Merge • Learn • Destroy</span></div><div style="display:flex;gap:6px"><button class="g-btn" onclick="ddShowHowToPlay()">Правила</button><button class="g-btn red" onclick="ddResetBattle()">Скинути</button></div></div>
+      <div class="dd-hud" style="margin-top:9px"><div class="dd-chip"><div style="font-size:8px;color:#6d8188">WAVE</div><b id="dd-wave">1/10</b></div><div class="dd-chip"><div style="font-size:8px;color:#6d8188">BASE</div><b id="dd-base" style="color:#de8a7f">100</b></div><div class="dd-chip"><div style="font-size:8px;color:#6d8188">MANA</div><b id="dd-mana" style="color:#74bad0">30</b></div><div class="dd-chip"><div style="font-size:8px;color:#6d8188">POWER</div><b id="dd-power" style="color:#e5c47a">0</b></div><div class="dd-chip"><div style="font-size:8px;color:#6d8188">COMBO</div><b id="dd-combo" style="color:#7fca96">x0</b></div></div>
+      <div class="g-grid-main" style="margin-top:9px"><div><div class="g-panel" style="padding:12px;margin-bottom:9px"><div class="g-panel-head" style="padding:0 0 8px"><h3>Вороги</h3><span>Language Power заряджає атаки</span></div><div id="dd-enemies" class="dd-enemies"></div></div><div class="g-panel" style="padding:12px"><div class="g-panel-head" style="padding:0 0 8px"><h3>Battle Board • 5 × 3</h3><span id="dd-board-help">Однакові кубики → MERGE</span></div><div id="dd-board" class="dd-board"></div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:8px"><button class="g-btn gold" onclick="ddRoll()" style="width:100%">🎲 ROLL <span id="dd-roll-cost">5</span></button><button class="g-btn" onclick="ddStartWave()" id="dd-wave-btn" style="width:100%">⚔ START WAVE</button><button class="g-btn blue" onclick="ddAutoMerge()" style="width:100%">⚡ AUTO MERGE</button></div></div><aside class="g-rightcol"><div id="dd-question" class="g-panel" style="padding:12px"><div class="g-panel-head" style="padding:0 0 8px"><h3>Language Power</h3><span id="dd-question-timer">READY</span></div><div id="dd-question-word" style="font:700 25px Georgia,serif;color:#f2e4c5">Запусти хвилю</div><div id="dd-question-prompt" style="font-size:10px;color:#71858b;margin-top:5px">Тут з’явиться німецьке слово.</div><div id="dd-answer-grid" style="display:grid;gap:7px;margin-top:10px"></div><div id="dd-question-result" style="min-height:28px;margin-top:7px;font-size:10px"></div></div><div class="g-panel" style="padding:12px"><div class="g-panel-head" style="padding:0 0 7px"><h3>Колода</h3><span id="dd-deck-count">0</span></div><div id="dd-deck" class="space-y-2"></div></div></aside></div>
+    </div></section>
 
-    <section id="sec-quests" class="g-screen">
-      <div class="g-panel"><div class="g-panel-head"><div><h3>Квести</h3><span>Daily • Weekly • Progression</span></div></div>
-        <div id="g-quest-screen" style="padding:6px 0">
-          <div class="g-quest-row"><div class="qicon">📖</div><div class="qtext"><b>Вчитель слів</b><span>Вивчи 20 нових слів</span></div><div class="qreward">200 XP<strong>100 🪙</strong></div></div>
-          <div class="g-quest-row"><div class="qicon">⭐</div><div class="qtext"><b>Майстер карток</b><span>Перейди mastery 5 для 3 слів</span></div><div class="qreward">300 XP<strong>150 🪙</strong></div></div>
-          <div class="g-quest-row"><div class="qicon">◉</div><div class="qtext"><b>Dice виклик</b><span>Зроби 10 ролів на арені</span></div><div class="qreward">150 XP<strong>75 🪙</strong></div></div>
-          <div class="g-quest-row"><div class="qicon">⚡</div><div class="qtext"><b>Perfect recall</b><span>10 правильних відповідей сьогодні</span></div><div class="qreward">250 XP<strong>125 🪙</strong></div></div>
-        </div>
-      </div>
-    </section>
+    <section id="sec-upgrade" class="v006-screen"><div class="v006-section-head"><div><h2>5. ПРОКАЧКА КАРТ</h2><p>Прокачуй картки та заробляй більше нагород</p></div></div><div class="v006-upgrade"><div class="v006-card-art"><div><div class="star">★★★☆☆</div><div class="rword" id="g-upgrade-word">Haus</div><div style="font-size:9px;color:#7d9096" id="g-upgrade-rarity">Рівень 3 / 5</div></div><div><div class="v006-statbar"><i id="g-card-xpbar" style="width:60%"></i></div><div style="font-size:9px;color:#71858e;margin-top:6px">Досвід картки <b id="g-card-level">3 / 5</b></div></div></div><div class="v006-card v006-panel"><h3 style="font:700 18px Georgia,serif;color:#e5d3a7;margin:0">Haus</h3><div style="font-size:9px;color:#71858e;margin-top:3px">Будинок, дім</div><div class="v006-bonus-list"><div class="v006-bonus"><span>+ Досвід</span><b id="g-bonus-xp">+30% XP</b></div><div class="v006-bonus"><span>+ Золото</span><b id="g-bonus-gold">+20%</b></div><div class="v006-bonus"><span>+ Шанс Dice</span><b id="g-bonus-dice">+15%</b></div></div><button class="v006-btn gold" style="width:100%;margin-top:12px" onclick="gUpgradeCard()">Покращити 🪙 <span id="g-upgrade-cost">750</span></button><div style="margin-top:14px;font-size:9px;color:#6e8086">Кожен рівень картки підсилює досвід, економіку та бойовий шанс.</div></div></div></section>
 
-    <section id="sec-shop" class="g-screen">
-      <div class="g-panel"><div class="g-panel-head"><div><h3>Магазин</h3><span>Не pay-to-win — лише прогрес та косметика</span></div></div>
-        <div style="padding:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
-          <div class="g-panel" style="padding:14px"><div style="font-size:24px">🎁</div><b style="font:700 14px Georgia,serif;color:#ead6ab">Starter Chest</b><p style="font-size:10px;color:#71858b">3 випадкові картки</p><button class="g-btn gold" onclick="gShop('Starter Chest')">Купити • 250 🪙</button></div>
-          <div class="g-panel" style="padding:14px"><div style="font-size:24px">✨</div><b style="font:700 14px Georgia,serif;color:#ead6ab">Lucky Roll</b><p style="font-size:10px;color:#71858b">Шанс на Rare Dice</p><button class="g-btn gold" onclick="gShop('Lucky Roll')">Купити • 400 🪙</button></div>
-        </div>
-      </div>
-    </section>
+    <section id="sec-rpg" class="v006-screen"><div class="v006-section-head"><div><h2>6. RPG ПРОГРЕС</h2><p>Прокачуй героя та отримуй нагороди</p></div></div><div class="v006-rpg"><div class="v006-hero-card"><div class="v006-hero-figure" id="g-rpg-avatar"></div><div style="margin-top:10px"><b id="g-rpg-name" style="font:700 18px Georgia,serif;color:#ead4a6">Wanderer</b><div style="font-size:9px;color:#72858d">Рівень <span id="g-rpg-level">1</span> • <span id="g-rpg-xp">0</span> / 100 XP</div><div class="v006-statbar" style="margin-top:7px"><i id="g-rpg-xpbar"></i></div></div><div class="v006-gear"><div class="v006-slot">⚔</div><div class="v006-slot">🛡</div><div class="v006-slot">💍</div><div class="v006-slot">🧿</div><div class="v006-slot">🏹</div><div class="v006-slot">📜</div><div class="v006-slot">👢</div><div class="v006-slot">🧥</div></div></div><div class="v006-card v006-panel"><div class="v006-grid-3"><div class="v006-stat"><small>СИЛА</small><strong>28</strong></div><div class="v006-stat"><small>ІНТЕЛЕКТ</small><strong>42</strong></div><div class="v006-stat"><small>ВИТРИВАЛІСТЬ</small><strong>35</strong></div></div><div class="v006-grid-3" style="margin-top:8px"><div class="v006-stat"><small>УДАЧА</small><strong>26</strong></div><div class="v006-stat"><small>DICE BONUS</small><strong id="g-rpg-dice">+15%</strong></div><div class="v006-stat"><small>STREAK</small><strong id="g-rpg-streak">0</strong></div></div><div style="margin-top:12px" class="v006-card v006-panel"><div class="v006-row"><span>Вивчено слів</span><b id="g-rpg-mastered">0</b></div><div class="v006-row" style="margin-top:7px"><span>Карток у колекції</span><b id="g-rpg-cards">0</b></div><div class="v006-row" style="margin-top:7px"><span>Досягнення</span><b id="g-rpg-ach">0 / 50</b></div></div></div></div></section>
 
-    <section id="sec-profile" class="g-screen">
-      <div class="g-panel" style="padding:18px">
-        <div style="display:flex;gap:14px;align-items:center"><div class="g-avatar" style="width:60px;height:60px" id="g-profile-avatar"></div><div><div style="font:700 20px Georgia,serif;color:#ecd7ab">Wanderer</div><div style="font-size:10px;color:#72868d">Deutsch Quest Adventurer</div></div></div>
-        <div class="g-statrow" style="margin-top:16px"><div class="g-statbox"><div class="lbl">РІВЕНЬ</div><div class="val" id="g-profile-level">1</div></div><div class="g-statbox"><div class="lbl">XP</div><div class="val" id="g-profile-xp">0</div></div><div class="g-statbox"><div class="lbl">STREAK</div><div class="val" id="g-profile-streak">0</div></div><div class="g-statbox"><div class="lbl">MASTERED</div><div class="val" id="g-profile-mastered">0</div></div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="g-btn gold" onclick="openHeroSelectModal()">Змінити героя</button><button class="g-btn" onclick="openMusicSelectModal()">Налаштувати звук</button><button class="g-btn red" onclick="confirmResetProgress()">Скинути прогрес</button></div>
-      </div>
-    </section>
+    <section id="sec-quests" class="v006-screen"><div class="v006-section-head"><div><h2>7. КВЕСТИ</h2><p>Виконуй квести та отримуй досвід і нагороди</p></div></div><div class="v006-quest-list"><div class="v006-quest"><div class="qicon">📖</div><div><b>Вчитель слів</b><span>Вивчи 20 нових слів</span></div><div class="reward">XP 200<br>🪙 100</div></div><div class="v006-quest"><div class="qicon">⭐</div><div><b>Майстер карток</b><span>Потримай mastery 5 для 3 слів</span></div><div class="reward">XP 300<br>🪙 150</div></div><div class="v006-quest"><div class="qicon">🎲</div><div><b>Dice виклик</b><span>Використай Random Dice 10 разів</span></div><div class="reward">XP 150<br>🪙 75</div></div><div class="v006-quest"><div class="qicon">🔥</div><div><b>Щоденне тренування</b><span>Вчись 7 днів поспіль</span></div><div class="reward">XP 250<br>🪙 125</div></div></div></section>
 
-    <section id="sec-settings" class="g-screen">
-      <div class="g-panel" style="padding:18px"><div class="g-panel-head" style="padding:0 0 12px"><div><h3>Налаштування</h3><span>Audio, appearance, accessibility</span></div></div>
-        <div style="display:grid;gap:9px">
-          <button class="g-btn" onclick="openMusicSelectModal()">♫ Музика та гучність</button>
-          <button class="g-btn" onclick="gToggleMotion()">◌ Reduced motion</button>
-          <button class="g-btn" onclick="gToggleTheme()">◐ Темна тема</button>
-          <button class="g-btn" onclick="gWorldToast('Telegram WebApp працює без mandatory API')">◈ Telegram compatibility</button>
-        </div>
-      </div>
-    </section>
+    <section id="sec-shop" class="v006-screen"><div class="v006-section-head"><div><h2>8. МАГАЗИН</h2><p>Купуй підсилення, теми та корисні речі</p></div></div><div class="v006-shop-grid"><div class="v006-item"><div class="icon">🎁</div><h4>Starter Chest</h4><p>3 випадкові картки для колекції.</p><button class="v006-btn gold" onclick="gShop('Starter Chest')">250 🪙</button></div><div class="v006-item"><div class="icon">🛡️</div><h4>Захист помилки</h4><p>Один неправильний recall не знижує mastery.</p><button class="v006-btn gold" onclick="gShop('Захист помилки')">200 🪙</button></div><div class="v006-item"><div class="icon">🎲</div><h4>Бонус Dice</h4><p>+1 додатковий roll у Dice Arena.</p><button class="v006-btn gold" onclick="gShop('Бонус Dice')">100 🪙</button></div><div class="v006-item"><div class="icon">✨</div><h4>Преміум на 7 днів</h4><p>Комфортні бонуси, без pay-to-win.</p><button class="v006-btn gold" onclick="gShop('Преміум')">500 🪙</button></div></div></section>
 
-    <!-- Existing systems kept alive and restyled -->
-    <section id="sec-exam" class="g-screen"><div class="g-panel" style="padding:14px"><div class="g-panel-head" style="padding:0 0 10px"><div><h3>Випробування</h3><span>Quiz / Chest / Boss content</span></div><button class="g-btn gold" onclick="startExam()">Почати</button></div><div id="exam-box"></div></div></section>
-    <section id="sec-inventory" class="g-screen"><div class="g-panel" style="padding:14px"><div class="g-panel-head" style="padding:0 0 10px"><div><h3>Інвентар Героя</h3><span>Equipment • Storage</span></div></div><div id="hero-equip-slots-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div><div style="height:1px;background:rgba(255,255,255,.05);margin:12px 0"></div><div style="font-size:10px;color:#7d8e93;margin-bottom:7px">Сховище <span id="storage-count-text">0</span>/36</div><div id="storage-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-height:300px;overflow:auto"></div></div></section>
-    <section id="sec-cube" class="g-screen"><div class="g-panel" style="padding:14px;text-align:center"><div class="g-panel-head" style="padding:0 0 12px"><div><h3>Алхімічний переплав</h3><span>9 карт → 1 stronger card</span></div></div><div id="legacy-cube-slots" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:330px;margin:0 auto"></div><div style="display:flex;gap:7px;max-width:330px;margin:10px auto"><button class="g-btn" onclick="autoFillCube()" style="flex:1">⚡ Авто</button><button class="g-btn gold" onclick="craftCubeTransmute()" style="flex:1">Сплавити</button></div></div></section>
-    <section id="sec-dictionary" class="g-screen"><div class="g-panel"><div class="g-panel-head"><div><h3>Колекція слів</h3><span>Пошук та mastery</span></div><input id="dict-search-input" oninput="filterDictionary()" placeholder="Пошук..." style="background:#08151b;border:1px solid rgba(255,255,255,.06);border-radius:7px;padding:7px 9px;color:#dce4e3;font-size:10px"></div><div id="dict-words-list" style="padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-height:600px;overflow:auto"></div></div></section>
+    <section id="sec-stats" class="v006-screen"><div class="v006-section-head"><div><h2>9. СТАТИСТИКА</h2><p>Детальна статистика твого прогресу</p></div><div><button class="v006-btn">7 днів</button> <button class="v006-btn">30 днів</button> <button class="v006-btn">Весь час</button></div></div><div class="v006-grid-2"><div class="v006-card v006-panel"><h3 style="font:700 15px Georgia,serif;color:#dfd3b8;margin:0 0 8px">Вивчені слова</h3><div class="v006-bars"><i class="v006-bar" style="height:30%"></i><i class="v006-bar" style="height:43%"></i><i class="v006-bar" style="height:52%"></i><i class="v006-bar" style="height:68%"></i><i class="v006-bar" style="height:61%"></i><i class="v006-bar" style="height:74%"></i><i class="v006-bar" style="height:87%"></i><i class="v006-bar" style="height:100%"></i></div></div><div class="v006-card v006-panel"><h3 style="font:700 15px Georgia,serif;color:#dfd3b8;margin:0 0 8px">Точність відповідей</h3><div style="font:700 34px Georgia,serif;color:#eef0ec" id="g-stats-accuracy">89%</div><div style="font-size:9px;color:#5fc78b">+5% цього тижня</div><div class="v006-line" style="margin-top:8px"><svg viewBox="0 0 100 50" preserveAspectRatio="none"><polyline points="0,42 12,39 24,42 36,32 48,28 60,29 72,18 84,13 100,9" fill="none" stroke="#69c98e" stroke-width="1.8"/></svg></div></div></div><div class="v006-grid-3" style="margin-top:9px"><div class="v006-stat"><small>ВИВЧЕНО</small><strong id="g-stats-mastered">0</strong></div><div class="v006-stat"><small>СЕРІЯ</small><strong id="g-stats-streak">0</strong></div><div class="v006-stat"><small>НАГОРОДИ</small><strong id="g-stats-rewards">0</strong></div></div></section>
+
+    <section id="sec-worlds" class="v006-screen"><div class="v006-section-head"><div><h2>10. СВІТИ</h2><p>Відкривай нові світи та рівні</p></div></div><div class="v006-world-grid"><button class="v006-world-card world-green" onclick="gWorldToast('Зелений луг')"><div><h4>Зелений луг</h4><p>Легкий рівень • доступний зараз</p></div></button><button class="v006-world-card world-dark" onclick="gWorldToast('Темний ліс')"><div><h4>Темний ліс</h4><p>Середній рівень • потрібен LVL 5</p></div></button><button class="v006-world-card world-fort" onclick="gWorldToast('Забута фортеця')"><div><h4>Забута фортеця</h4><p>Складний рівень • потрібен LVL 12</p></div></button><button class="v006-world-card world-sky" onclick="gWorldToast('Небесна вежа')"><div><h4>Небесна вежа</h4><p>Експертний рівень • потрібен LVL 20</p></div></button></div></section>
+
+    <section id="sec-profile" class="v006-screen"><div class="v006-section-head"><div><h2>11. ПРОФІЛЬ</h2><p>Твій профіль та досягнення</p></div></div><div class="v006-card v006-panel"><div style="display:flex;gap:12px;align-items:center"><div class="v006-avatar" style="width:58px;height:58px" id="g-profile-avatar"></div><div><div style="font:700 20px Georgia,serif;color:#ecd7ab">Wanderer</div><div style="font-size:9px;color:#72858d">Deutsch Quest Adventurer</div></div></div><div class="v006-grid-3" style="margin-top:12px"><div class="v006-stat"><small>РІВЕНЬ</small><strong id="g-profile-level">1</strong></div><div class="v006-stat"><small>XP</small><strong id="g-profile-xp">0</strong></div><div class="v006-stat"><small>STREAK</small><strong id="g-profile-streak">0</strong></div></div><div class="v006-achievements" style="margin-top:10px"><div class="v006-setting"><div><b>🏆 Перші 100 слів</b><span>22 / 100</span></div><span style="color:#e2be6d">22%</span></div><div class="v006-setting"><div><b>🔥 30 Day Streak</b><span>12 / 30 днів</span></div><span style="color:#e2be6d">40%</span></div><div class="v006-setting"><div><b>⚔️ First Boss</b><span>Перша перемога над босом</span></div><span style="color:#78c990">✓</span></div></div><div style="display:flex;gap:7px;margin-top:11px;flex-wrap:wrap"><button class="v006-btn gold" onclick="openHeroSelectModal()">Змінити героя</button><button class="v006-btn" onclick="gNav('settings')">Налаштування</button></div></div></section>
+
+    <section id="sec-settings" class="v006-screen"><div class="v006-section-head"><div><h2>12. НАЛАШТУВАННЯ</h2><p>Налаштуй гру під себе</p></div></div><div class="v006-settings"><div class="v006-setting"><div><b>Тема</b><span>Темна / Світла</span></div><div><button class="v006-btn" onclick="gToggleTheme()">Темна</button> <button class="v006-btn" onclick="gToggleTheme()">Світла</button></div></div><div class="v006-setting"><div><b>Мова інтерфейсу</b><span>Українська</span></div><span>UA ›</span></div><div class="v006-setting"><div><b>Нотифікації</b><span>Щоденні нагадування</span></div><div class="v006-switch on" onclick="this.classList.toggle('on')"><i></i></div></div><div class="v006-setting"><div><b>Звук</b><span>Music + SFX + Voice</span></div><div class="v006-switch on" onclick="toggleAudioMute();this.classList.toggle('on')"><i></i></div></div><div class="v006-setting"><div><b>Щоденна ціль</b><span>20 карток</span></div><span>20</span></div><div class="v006-setting"><div><b>Резервне копіювання</b><span>Google Drive-ready flow</span></div><span>›</span></div><div class="v006-setting"><div><b>Про гру</b><span>GESTALT • HTML / CSS / JS • Offline</span></div><span>v0.006</span></div></div></section>
 
   </main>
-
-  <aside class="g-right-rail" style="padding:18px 16px 24px 0">
-    <div class="g-panel" style="padding:14px;position:sticky;top:18px">
-      <div class="g-profile" style="margin-bottom:12px">
-        <div class="g-avatar" id="hero-chibi-container"></div>
-        <div style="flex:1"><div class="small">Рівень <span id="hero-lvl-badge">1</span></div><strong id="hero-title">Wanderer</strong><div class="g-progress"><i id="hero-xp-bar"></i></div></div>
-        <div style="font-size:9px;color:#71858b">⚔ <b id="total-atk-text" style="color:#d6bb7b">10</b></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px">
-        <div class="g-statbox"><div class="lbl">СЕРІЯ</div><div class="val" id="g-side-streak">0</div></div>
-        <div class="g-statbox"><div class="lbl">ДО ПОВТОРЕННЯ</div><div class="val" id="g-side-due">0</div></div>
-      </div>
-      <div class="g-panel" style="padding:12px;margin-bottom:10px"><div class="g-panel-head" style="padding:0 0 9px"><div><h3>Картка дня</h3><span id="g-side-card-label">Wunder</span></div></div><div style="font:700 24px Georgia,serif;color:#eee3c9" id="g-side-word">Wunder</div><div style="font-size:10px;color:#71858b;margin-top:5px" id="g-side-meaning">Диво, чудо</div><div class="g-progress" style="margin-top:10px"><i id="g-side-cardbar" style="width:64%"></i></div></div>
-      <button class="g-btn gold" style="width:100%;margin-bottom:10px" onclick="gNav('dice')">Запустити Dice Battle</button>
-      <div style="font-size:9px;color:#6f8187;line-height:1.6">Знання слова дає атаці bonus. Mastered word дає постійний прогрес.</div>
+  <aside class="v006-right"><div class="v006-right-inner">
+    <div class="v006-card">
+      <div class="v006-profile"><div class="v006-avatar" id="hero-chibi-container"></div><div style="flex:1"><b id="hero-title">Wanderer</b><span>Рівень <span id="hero-lvl-badge">1</span> • <span id="hero-xp-side">0</span> / 100 XP</span><div class="v006-statbar" style="margin-top:5px"><i id="hero-xp-bar"></i></div></div></div>
+      <div class="v006-stat-grid"><div class="v006-stat"><small>СЕРІЯ</small><strong id="g-side-streak">0</strong></div><div class="v006-stat"><small>ДО ПОВТОРЕННЯ</small><strong id="g-side-due">0</strong></div></div>
+      <div class="v006-panel"><div style="font-size:8px;color:#74878d;letter-spacing:.1em">КАРТКА ДНЯ</div><div style="font:700 22px Georgia,serif;color:#efe8d7;margin-top:6px" id="g-side-word">Wunder</div><div style="font-size:9px;color:#74878d;margin-top:4px" id="g-side-meaning">Диво, чудо</div><div class="v006-statbar" style="margin-top:8px"><i id="g-side-cardbar" style="width:64%"></i></div></div>
+      <button class="v006-btn gold" style="width:calc(100% - 20px);margin:10px" onclick="gNav('dice')">Запустити Dice Battle</button>
     </div>
-  </aside>
+  </div></aside>
 </div>
-
-<nav class="g-bottom-nav">
-  <button data-screen="dashboard" onclick="gNav('dashboard')" class="active"><i>⌂</i>Головна</button>
-  <button data-screen="cards" onclick="gNav('cards')"><i>▣</i>Слова</button>
-  <button data-screen="dice" onclick="gNav('dice')"><i>◉</i>Dice</button>
-  <button data-screen="quests" onclick="gNav('quests')"><i>◇</i>Квести</button>
-  <button data-screen="profile" onclick="gNav('profile')"><i>◌</i>Профіль</button>
+<nav class="v006-bottom">
+  <button data-screen="dashboard" onclick="gNav('dashboard')" class="active"><b>⌂</b>Головна</button>
+  <button data-screen="words" onclick="gNav('words')"><b>▣</b>Слова</button>
+  <button data-screen="anki" onclick="gNav('anki')"><b>▤</b>Картки</button>
+  <button data-screen="dice" onclick="gNav('dice')"><b>◉</b>Dice</button>
+  <button data-screen="profile" onclick="gNav('profile')"><b>◌</b>Профіль</button>
 </nav>
-
 <div id="toast-container"></div>
-<div id="dd-help-modal" class="fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-4 opacity-0 pointer-events-none">
-  <div class="g-panel" style="max-width:420px;width:100%;padding:18px"><div style="font:700 18px Georgia,serif;color:#e7d5ae">Як грати в Random Dice</div><p style="font-size:11px;color:#809198;line-height:1.6">ROLL створює кубики. Два однакових рівня → MERGE. START WAVE починає бій. Під час бою відповідай на питання німецькою: правильна відповідь заряджає Language Power.</p><div style="display:flex;gap:7px;margin-top:12px"><button class="g-btn gold" onclick="ddCloseHowToPlay()">Зрозуміло</button></div></div>
+<div class="compat" id="v006-legacy-mirror">
+<span id="g-page-title"></span><span id="g-page-subtitle"></span>
+<span id="g-feature-word"></span><span id="g-feature-grammar"></span><span id="g-feature-meaning"></span><span id="g-feature-example"></span>
+<span id="g-upgrade-rarity"></span><span id="g-upgrade-word"></span><span id="g-upgrade-stars"></span><span id="g-card-level"></span><span id="g-card-xpbar"></span><span id="g-bonus-xp"></span><span id="g-bonus-gold"></span><span id="g-bonus-dice"></span><span id="g-upgrade-cost">750</span>
+<span id="g-side-card-label"></span><span id="g-side-word"></span><span id="g-side-meaning"></span><span id="g-side-cardbar"></span><span id="g-recommendation"></span>
 </div>
-<div id="dd-toast" class="fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-5 bg-[#132028] text-[#e7d19f] border border-[#7d693e] px-4 py-2 rounded-lg text-xs z-[100] opacity-0 pointer-events-none"></div>
-
 <!-- Hidden compatibility surface for legacy systems -->
 <div class="compat" id="legacy-compat"><div id="card-inner"></div><div id="enemy-box"></div><span id="enemy-name-text"></span><span id="enemy-hp-text"></span><div id="monster-chibi-svg"></div><div id="modal-key-icon"></div><div id="modal-key-name"></div><div id="modal-key-chance"></div><div id="dq-battle-modal"></div><div id="dq-battle-board"></div><div id="dq-battle-hp"></div><div id="dq-battle-hpbar"></div><div id="dq-battle-options"></div><div id="dq-battle-prompt"></div><div id="dq-battle-result"></div><div id="dq-battle-wave"></div><div id="dq-battle-word"></div><div id="tab-dashboard"></div>
   <span id="gold-amount-text"></span><span id="current-hero-class-name">Wanderer</span><span id="trophy-count-badge"></span><span id="hero-level-label"></span><span id="hero-streak-label"></span>
   <span id="hero-xp-bar-compat"></span><div id="key-icon-container"></div><span id="key-name-text"></span><button id="open-chest-btn"></button>
   <span id="trophy-count-badge"></span><div id="pity-counter-text"></div>
   <div id="heroes-modal-content"></div><div id="achievements-modal-content"></div><div id="cube-slot-0"></div><div id="cube-slot-1"></div><div id="cube-slot-2"></div><div id="cube-slot-3"></div><div id="cube-slot-4"></div><div id="cube-slot-5"></div><div id="cube-slot-6"></div><div id="cube-slot-7"></div><div id="cube-slot-8"></div><div id="profile-content"></div><div id="skills-content"></div><div id="boss-content"></div><div id="dialogues-content"></div><div id="quiz-content"></div><div id="dictation-content"></div><div id="sentence-content"></div><div id="verbs-content"></div><div id="article-content"></div><div id="match-content"></div><div id="speedrush-content"></div><div id="leitner-content"></div><div id="leitner-actions"></div><div id="leitner-back-section"></div>
-  <input id="compact-search-input"><div id="compact-words-grid"></div><div id="game-view-container"></div><div id="flashcard-inner"></div><div id="card-bookmark-btn"></div><div id="card-emoji"></div><div id="card-german"></div><div id="card-grammar"></div><div id="card-ukrainian"></div><div id="card-hint"></div><div id="card-rarity-badge"></div><div id="mode-compact-btn"></div><div id="mode-game-btn"></div>
+  <span id="card-german"></span><span id="card-grammar"></span><span id="card-ukrainian"></span><span id="card-hint"></span><span id="card-back-grammar"></span><span id="theme-progress-text"></span><span id="card-rarity-badge"></span><span id="card-emoji"></span><div id="flashcard-inner"></div><input id="compact-search-input"><div id="compact-words-grid"></div><div id="game-view-container"></div><div id="flashcard-inner"></div><div id="card-bookmark-btn"></div><div id="card-emoji"></div><div id="card-german"></div><div id="card-grammar"></div><div id="card-ukrainian"></div><div id="card-hint"></div><div id="card-rarity-badge"></div><div id="mode-compact-btn"></div><div id="mode-game-btn"></div>
   <span id="stat-bookmarks"></span><span id="stat-level"></span><span id="stat-mastered-count"></span><span id="stat-streak-count"></span><span id="stat-xp"></span><span id="theme-progress-text"></span><span id="volume-val-label"></span><span id="sound-icon"></span><button id="sound-autospeak-btn"></button><button id="sound-master-btn"></button><button id="sound-master-btn-header"></button><button id="sound-rate-btn"></button><button id="soul-hack-btn"></button>
 </div>
 
@@ -1843,6 +1682,51 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
   window.updateUI=function(){try{oldUpdate&&oldUpdate()}catch(e){};syncHeroUI();syncStats();}
   window.gNav=gNav;window.gSpeakFeatured=gSpeakFeatured;window.gReview=gReview;window.gHard=gHard;window.gEasy=gEasy;window.gUpgradeCard=gUpgradeCard;window.gWorldToast=gWorldToast;window.gShop=gShop;window.gToggleMotion=gToggleMotion;window.gToggleTheme=gToggleTheme;
   setTimeout(()=>{try{updateUI()}catch(e){};try{syncStats()}catch(e){};gNav('dashboard')},150);
+})();
+</script>
+
+<script>
+(() => {
+  const titles={
+    dashboard:['1. ГОЛОВНА','Твій прогрес та світ гри'], words:['2. ВИВЧЕННЯ СЛІВ','Додавай слова та вчи їх'], anki:['3. КАРТКИ (ANKI)','Інтелектуальна система повторення (SRS)'],
+    dice:['4. RANDOM DICE','Кинь кубик і отримуй випадкову карту для тренування та бонусів'], upgrade:['5. ПРОКАЧКА КАРТ','Прокачуй картки та заробляй більше нагород'], rpg:['6. RPG ПРОГРЕС','Прокачуй героя та отримуй нагороди'],
+    quests:['7. КВЕСТИ','Виконуй квести та отримуй досвід і нагороди'], shop:['8. МАГАЗИН','Купуй підсилення, теми та корисні речі'], stats:['9. СТАТИСТИКА','Детальна статистика твого прогресу'],
+    worlds:['10. СВІТИ','Відкривай нові світи та рівні'], profile:['11. ПРОФІЛЬ','Твій профіль та досягнення'], settings:['12. НАЛАШТУВАННЯ','Налаштуй гру під себе']
+  };
+  const screens=Object.keys(titles);
+  let ankiWord=null;
+  function m(){try{return JSON.parse(localStorage.getItem(typeof DQ_SAVE_KEY!=='undefined'?DQ_SAVE_KEY:'deutsch_quest_v005_meta')||'{}')}catch(e){return {mastery:{},review:{},daily:{},streak:0}}}
+  function safeWords(){return Array.isArray(window.masterVocabulary)?window.masterVocabulary:(typeof masterVocabulary!=='undefined'?masterVocabulary:[])}
+  function pick(){try{return typeof dqPickWord==='function'?dqPickWord():safeWords()[0]}catch(e){return safeWords()[0]}}
+  function sync(){
+    const meta=m(), mastery=meta.mastery||{}, words=safeWords(); const values=Object.values(mastery).map(Number); const mastered=values.filter(v=>v>=5).length; const learning=values.filter(v=>v>0&&v<5).length; const fresh=Math.max(0,words.length-mastered-learning); const due=typeof dqDueCount==='function'?dqDueCount():0;
+    const streak=Number(meta.streak||0);
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+    set('g-total-words',words.length);set('g-mastered-words',mastered);set('g-learning-words',learning);set('g-new-words',fresh);set('g-due',due);set('g-side-due',due);set('g-side-streak',streak);set('g-home-streak',streak);set('g-anki-total',words.length);set('g-anki-learned',mastered);set('g-anki-streak',streak+' днів');set('g-rpg-streak',streak);set('g-profile-streak',streak);set('g-stats-mastered',mastered);set('g-stats-streak',streak);set('g-rpg-mastered',mastered);set('g-rpg-cards',words.length);set('g-gold',state?.gold||0);set('g-energy',5);set('g-gems',0);set('g-home-level',state?.heroLvl||1);set('g-home-xp',state?.heroXp||0);set('g-profile-level',state?.heroLvl||1);set('g-profile-xp',state?.heroXp||0);set('g-rpg-level',state?.heroLvl||1);set('g-rpg-xp',state?.heroXp||0);set('g-hero-xp-side',state?.heroXp||0);
+    const xpPct=Math.min(100,(state?.heroXp||0)/Math.max(1,(state?.heroLvl||1)*100)*100); document.getElementById('hero-xp-bar')?.style && (document.getElementById('hero-xp-bar').style.width=xpPct+'%'); document.getElementById('g-rpg-xpbar')?.style && (document.getElementById('g-rpg-xpbar').style.width=xpPct+'%');
+    try{const av=getHeroSVG(state.heroClass); ['hero-chibi-container','g-profile-avatar','g-rpg-avatar','g-home-avatar'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=av;}); document.getElementById('hero-title').textContent=(HERO_CLASSES?.[state.heroClass]?.name)||'Wanderer'; document.getElementById('hero-lvl-badge').textContent=state.heroLvl||1;}catch(e){}
+    const p=pick(); if(p){fillAnki(p); const side=document.getElementById('g-side-word'); if(side)side.textContent=p.german; const sm=document.getElementById('g-side-meaning'); if(sm)sm.textContent=p.ukrainian; const bar=document.getElementById('g-side-cardbar'); if(bar)bar.style.width=(Math.max(1,Number(mastery[p.german]||0))/5*100)+'%';}
+    renderWords();
+  }
+  function fillAnki(w){ ankiWord=w||pick(); if(!ankiWord)return; setTxt('g-anki-front',ankiWord.german);setTxt('g-anki-phon',ankiWord.grammar||'Deutsch');setTxt('g-anki-back',ankiWord.ukrainian||'');setTxt('g-anki-ex',ankiWord.sentence?ankiWord.sentence+'\n'+(ankiWord.sentenceTranslation||''): ''); }
+  function setTxt(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+  function renderWords(){const box=document.getElementById('g-word-list'); if(!box)return; const q=(document.getElementById('g-word-search')?.value||'').toLowerCase().trim(); const meta=m(); const list=safeWords().filter(w=>!q||w.german.toLowerCase().includes(q)||w.ukrainian.toLowerCase().includes(q)).slice(0,120); box.innerHTML=list.map(w=>{const lvl=Number(meta.mastery?.[w.german]||0);const due=Number(meta.review?.[w.german]||0)<=Date.now();return `<button class="v006-word-row" onclick="gUseWord('${String(w.german).replace(/'/g,"\\'")}')"><div><b>${w.german}</b><span>${w.ukrainian}</span></div><div class="m">${'★'.repeat(lvl)}${'☆'.repeat(5-lvl)}${due?' · due':''}</div></button>`}).join('') || '<div style="padding:20px;color:#74878d;font-size:10px">Нічого не знайдено.</div>'; }
+  window.gUseWord=(g)=>{const w=safeWords().find(x=>x.german===g);if(w){ankiWord=w;fillAnki(w);gNav('anki')}};
+  window.gClearWordSearch=()=>{const e=document.getElementById('g-word-search');if(e)e.value='';renderWords()};
+  window.gAddWord=()=>{const german=document.getElementById('g-add-word')?.value.trim();const ukrainian=document.getElementById('g-add-meaning')?.value.trim();const sentence=document.getElementById('g-add-example')?.value.trim();if(!german||!ukrainian){gWorldToast('Введи слово і переклад');return} const newWord={german,ukrainian,grammar:'Nomen, n.',sentence:sentence||'Das ist ein neues Wort.',emoji:'📘',rarity:'нове'}; try{window.customGESTALTWords=window.customGESTALTWords||JSON.parse(localStorage.getItem('gestalt_custom_words')||'[]');window.customGESTALTWords.push(newWord);localStorage.setItem('gestalt_custom_words',JSON.stringify(window.customGESTALTWords));window.masterVocabulary=[...safeWords(),newWord]}catch(e){} ['g-add-word','g-add-meaning','g-add-example'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});sync();gWorldToast('Слово додано в колекцію')};
+  window.gAnkiShuffle=()=>{fillAnki(pick());gWorldToast('Нова картка')};
+  window.gSpeakAnki=()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(ankiWord?.german||'');u.lang='de-DE';speechSynthesis.speak(u)}catch(e){}};
+  window.gAnkiRate=(rating)=>{if(!ankiWord)return; try{if(typeof dqSetMastery==='function'){const ok=rating>=2; dqSetMastery(ankiWord.german,ok)} else {const meta=m();meta.mastery=meta.mastery||{};const old=Number(meta.mastery[ankiWord.german]||0);meta.mastery[ankiWord.german]=Math.max(0,Math.min(5,old+(rating>=2?1:-1)));localStorage.setItem('deutsch_quest_v005_meta',JSON.stringify(meta));} if(typeof grantRpgReward==='function')grantRpgReward(rating===5?12:rating===4?8:rating===2?5:2,rating>=2?2:0); sync();gWorldToast(rating>=2?'Картку оцінено — прогрес збережено':'Повернули картку в цикл повторення')}catch(e){gWorldToast('Не вдалося зберегти оцінку')}};
+  window.gContinueJourney=()=>gNav('anki');
+  window.gNav=(screen)=>{if(!titles[screen])screen='dashboard'; screens.forEach(s=>document.getElementById('sec-'+s)?.classList.remove('active')); document.getElementById('sec-'+screen)?.classList.add('active'); document.querySelectorAll('[data-screen]').forEach(b=>b.classList.toggle('active',b.dataset.screen===screen)); const t=titles[screen]; setTxt('g-page-title',t[0]);setTxt('g-page-subtitle',t[1]); if(screen==='dice'){try{buildWave();render()}catch(e){}} if(screen==='anki')fillAnki(ankiWord||pick()); if(screen==='words')renderWords(); window.scrollTo({top:0,behavior:'smooth'}); sync();};
+  window.gWorldToast=(msg)=>{const t=document.getElementById('dd-toast');if(t){t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',1600)} else if(window.showToast)showToast(msg)};
+  window.gUpgradeCard=window.gUpgradeCard||function(){gWorldToast('Картка покращена')};
+  window.gToggleMotion=window.gToggleMotion||function(){document.documentElement.classList.toggle('reduced-motion');gWorldToast('Motion mode змінено')};
+  window.gToggleTheme=window.gToggleTheme||function(){document.documentElement.classList.toggle('light-theme');gWorldToast('Тему змінено')};
+  window.gShop=window.gShop||function(name){const cost=name==='Преміум'?500:name==='Бонус Dice'?100:name==='Захист помилки'?200:250;if((state?.gold||0)>=cost){state.gold-=cost;try{persistRpgState();}catch(e){}sync();gWorldToast(name+' придбано')}else gWorldToast('Недостатньо монет')};
+  const oldUpdate=window.updateUI; window.updateUI=function(){try{oldUpdate&&oldUpdate()}catch(e){} sync()};
+  window.gRenderWordList=renderWords;
+  document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{try{const custom=JSON.parse(localStorage.getItem('gestalt_custom_words')||'[]');if(custom.length&&Array.isArray(window.masterVocabulary))window.masterVocabulary=[...window.masterVocabulary,...custom]}catch(e){} gNav('dashboard')},220)});
 })();
 </script>
 </body>

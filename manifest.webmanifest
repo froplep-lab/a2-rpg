@@ -6,7 +6,7 @@
   "background_color": "#061017",
   "theme_color": "#0a171d",
   "lang": "uk",
-  "description": "Німецька A2/B1 у форматі гри: картки, квести, діалоги, диктант, артиклі та RPG.",
+  "description": "GESTALT: німецька A2/B1 як RPG — слова, Anki/SRS, Random Dice, прокачка карт, квести, світи та профіль.",
   "icons": [
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%2307111f'/><text x='50%25' y='56%25' text-anchor='middle' font-size='180' font-family='Arial' font-weight='900' fill='%2345c8ff'>DE</text></svg>",

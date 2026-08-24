@@ -1,45 +1,41 @@
-# GESTALT — Deutsch Quest / DE B1 RPG v0.005
+# GESTALT — Deutsch Quest / DE B1 RPG v0.006
 
-## What changed
-- Bugfix pass for storage persistence, spaced-repetition target selection, Dice wave lifecycle, stale quiz answers and XP/level rewards.
-- New GESTALT visual shell inspired by the supplied reference: dark teal/forest fantasy + restrained gold UI.
-- Responsive desktop 3-column layout and mobile bottom navigation.
-- Learning dashboard with word statistics, streak, recommendation, quests and card-upgrade panel.
-- Random Dice Arena retained and restyled to the new GESTALT identity.
-- Existing vocabulary, RPG progression, mastery, spaced repetition, audio and inventory systems preserved.
-- Existing save data remains in localStorage; no destructive migration was introduced.
-- Legacy UI IDs are kept in a compatibility surface so older systems continue to function.
+## Update focus
+- Rebuilt the visible product shell around the supplied GESTALT reference: 12 primary screens with the same information hierarchy and navigation concept.
+- Removed the old visible tavern/legacy screen set from the product flow; legacy modules remain only as hidden compatibility/runtime support where needed.
+- Added dedicated screens for Words, Anki/SRS, Random Dice, Card Upgrade, RPG Progress, Quests, Shop, Statistics, Worlds, Profile and Settings.
+- Home is now a world-map style journey screen with landmark navigation to the core systems.
+- Mobile-first bottom navigation and desktop left navigation mirror the reference information architecture.
+- Added functional word search and session-persistent custom-word entry.
+- Added functional Anki rating buttons connected to the existing mastery/SRS storage.
+- Preserved the existing 287-word vocabulary, Dice Arena, RPG progression, audio, quests and local-save systems.
+- Existing storage keys were not destructively reset.
 
 ## Run
-Open `index.html` in a modern browser. For best results use a local static server.
-
-## Controls
-Dashboard: word review and progression.
-Cards: flashcard / Anki-style recall.
-Dice: Roll → Spawn → Merge → Wave → Language Power.
-Quests: daily progression.
-Profile: hero and progress.
-Settings: audio / theme / compatibility.
+Open `index.html` in a modern browser or serve the folder with a static HTTP server.
 
 ## QA
-- Static JavaScript syntax checks performed on inline scripts and project JS modules.
-- JSON validation performed for project data files.
-- ZIP integrity verified.
-- Real physical iPhone / Android hardware test was not performed.
+- All project JavaScript modules pass `node --check`.
+- All inline JavaScript blocks pass `node --check`.
+- `data/words.json` parses successfully (287 entries).
+- HTTP static-server smoke check returned 200 for `index.html`.
+- Chromium headless runtime still hangs in this sandbox, so no claim of full browser/device QA is made.
 
-## v0.005 bug fixes
-- Migrated Dice and learning meta storage to v0.005 while preserving v0.002/v0.003 data.
-- Fixed wrong-word mastery updates in the compact Language Battle.
-- Fixed stale answer buttons after a timed-out Dice question.
-- Added real base damage / game-over flow in Dice Arena.
-- Added completed-run state so a finished 10-wave run cannot restart accidentally.
-- XP and coins from Dice, review, quests and shop now persist through the legacy RPG save path.
-- Fixed light-theme and reduced-motion toggles so they have visible effect.
-- Fixed stale page/version labels.
+## v0.006 changelog
+### Added
+- Reference-aligned 12-screen GESTALT information architecture.
+- Home world-map journey UI.
+- Dedicated Words screen with add/search/collection.
+- Dedicated Anki/SRS screen and four grading actions.
+- Card upgrade, RPG progress, stats, worlds, profile and settings screens.
 
-## QA status
-- All project JS files pass `node --check`.
-- Inline JavaScript extracted from `index.html` passes `node --check`.
-- `data/words.json` parses successfully.
-- Import/export graph was checked and legacy modules were patched for missing exports.
-- Chromium headless runtime smoke-test could not complete in the sandbox because the browser process hung; no claim of full browser/device QA is made.
+### Changed
+- Removed the old tavern-style visible UI from the normal product path.
+- Simplified navigation to the systems shown in the supplied reference.
+- Restyled mobile navigation and desktop navigation to the same product hierarchy.
+
+### Preserved
+- Existing vocabulary and learning data.
+- Dice Arena battle logic.
+- Mastery and spaced repetition storage.
+- Existing RPG rewards, quests and audio systems.
