@@ -1,3 +1,5 @@
+const APP_VERSION = "v1.6.4";
+
 const AudioEngine = {
     ctx: null,
     muted: localStorage.getItem('a2_muted') === 'true',
@@ -221,6 +223,10 @@ function updateHeroUI() {
     const petEl = document.getElementById("pet-display");
     if (petEl) petEl.innerText = hero.pet;
     
+    // Автоматично оновлюємо версію в інтерфейсі, якщо такий елемент є
+    const verEl = document.getElementById("app-version-badge");
+    if (verEl) verEl.innerText = APP_VERSION;
+    
     const pct = Math.min(100, (hero.xp / hero.maxXp) * 100);
     const xpBar = document.getElementById("hero-xp-bar");
     if (xpBar) xpBar.style.width = `${pct}%`;
@@ -375,13 +381,12 @@ function speakWord(e) {
     }
 }
 
-// НАДІЙНИЙ ГІБРИДНИЙ РУШІЙ ОЗВУЧКИ З ПРИМУСОВИМ НІМЕЦЬКИМ ГОЛОСОМ
+// 100% НАДІЙНИЙ ГІБРИДНИЙ РУШІЙ ОЗВУЧКИ З ПРИМУСОВИМ НІМЕЦЬКИМ ГОЛОСОМ
 function speakCompactWord(wordStr) {
     let cleanText = wordStr.split('/')[0];
     cleanText = cleanText.split(',')[0];
     cleanText = cleanText.replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
     
-    // Спочатку пробуємо вбудований Web Speech API з точним пошуком німецького голосу
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -399,7 +404,6 @@ function speakCompactWord(wordStr) {
         
         window.speechSynthesis.speak(utterance);
         
-        // Якщо голоси ще не завантажилися, дублюємо через Google TTS у фоні для надійності на телефоні
         if (!germanVoice && voices.length === 0) {
             playGoogleTts(cleanText);
         }
@@ -912,7 +916,7 @@ function openInventoryModal() {
     const modal = document.getElementById("inventory-modal");
     if (modal) modal.classList.remove("opacity-0", "pointer-events-none");
     const box = document.getElementById("inventory-box");
-    if (box) box.classList.remove("scale-95");
+    if (box) box.classList.add("scale-95");
 }
 
 function closeInventoryModal() {
@@ -922,7 +926,6 @@ function closeInventoryModal() {
     if (box) box.classList.add("scale-95");
 }
 
-// ФУНКЦІЯ СКИДАННЯ ПРОГРЕСУ ТА КЕШУ
 function resetProgress() {
     if (confirm("⚠️ Увага! Ти дійсно хочеш скинути весь свій прогрес, рівень та зламані душі?")) {
         AudioEngine.play('error');
