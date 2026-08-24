@@ -1,7 +1,7 @@
 {
   "name": "GESTALT — Deutsch Quest",
   "short_name": "GESTALT",
-  "start_url": "./",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#061017",
   "theme_color": "#0a171d",
