@@ -2,139 +2,127 @@
 <html lang="de" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>А2: RPG Studio (Telegram Edition)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>А2: RPG Studio</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="min-h-screen flex flex-col justify-between p-3 sm:p-6 max-w-6xl mx-auto antialiased select-none">
+<body class="min-h-screen flex flex-col justify-between p-3 sm:p-5 max-w-5xl mx-auto antialiased select-none">
 
     <!-- HEADER / NAVIGATION -->
-    <header class="w-full pt-1 pb-3">
-        <div class="flex items-center justify-between mb-3">
+    <header class="w-full pt-1 pb-3 gpu-accel">
+        <div class="flex items-center justify-between mb-4">
             <div>
-                <h1 id="main-title" class="text-xl sm:text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-pink-500 uppercase">
-                    ⚡ А2: RPG Studio
+                <h1 id="main-title" class="text-xl sm:text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-pink-500 uppercase drop-shadow-sm">
+                    ⚡ DE B1: RPG Studio
                 </h1>
-                <span id="app-version-badge" class="text-[10px] text-pink-400 font-bold tracking-widest bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/30 inline-block mt-1">
-                    v1.6.5 (Universal Neural Audio) 🔊
+                <span id="app-version-badge" class="text-[10px] text-pink-400 font-black tracking-widest bg-pink-900/30 px-2 py-0.5 rounded border border-pink-500/40 inline-block mt-1">
+                    v2.0.0 (Next-Gen)
                 </span>
             </div>
             <div class="flex items-center gap-1.5 flex-wrap justify-end">
-                <button onclick="openAchievementsModal()" class="interactive-btn bg-slate-900 text-yellow-300 px-3 py-2 rounded-xl border border-yellow-500/30 text-xs font-bold flex items-center gap-1.5">
-                    <i class="fa-solid fa-trophy"></i> <span>Місії</span> <span id="ach-count-badge" class="bg-yellow-500/20 text-yellow-300 text-[10px] px-1 py-0.5 rounded-md font-extrabold">0/5</span>
+                <button onclick="openAchievementsModal()" class="interactive-btn glass-panel text-yellow-400 px-3 py-2.5 rounded-xl border border-yellow-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
+                    <i class="fa-solid fa-trophy"></i> <span id="ach-count-badge" class="bg-yellow-500/20 text-yellow-300 text-[10px] px-1.5 py-0.5 rounded font-black">0/5</span>
                 </button>
-                <button onclick="openInventoryModal()" class="interactive-btn bg-slate-900 text-cyan-300 px-3 py-2 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-1.5">
-                    <i class="fa-solid fa-microchip text-pink-500"></i> <span>Сховище</span> <span id="inv-count-badge" class="bg-pink-500/20 text-cyan-300 text-[10px] px-1 py-0.5 rounded-md font-extrabold">0</span>
+                <button onclick="openInventoryModal()" class="interactive-btn glass-panel text-cyan-300 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
+                    <i class="fa-solid fa-microchip text-pink-500"></i> <span id="inv-count-badge" class="bg-pink-500/20 text-cyan-300 text-[10px] px-1.5 py-0.5 rounded font-black">0</span>
                 </button>
-                <button onclick="openWordBrowser()" class="interactive-btn bg-slate-900 text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs" title="Пошук слів">
-                    <i class="fa-solid fa-terminal text-cyan-400"></i>
-                </button>
-                <button onclick="openSoundSettingsModal()" class="interactive-btn bg-slate-900 text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs" title="Звук">
-                    <i id="sound-icon" class="fa-solid fa-volume-high text-cyan-400"></i>
-                </button>
-                <button onclick="resetAllProgress()" class="interactive-btn bg-slate-900 text-slate-400 hover:text-pink-400 p-2.5 rounded-xl border border-slate-800 text-xs" title="Скинути">
-                    <i class="fa-solid fa-power-off"></i>
-                </button>
+                <button onclick="openWordBrowser()" class="interactive-btn glass-panel text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs hover:bg-slate-800"><i class="fa-solid fa-terminal text-cyan-400"></i></button>
+                <button onclick="openSoundSettingsModal()" class="interactive-btn glass-panel text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs hover:bg-slate-800"><i id="sound-icon" class="fa-solid fa-volume-high text-cyan-400"></i></button>
             </div>
         </div>
 
         <!-- THEME BAR -->
-        <div class="flex items-center justify-between bg-slate-900 p-3 rounded-2xl border border-cyan-500/30 flex-wrap gap-2">
+        <div class="flex items-center justify-between glass-panel p-3 rounded-2xl border border-cyan-500/30 flex-wrap gap-2 shadow-lg">
             <div class="flex items-center gap-2">
-                <div class="interactive-btn bg-cyan-500/20 text-cyan-300 px-3.5 py-2 rounded-xl border border-cyan-500/40 text-xs font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-book-open text-pink-400"></i> А2: Тема 8 <span id="total-vocab-badge" class="text-pink-400">84 слова</span>
+                <div class="bg-cyan-900/30 text-cyan-300 px-4 py-2 rounded-xl border border-cyan-500/50 text-xs font-black flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-pink-400"></i> Тема 8 <span id="total-vocab-badge" class="text-pink-400 ml-1">84</span>
                 </div>
             </div>
-            <div class="flex items-center gap-1.5">
-                <button onclick="switchDisplayMode('game')" id="mode-game-btn" class="interactive-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-400 text-slate-950">Картки</button>
-                <button onclick="switchDisplayMode('compact')" id="mode-compact-btn" class="interactive-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 text-slate-300 border border-slate-800">Блок</button>
-                <button onclick="openMarathonModal()" class="interactive-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-500 text-white">🚀 Марафон</button>
+            <div class="flex items-center gap-2 bg-slate-900/50 p-1 rounded-xl border border-slate-700">
+                <button onclick="switchDisplayMode('game')" id="mode-game-btn" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-black bg-cyan-400 text-slate-950 shadow-md shadow-cyan-400/20">Картки</button>
+                <button onclick="switchDisplayMode('compact')" id="mode-compact-btn" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white">Блок</button>
+                <button onclick="openMarathonModal()" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/20 ml-1">🚀 БОС</button>
             </div>
         </div>
     </header>
 
     <!-- CYBER ARENA / BATTLE HUD -->
-    <div id="arena-box" class="w-full bg-slate-900 border border-cyan-500/30 rounded-3xl p-4 sm:p-5 my-2 relative overflow-hidden">
+    <div id="arena-box" class="w-full glass-panel border border-cyan-500/30 rounded-3xl p-5 my-2 relative overflow-hidden gpu-accel shadow-xl">
         <div class="flex items-center justify-between relative z-10">
             <!-- HERO STATS -->
-            <div class="flex items-center gap-3">
-                <div id="hero-avatar-box" class="w-14 h-14 sm:w-16 sm:h-16 relative flex items-center justify-center anim-hero">
+            <div class="flex items-center gap-4">
+                <div id="hero-avatar-box" class="w-16 h-16 sm:w-20 sm:h-20 relative flex items-center justify-center anim-hero drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">
                     <svg viewBox="0 0 100 100" class="w-full h-full stroke-cyan-400 fill-none stroke-[5] stroke-linecap-round stroke-linejoin-round" id="hero-svg">
-                        <circle cx="50" cy="22" r="12" class="fill-slate-950" />
-                        <path id="hero-visor" d="M38 20 Q50 12 62 20" class="stroke-pink-500 stroke-[3] hidden" />
+                        <circle cx="50" cy="22" r="12" class="fill-slate-900" />
+                        <path id="hero-visor" d="M38 20 Q50 12 62 20" class="stroke-pink-500 stroke-[3.5] hidden drop-shadow-[0_0_5px_rgba(236,72,153,1)]" />
                         <line x1="50" y1="34" x2="50" y2="70" />
                         <line x1="50" y1="44" x2="26" y2="54" />
                         <line x1="50" y1="44" x2="74" y2="38" />
-                        <line id="hero-weapon-line" x1="74" y1="38" x2="94" y2="30" class="stroke-pink-500 stroke-[4.5]" />
+                        <line id="hero-weapon-line" x1="74" y1="38" x2="94" y2="30" class="stroke-pink-500 stroke-[5] drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]" />
                         <line x1="50" y1="70" x2="34" y2="92" />
                         <line x1="50" y1="70" x2="66" y2="92" />
                     </svg>
                 </div>
                 <div>
-                    <div class="flex items-center gap-2">
-                        <span id="hero-level-badge" class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-md font-bold border border-cyan-500/40">LVL 1</span>
-                        <span id="hero-class-label" class="text-xs sm:text-sm font-black text-white">Cyber-Runner</span>
-                        <span id="pet-display" class="text-base">🐲</span>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span id="hero-level-badge" class="text-[10px] bg-cyan-900/40 text-cyan-300 px-2.5 py-0.5 rounded-md font-black border border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.2)]">LVL 1</span>
+                        <span id="hero-class-label" class="text-sm font-black text-white tracking-wide">Cyber-Runner</span>
+                        <span id="pet-display" class="text-lg drop-shadow-md">🐲</span>
                     </div>
-                    <div class="w-32 sm:w-44 bg-slate-950 h-2 rounded-full overflow-hidden border border-cyan-500/20 mt-1.5">
-                        <div id="hero-xp-bar" class="bg-gradient-to-r from-cyan-400 to-pink-500 h-full transition-all duration-300" style="width: 0%"></div>
+                    <div class="w-36 sm:w-48 bg-slate-950 h-2.5 rounded-full overflow-hidden border border-cyan-500/30 shadow-inner">
+                        <div id="hero-xp-bar" class="bg-gradient-to-r from-cyan-400 to-pink-500 h-full transition-all duration-500 ease-out" style="width: 0%"></div>
                     </div>
-                    <div id="hero-xp-text" class="text-[10px] text-slate-400 font-medium mt-0.5">XP: 0 / 100</div>
+                    <div id="hero-xp-text" class="text-[10px] text-cyan-400/70 font-bold mt-1 tracking-wider">XP: 0 / 100</div>
                 </div>
             </div>
 
-            <!-- STREET SLANG / COMBO -->
-            <div class="flex flex-col items-center justify-center px-1">
-                <span class="text-[10px] font-black text-pink-400 tracking-wider">COMBO</span>
-                <span id="combo-badge" class="text-xs sm:text-sm font-black text-white bg-pink-500/20 px-2.5 py-0.5 rounded-xl border border-pink-500/40 my-0.5">x1</span>
-                <span id="slang-hint" class="text-[10px] text-cyan-300 italic hidden sm:inline">"Bock drauf!"</span>
+            <div class="flex flex-col items-center justify-center px-2">
+                <span class="text-[10px] font-black text-pink-500 tracking-widest drop-shadow-[0_0_5px_rgba(236,72,153,0.5)]">COMBO</span>
+                <span id="combo-badge" class="text-sm font-black text-white bg-pink-600/30 px-3 py-0.5 rounded-xl border border-pink-500/50 my-1 shadow-[0_0_15px_rgba(236,72,153,0.3)]">x1</span>
+                <span id="slang-hint" class="text-[10px] text-cyan-300 italic hidden sm:inline opacity-80">"Bock drauf!"</span>
             </div>
 
             <!-- ENEMY / TARGET STATS -->
             <div class="flex flex-col items-end text-right">
-                <div class="text-[10px] text-slate-400 font-bold mb-1 flex items-center gap-1">
+                <div class="text-[10px] text-slate-400 font-bold mb-1.5 flex items-center gap-1.5">
                     <span>HP:</span> <span id="enemy-hp-text" class="text-pink-400 font-black text-xs">3000 / 3000</span>
                 </div>
-                <div class="w-32 sm:w-44 bg-slate-950 h-2 rounded-full overflow-hidden border border-pink-500/20 mb-1.5">
-                    <div id="enemy-hp-bar" class="bg-gradient-to-r from-pink-500 to-cyan-400 h-full transition-all duration-200" style="width: 100%"></div>
+                <div class="w-36 sm:w-48 bg-slate-950 h-2.5 rounded-full overflow-hidden border border-pink-500/30 shadow-inner mb-2.5">
+                    <div id="enemy-hp-bar" class="bg-gradient-to-l from-pink-500 to-purple-600 h-full transition-all duration-300 ease-out" style="width: 100%"></div>
                 </div>
-                <div id="enemy-container" onclick="attackEnemyClick()" class="interactive-btn cursor-pointer flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-pink-500/30 hover:border-cyan-400" title="Вдарити ворога!">
-                    <span id="battle-word-target" class="text-xs sm:text-sm font-black text-slate-200 truncate max-w-[90px] sm:max-w-[130px]">...</span>
-                    <span id="battle-emoji-target" class="text-2xl">👾</span>
+                <div id="enemy-container" onclick="attackEnemyClick()" class="interactive-btn cursor-pointer flex items-center gap-2 bg-slate-900/80 px-4 py-2 rounded-xl border border-pink-500/40 hover:border-cyan-400 hover:bg-slate-800 shadow-[0_0_15px_rgba(236,72,153,0.15)]">
+                    <span id="battle-word-target" class="text-sm font-black text-white truncate max-w-[90px] sm:max-w-[140px]">...</span>
+                    <span id="battle-emoji-target" class="text-2xl drop-shadow-md">👾</span>
                 </div>
             </div>
         </div>
 
-        <div class="mt-3 pt-2.5 border-t border-cyan-500/20 flex items-center justify-between">
-            <div class="flex items-center gap-2 text-xs text-cyan-400 font-medium">
-                <i class="fa-solid fa-shield-halved text-pink-500"></i> Трофеї: <span id="sub-trophies-count" class="font-bold text-white">0</span>
+        <div class="mt-4 pt-3 border-t border-cyan-500/20 flex items-center justify-between">
+            <div class="flex items-center gap-2 text-xs text-cyan-400 font-bold">
+                <i class="fa-solid fa-shield-halved text-pink-500"></i> Душі: <span id="sub-trophies-count" class="font-black text-white">0</span>
             </div>
-            <div class="flex items-center gap-1.5">
-                <span class="text-[10px] text-slate-400">Локація:</span>
-                <button onclick="cycleEnvironment()" id="env-btn" class="interactive-btn text-[10px] bg-slate-950 text-cyan-300 px-2.5 py-1 rounded-lg border border-cyan-500/30">🌆 Cyber Berlin</button>
+            <div class="flex items-center gap-2">
+                <button onclick="cycleEnvironment()" id="env-btn" class="interactive-btn text-[10px] font-bold bg-slate-900/80 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 hover:border-cyan-400">🌆 Cyber Berlin</button>
             </div>
         </div>
-        <div id="inline-trophies" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 bg-slate-950 p-2 rounded-xl border border-cyan-500/20 min-h-[44px] max-h-24 overflow-y-auto items-center mt-2"></div>
+        <div id="inline-trophies" class="grid grid-cols-6 sm:grid-cols-12 gap-2 glass-panel p-2.5 rounded-xl border border-cyan-500/20 min-h-[50px] max-h-24 overflow-y-auto items-center mt-3"></div>
     </div>
 
     <!-- MAIN INTERACTIVE SECTION -->
-    <main class="w-full flex-1 flex flex-col justify-between space-y-3 my-1">
+    <main class="w-full flex-1 flex flex-col justify-between space-y-3 my-1 gpu-accel">
         
         <!-- GAME VIEW (CARDS) -->
-        <div id="game-view-container" class="w-full flex flex-col space-y-3">
-            <div class="flex items-center justify-between bg-slate-900 border border-cyan-500/20 px-4 py-2.5 rounded-2xl text-xs">
+        <div id="game-view-container" class="w-full flex flex-col space-y-3 transition-opacity duration-300">
+            <div class="flex items-center justify-between glass-panel border border-cyan-500/20 px-5 py-3 rounded-2xl text-xs shadow-lg">
                 <div class="flex items-center gap-2">
-                    <span id="card-counter" class="font-bold text-cyan-400 text-sm">1 / 84</span>
-                    <span class="text-slate-600">|</span>
-                    <span id="block-badge" class="text-slate-300">Тема 8</span>
+                    <span id="card-counter" class="font-black text-cyan-400 text-sm tracking-wide">1 / 84</span>
                 </div>
-                
                 <div class="flex items-center gap-2">
-                    <button onclick="openMasteryTrial()" id="soul-hack-btn" class="interactive-btn bg-pink-500/20 hover:bg-pink-500/30 text-pink-300 px-3 py-2 rounded-xl border border-pink-500/40 text-xs font-bold flex items-center gap-1.5">
+                    <button onclick="openMasteryTrial()" id="soul-hack-btn" class="interactive-btn bg-pink-500/20 text-pink-300 px-4 py-2 rounded-xl border border-pink-500/40 text-xs font-bold flex items-center gap-2">
                         <i id="soul-hack-icon" class="fa-solid fa-bolt text-pink-400"></i>
                         <span id="soul-hack-label">Зламати душу</span>
                     </button>
@@ -143,193 +131,200 @@
 
             <!-- FLASHCARD VIEW -->
             <div id="view-cards" class="w-full">
-                <div class="w-full h-72 sm:h-88 perspective cursor-pointer group" onclick="flipCard()">
-                    <div id="card-inner" class="w-full h-full relative transform-style-3d cyber-card rounded-3xl shadow-xl">
+                <div class="w-full h-72 sm:h-96 perspective cursor-pointer group" onclick="flipCard()">
+                    <div id="card-inner" class="w-full h-full relative transform-style-3d cyber-card rounded-3xl">
                         
                         <!-- FRONT SIDE -->
-                        <div class="absolute inset-0 w-full h-full backface-hidden bg-slate-900 border border-cyan-500/30 rounded-3xl p-6 sm:p-8 flex flex-col justify-between items-center text-center">
+                        <div class="absolute inset-0 w-full h-full backface-hidden glass-panel border border-cyan-500/40 rounded-3xl p-6 sm:p-8 flex flex-col justify-between items-center text-center shadow-[0_15px_40px_rgba(6,182,212,0.15)]">
                             <div class="w-full flex justify-between items-center">
-                                <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2.5 py-1 rounded-lg font-semibold border border-cyan-500/30">DEUTSCH 🇩🇪</span>
-                                <button onclick="speakWord(event)" class="interactive-btn text-cyan-400 hover:text-pink-400 p-2 text-base"><i class="fa-solid fa-volume-high"></i></button>
+                                <span class="text-[10px] bg-cyan-900/40 text-cyan-400 px-3 py-1.5 rounded-lg font-black tracking-widest border border-cyan-500/30">DEUTSCH 🇩🇪</span>
+                                <button onclick="speakWord(event)" class="interactive-btn bg-slate-800 text-cyan-400 hover:text-white p-2.5 rounded-xl"><i class="fa-solid fa-volume-high"></i></button>
                             </div>
-                            <div class="my-auto">
-                                <div id="card-front-word" class="text-2xl sm:text-4xl font-black text-white mb-3 tracking-tight"></div>
-                                <div id="card-front-grammar" class="text-xs font-semibold text-pink-400 bg-pink-500/10 border border-pink-500/20 px-3 py-1.5 rounded-full inline-block"></div>
+                            <div class="my-auto w-full">
+                                <div id="card-front-word" class="text-3xl sm:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-md"></div>
+                                <div id="card-front-grammar" class="text-xs font-bold text-pink-400 bg-pink-900/30 border border-pink-500/40 px-4 py-1.5 rounded-full inline-block shadow-sm"></div>
                             </div>
-                            <div class="text-[10px] text-slate-400 flex items-center gap-1">
-                                <i class="fa-solid fa-hand-pointer text-[10px]"></i> Натисни для перевороту
+                            <div class="text-[10px] text-cyan-400/60 font-bold tracking-widest flex items-center gap-1.5 uppercase">
+                                <i class="fa-solid fa-hand-pointer"></i> ТАП ДЛЯ ПЕРЕКЛАДУ
                             </div>
                         </div>
 
                         <!-- BACK SIDE -->
-                        <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 flex flex-col justify-between items-center text-center">
+                        <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 glass-panel border border-emerald-500/40 rounded-3xl p-6 sm:p-8 flex flex-col justify-between items-center text-center shadow-[0_15px_40px_rgba(16,185,129,0.15)]">
                             <div class="w-full flex justify-between items-center">
-                                <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-lg font-semibold border border-emerald-500/20">ÜBERSETZUNG 🇺🇦</span>
-                                <span id="card-back-grammar-badge" class="text-xs text-slate-300"></span>
+                                <span class="text-[10px] bg-emerald-900/40 text-emerald-400 px-3 py-1.5 rounded-lg font-black tracking-widest border border-emerald-500/30">ÜBERSETZUNG 🇺🇦</span>
+                                <span id="card-back-grammar-badge" class="text-[10px] font-bold text-slate-400 bg-slate-800 px-3 py-1.5 rounded-lg"></span>
                             </div>
-                            <div class="my-auto space-y-3">
-                                <div id="card-back-emoji" class="text-4xl sm:text-5xl"></div>
-                                <div id="card-back-translation" class="text-2xl sm:text-4xl font-bold text-emerald-400 tracking-tight"></div>
-                                <div id="card-back-hint" class="text-xs sm:text-sm text-slate-300 italic"></div>
+                            <div class="my-auto space-y-4 w-full">
+                                <div id="card-back-emoji" class="text-5xl sm:text-6xl drop-shadow-lg"></div>
+                                <div id="card-back-translation" class="text-2xl sm:text-4xl font-black text-emerald-400 tracking-tight drop-shadow-sm"></div>
+                                <div id="card-back-hint" class="text-xs sm:text-sm text-slate-300 font-medium"></div>
                             </div>
-                            <div class="text-[10px] text-slate-400">Натисни для повернення</div>
+                            <div class="text-[10px] text-emerald-400/60 font-bold tracking-widest uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-rotate-left"></i> ПОВЕРНУТИ
+                            </div>
                         </div>
 
                     </div>
                 </div>
 
                 <!-- CARD CONTROLS -->
-                <div class="grid grid-cols-4 gap-2 mt-4">
-                    <button onclick="prevCard()" class="interactive-btn bg-slate-900 text-slate-200 py-3 rounded-2xl text-xs font-bold border border-cyan-500/20 flex flex-col items-center">
-                        <i class="fa-solid fa-arrow-left text-xs mb-0.5 text-cyan-400"></i> Назад
+                <div class="grid grid-cols-4 gap-2.5 mt-5">
+                    <button onclick="prevCard()" class="interactive-btn glass-panel text-slate-300 py-3.5 rounded-2xl text-xs font-bold border border-cyan-500/20 hover:border-cyan-400 flex flex-col items-center shadow-md">
+                        <i class="fa-solid fa-arrow-left text-sm mb-1 text-cyan-400"></i> НАЗАД
                     </button>
-                    <button onclick="flipCard()" class="interactive-btn bg-slate-900 text-cyan-400 py-3 rounded-2xl text-xs font-bold border border-cyan-500/20 flex flex-col items-center">
-                        <i class="fa-solid fa-rotate text-xs mb-0.5"></i> Оберт
+                    <button onclick="flipCard()" class="interactive-btn glass-panel text-cyan-400 py-3.5 rounded-2xl text-xs font-bold border border-cyan-500/20 hover:border-cyan-400 flex flex-col items-center shadow-md">
+                        <i class="fa-solid fa-rotate text-sm mb-1"></i> ОБЕРТ
                     </button>
-                    <button onclick="nextCard()" class="interactive-btn bg-cyan-400 text-slate-950 py-3 rounded-2xl text-xs font-black flex flex-col items-center">
-                        <i class="fa-solid fa-arrow-right text-xs mb-0.5"></i> Далі
+                    <button onclick="nextCard()" class="interactive-btn bg-cyan-400 text-slate-950 py-3.5 rounded-2xl text-xs font-black flex flex-col items-center shadow-[0_5px_15px_rgba(6,182,212,0.4)]">
+                        <i class="fa-solid fa-arrow-right text-sm mb-1"></i> ДАЛІ
                     </button>
-                    <button onclick="toggleShuffle()" id="shuffle-btn" class="interactive-btn bg-slate-900 text-slate-200 py-3 rounded-2xl text-xs font-bold border border-cyan-500/20 flex flex-col items-center">
-                        <i class="fa-solid fa-shuffle text-xs mb-0.5 text-cyan-400"></i> Шум
+                    <button onclick="toggleShuffle()" id="shuffle-btn" class="interactive-btn glass-panel text-slate-300 py-3.5 rounded-2xl text-xs font-bold border border-cyan-500/20 hover:border-cyan-400 flex flex-col items-center shadow-md">
+                        <i class="fa-solid fa-shuffle text-sm mb-1 text-pink-400"></i> ШУМ
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- COMPACT WORDS BLOCK VIEW -->
-        <div id="compact-block-view" class="hidden w-full bg-slate-900 border border-cyan-500/30 rounded-3xl p-5 shadow-xl">
-            <div class="flex items-center justify-between pb-3 mb-3 border-b border-cyan-500/20">
-                <div class="flex items-center gap-2 text-cyan-400 font-bold text-sm">
-                    <i class="fa-solid fa-border-all"></i> <span id="compact-title">А2 Тема 8: Всі слова</span>
+        <div id="compact-block-view" class="hidden w-full glass-panel border border-cyan-500/30 rounded-3xl p-5 shadow-xl transition-opacity duration-300">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-cyan-500/20">
+                <div class="flex items-center gap-2 text-cyan-400 font-black text-sm uppercase tracking-wider">
+                    <i class="fa-solid fa-list-ul"></i> <span id="compact-title">База: Всі слова</span>
                 </div>
-                <span id="compact-count" class="text-xs text-slate-300">84 слова</span>
             </div>
-            <div id="compact-words-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-[60vh] overflow-y-auto pr-1"></div>
+            <div id="compact-words-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[65vh] overflow-y-auto pr-2 pb-2"></div>
         </div>
 
     </main>
 
-    <!-- MODALS -->
-    <div id="sound-settings-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
-        <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl w-full max-w-sm p-6 shadow-2xl transform scale-95 transition-transform duration-200" id="sound-box">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-                <h3 class="font-bold text-sm text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-sliders"></i> Звук</h3>
-                <button onclick="closeSoundSettingsModal()" class="interactive-btn text-slate-400 hover:text-white p-1.5 text-base"><i class="fa-solid fa-xmark"></i></button>
+    <!-- MODALS (Unified Premium Style) -->
+    <!-- SOUND -->
+    <div id="sound-settings-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-sm p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 cubic-bezier(0.175, 0.885, 0.32, 1.275)" id="sound-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-700/50">
+                <h3 class="font-black text-sm text-cyan-400 flex items-center gap-2 tracking-widest uppercase"><i class="fa-solid fa-sliders"></i> Звук</h3>
+                <button onclick="closeSoundSettingsModal()" class="interactive-btn text-slate-400 hover:text-white p-2 bg-slate-800/50 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="space-y-4 text-xs">
-                <div class="flex items-center justify-between bg-slate-950 p-3 rounded-2xl border border-cyan-500/20">
-                    <span class="text-slate-200">Головний звук</span>
-                    <button onclick="toggleAudioMute()" id="sound-master-btn" class="interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-cyan-500 text-slate-950">УВІМКНЕНО</button>
+            <div class="space-y-4 text-xs font-bold">
+                <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/20">
+                    <span class="text-slate-200 uppercase tracking-wide">Система аудіо</span>
+                    <button onclick="toggleAudioMute()" id="sound-master-btn" class="interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-cyan-400 text-slate-950 shadow-md">УВІМКНЕНО</button>
                 </div>
-                <button onclick="closeSoundSettingsModal()" class="interactive-btn w-full bg-cyan-500 text-slate-950 py-3 rounded-2xl font-bold text-xs">ЗБЕРЕГТИ</button>
+                <button onclick="closeSoundSettingsModal()" class="interactive-btn w-full bg-cyan-500 text-slate-950 py-3.5 rounded-2xl font-black text-xs mt-2 shadow-[0_5px_15px_rgba(6,182,212,0.3)]">ЗБЕРЕГТИ НАЛАШТУВАННЯ</button>
             </div>
         </div>
     </div>
 
-    <div id="marathon-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
-        <div class="bg-slate-900 border border-pink-500/50 rounded-3xl w-full max-w-lg p-6 shadow-2xl transform scale-95 transition-transform duration-200" id="marathon-box">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-                <h3 class="font-bold text-sm text-pink-400">🚀 Ультра-Марафон</h3>
-                <button onclick="closeMarathonModal()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+    <!-- MARATHON -->
+    <div id="marathon-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-pink-500/40 rounded-3xl w-full max-w-lg p-6 shadow-[0_20px_50px_rgba(236,72,153,0.15)] transform scale-90 translate-y-4 transition-all duration-400 cubic-bezier(0.175, 0.885, 0.32, 1.275)" id="marathon-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-pink-500/20">
+                <h3 class="font-black text-sm text-pink-400 tracking-widest uppercase"><i class="fa-solid fa-rocket mr-2"></i> Кібер-Марафон</h3>
+                <button onclick="closeMarathonModal()" class="interactive-btn text-pink-400 hover:text-white p-2 bg-pink-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="marathon-content" class="space-y-4">
-                <div class="text-center py-4">
-                    <button onclick="startMarathon('all')" class="interactive-btn bg-pink-500 text-slate-950 px-6 py-3 rounded-2xl font-bold text-xs">ПОЧАТИ МАРАФОН (84 слова)</button>
+                <div class="text-center py-6">
+                    <button onclick="startMarathon()" class="interactive-btn w-full max-w-xs mx-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white py-4 rounded-2xl font-black text-sm shadow-[0_10px_25px_rgba(236,72,153,0.4)]">СТАРТ (84 СЛОВА)</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="inventory-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
-        <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl w-full max-w-lg p-6 shadow-2xl transform scale-95 transition-transform duration-200 max-h-[90vh] overflow-y-auto" id="inventory-box">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-                <h3 class="font-bold text-sm text-cyan-400">🛡️ Сховище та екіпірування</h3>
-                <button onclick="closeInventoryModal()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+    <!-- INVENTORY -->
+    <div id="inventory-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-lg p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 cubic-bezier(0.175, 0.885, 0.32, 1.275) max-h-[90vh] overflow-y-auto" id="inventory-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
+                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-shield-halved mr-2"></i> Сховище</h3>
+                <button onclick="closeInventoryModal()" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="space-y-4 text-xs">
+            <div class="space-y-5 text-xs">
                 <div>
-                    <div class="font-bold text-slate-300 mb-2">Клас агента:</div>
-                    <div id="class-list" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
+                    <div class="font-bold text-slate-300 mb-2 uppercase tracking-wide">Клас:</div>
+                    <div id="class-list" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5"></div>
                 </div>
                 <div>
-                    <div class="font-bold text-slate-300 mb-2">Пет-компаньйон:</div>
+                    <div class="font-bold text-slate-300 mb-2 uppercase tracking-wide">Компаньйон:</div>
                     <div id="pet-list" class="grid grid-cols-6 gap-2"></div>
                 </div>
-                <div id="gear-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2"></div>
-                <div>
-                    <div class="font-bold text-slate-300 mb-2">Трофеї (<span id="sub-trophies-count-inv">0</span>):</div>
-                    <div id="trophies-grid" class="grid grid-cols-6 gap-2 bg-slate-950 p-3 rounded-2xl border border-cyan-500/25 min-h-[60px]"></div>
+                <div id="gear-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-700/50"></div>
+                <div class="pt-2 border-t border-slate-700/50">
+                    <div class="font-bold text-slate-300 mb-2 uppercase tracking-wide flex items-center gap-2">Трофеї <span class="bg-cyan-900/50 text-cyan-300 px-2 rounded" id="sub-trophies-count-inv">0</span></div>
+                    <div id="trophies-grid" class="grid grid-cols-5 sm:grid-cols-8 gap-2 bg-slate-900/50 p-3 rounded-2xl border border-cyan-500/20 min-h-[70px]"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="achievements-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
-        <div class="bg-slate-900 border border-yellow-500/50 rounded-3xl w-full max-w-lg p-6 shadow-2xl transform scale-95 transition-transform duration-200" id="achievements-box">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-                <h3 class="font-bold text-sm text-yellow-400">🏆 Кібер-Місії</h3>
-                <button onclick="closeAchievementsModal()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+    <!-- ACHIEVEMENTS -->
+    <div id="achievements-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-yellow-500/40 rounded-3xl w-full max-w-lg p-6 shadow-[0_20px_50px_rgba(234,179,8,0.15)] transform scale-90 translate-y-4 transition-all duration-400 cubic-bezier(0.175, 0.885, 0.32, 1.275)" id="achievements-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-yellow-500/20">
+                <h3 class="font-black text-sm text-yellow-400 uppercase tracking-widest"><i class="fa-solid fa-trophy mr-2"></i> Місії</h3>
+                <button onclick="closeAchievementsModal()" class="interactive-btn text-yellow-400 hover:text-white p-2 bg-yellow-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="achievements-list" class="space-y-2.5 max-h-[60vh] overflow-y-auto"></div>
+            <div id="achievements-list" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2"></div>
         </div>
     </div>
 
-    <div id="word-browser-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
-        <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl w-full max-w-xl p-6 shadow-2xl transform scale-95 transition-transform duration-200 flex flex-col max-h-[85vh]" id="browser-box">
-            <div class="flex justify-between items-center mb-3 pb-3 border-b border-slate-800">
-                <h3 class="font-bold text-sm text-cyan-400">📜 База даних слів</h3>
-                <button onclick="closeWordBrowser()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+    <!-- WORD BROWSER -->
+    <div id="word-browser-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-xl p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 cubic-bezier(0.175, 0.885, 0.32, 1.275) flex flex-col max-h-[85vh]" id="browser-box">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-cyan-500/20">
+                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-database mr-2"></i> База Даних</h3>
+                <button onclick="closeWordBrowser()" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <input type="text" id="browser-search" oninput="filterWords()" placeholder="Пошук слова чи перекладу..." class="w-full bg-slate-950 border border-cyan-500/30 rounded-xl px-3.5 py-2.5 text-xs text-white mb-3 focus:outline-none">
-            <div id="browser-list" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+            <input type="text" id="browser-search" oninput="filterWords()" placeholder="Введіть слово для пошуку..." class="w-full bg-slate-900/80 border border-cyan-500/40 rounded-xl px-4 py-3 text-sm font-bold text-white mb-4 focus:outline-none focus:border-pink-500 shadow-inner placeholder-slate-500 transition-colors">
+            <div id="browser-list" class="space-y-2 overflow-y-auto flex-1 pr-2 pb-2"></div>
         </div>
     </div>
 
-    <div id="trial-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
-        <div class="bg-slate-900 border border-pink-500/50 rounded-3xl w-full max-w-md p-6 shadow-2xl transform scale-95 transition-transform duration-200" id="trial-box">
-            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
-                <h3 class="font-bold text-sm text-pink-400">⚡ Злам ядріва слова</h3>
-                <button onclick="closeTrial()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+    <!-- TRIAL -->
+    <div id="trial-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-pink-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(236,72,153,0.15)] transform scale-90 translate-y-4 transition-all duration-400 cubic-bezier(0.175, 0.885, 0.32, 1.275)" id="trial-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-pink-500/20">
+                <h3 class="font-black text-sm text-pink-400 uppercase tracking-widest"><i class="fa-solid fa-microchip mr-2"></i> Злам Ядра</h3>
+                <button onclick="closeTrial()" class="interactive-btn text-pink-400 hover:text-white p-2 bg-pink-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="space-y-4 text-xs">
-                <div class="bg-slate-950 p-3.5 rounded-2xl border border-cyan-500/30 flex items-center justify-between">
+            <div class="space-y-5 text-xs">
+                <div class="bg-slate-900/50 p-4 rounded-2xl border border-cyan-500/30 flex items-center justify-between shadow-inner">
                     <div>
-                        <div class="text-[10px] text-slate-400 mb-0.5">Цільовий переклад:</div>
-                        <div id="trial-translation-target" class="text-sm font-bold text-white">...</div>
+                        <div class="text-[10px] text-slate-400 mb-1 uppercase tracking-wider font-bold">Ціль (Переклад):</div>
+                        <div id="trial-translation-target" class="text-base font-black text-white">...</div>
                     </div>
-                    <button onclick="speakTrialWord()" class="interactive-btn bg-cyan-500/20 text-cyan-300 p-2.5 rounded-xl border border-cyan-500/40"><i class="fa-solid fa-volume-high"></i></button>
+                    <button onclick="speakTrialWord()" class="interactive-btn bg-cyan-900/30 text-cyan-300 p-3 rounded-xl border border-cyan-500/40 hover:bg-cyan-800"><i class="fa-solid fa-volume-high"></i></button>
                 </div>
                 <div>
-                    <div class="text-[10px] text-slate-400 mb-1.5">Зберіть правильне німецьке слово з модулів:</div>
-                    <div id="trial-slots" class="bg-slate-950 p-3 rounded-2xl border border-pink-500/30 min-h-[50px] flex flex-wrap gap-1.5 items-center"></div>
+                    <div class="text-[10px] text-slate-400 mb-2 uppercase tracking-wider font-bold">Синтаксис (Зберіть слово):</div>
+                    <div id="trial-slots" class="bg-slate-900/50 p-3.5 rounded-2xl border border-pink-500/40 min-h-[60px] flex flex-wrap gap-2 items-center shadow-inner transition-all"></div>
                 </div>
                 <div>
-                    <div class="text-[10px] text-slate-400 mb-1.5">Доступні модулі пам'яті:</div>
-                    <div id="trial-modules" class="flex flex-wrap gap-2"></div>
+                    <div class="text-[10px] text-slate-400 mb-2 uppercase tracking-wider font-bold">Доступні фрагменти:</div>
+                    <div id="trial-modules" class="flex flex-wrap gap-2.5"></div>
                 </div>
-                <div class="flex gap-2 pt-2">
-                    <button onclick="resetTrialAssembly()" class="interactive-btn bg-slate-800 text-slate-300 py-3 px-4 rounded-xl font-bold text-xs flex-1">Скинути</button>
-                    <button onclick="verifyTrialAssembly()" class="interactive-btn bg-pink-500 text-slate-950 py-3 px-5 rounded-xl font-bold text-xs flex-1">Зламати</button>
+                <div class="flex gap-3 pt-3 border-t border-slate-700/50">
+                    <button onclick="resetTrialAssembly()" class="interactive-btn bg-slate-800 text-slate-300 py-3.5 px-4 rounded-xl font-bold text-xs flex-1 hover:bg-slate-700">ОЧИСТИТИ</button>
+                    <button onclick="verifyTrialAssembly()" class="interactive-btn bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3.5 px-5 rounded-xl font-black text-xs flex-1 shadow-[0_5px_15px_rgba(236,72,153,0.3)]">ЗЛАМАТИ</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="soul-inspect-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
-        <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl transform scale-95 transition-transform duration-200" id="soul-inspect-box">
+    <!-- SOUL INSPECT -->
+    <div id="soul-inspect-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-cyan-500/50 rounded-3xl w-full max-w-sm p-8 text-center shadow-[0_20px_50px_rgba(6,182,212,0.2)] transform scale-90 translate-y-4 transition-all duration-400 cubic-bezier(0.175, 0.885, 0.32, 1.275)" id="soul-inspect-box">
             <div class="flex justify-end mb-2">
-                <button onclick="closeSoulInspect()" class="interactive-btn text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeSoulInspect()" class="interactive-btn text-slate-400 hover:text-white p-2 bg-slate-800/50 rounded-xl absolute top-4 right-4"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="inspect-emoji" class="text-5xl mb-3"></div>
-            <div id="inspect-rarity"></div>
-            <div id="inspect-german" class="text-xl font-black text-white mb-1"></div>
-            <div id="inspect-grammar" class="text-xs text-pink-400 font-semibold mb-2"></div>
-            <div id="inspect-translation" class="text-sm text-emerald-400 font-medium mb-4"></div>
-            <button onclick="closeSoulInspect()" class="interactive-btn w-full bg-cyan-500 text-slate-950 py-2.5 rounded-xl font-bold text-xs">Закрити</button>
+            <div id="inspect-emoji" class="text-7xl mb-4 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"></div>
+            <div id="inspect-rarity" class="mb-3"></div>
+            <div id="inspect-german" class="text-2xl font-black text-white mb-1 tracking-wide drop-shadow-md"></div>
+            <div id="inspect-grammar" class="text-xs text-pink-400 font-bold mb-3 uppercase tracking-widest"></div>
+            <div id="inspect-translation" class="text-base text-emerald-400 font-black mb-6 drop-shadow-sm"></div>
+            <button onclick="closeSoulInspect()" class="interactive-btn w-full bg-cyan-400 text-slate-950 py-3.5 rounded-xl font-black text-sm shadow-[0_5px_15px_rgba(6,182,212,0.4)]">ЗАКРИТИ ДАНІ</button>
         </div>
     </div>
 
-    
     <script src="speech.js"></script>
     <script src="app.js"></script>
 </body>
