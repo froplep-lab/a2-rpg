@@ -1,10 +1,10 @@
 {
-  "name": "Deutsch Quest",
-  "short_name": "Deutsch Quest",
+  "name": "GESTALT — Deutsch Quest",
+  "short_name": "GESTALT",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#050b14",
-  "theme_color": "#07111f",
+  "background_color": "#061017",
+  "theme_color": "#0a171d",
   "lang": "uk",
   "description": "Німецька A2/B1 у форматі гри: картки, квести, діалоги, диктант, артиклі та RPG.",
   "icons": [

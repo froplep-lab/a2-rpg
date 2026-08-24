@@ -208,370 +208,423 @@
         @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
     </style>
-</head>
-<body id="app-body" class="min-h-screen flex flex-col justify-between p-3 sm:p-6 lg:p-8 max-w-5xl xl:max-w-6xl mx-auto antialiased tavern-bg-texture">
+<style>
+:root{
+  --bg:#061017;
+  --bg2:#0a171d;
+  --panel:#0d1b22;
+  --panel2:#101f27;
+  --panel3:#0b161c;
+  --gold:#d8aa58;
+  --gold2:#f0c97b;
+  --line:rgba(216,170,88,.28);
+  --text:#ecf0ef;
+  --muted:#8fa2a8;
+  --cyan:#48a8c5;
+  --green:#6fc58b;
+  --purple:#9276d8;
+  --red:#d86b67;
+}
+html,body{background:var(--bg)!important;color:var(--text)!important}
+body{min-height:100vh!important;max-width:none!important;margin:0!important;padding:0!important;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
+ radial-gradient(circle at 50% -10%,rgba(90,143,165,.14),transparent 34%),
+ radial-gradient(circle at 14% 30%,rgba(23,69,51,.16),transparent 28%),
+ radial-gradient(circle at 84% 74%,rgba(35,65,92,.12),transparent 25%);z-index:-1}
+.g-app{display:grid;grid-template-columns:230px minmax(0,1fr) 340px;min-height:100vh}
+.g-sidebar{background:linear-gradient(180deg,#071218 0%,#08141a 60%,#071016 100%);border-right:1px solid rgba(216,170,88,.15);padding:18px 14px;position:sticky;top:0;height:100vh;box-sizing:border-box}
+.g-brand{display:flex;gap:11px;align-items:center;padding:8px 8px 22px;border-bottom:1px solid rgba(216,170,88,.14);margin-bottom:16px}
+.g-brand-mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#0b1115;background:radial-gradient(circle at 40% 35%,#f1cf87,#8a6530);box-shadow:0 0 20px rgba(216,170,88,.25);font-size:18px;font-weight:900}
+.g-brand h1{font-family:Georgia,serif;font-size:25px;letter-spacing:.12em;color:#f1d18e;line-height:1;margin:0}
+.g-brand p{font-size:8px;letter-spacing:.18em;color:#6d7e85;margin:6px 0 0}
+.g-nav{display:flex;flex-direction:column;gap:6px}
+.g-nav button{border:1px solid transparent;background:transparent;color:#8ca0a6;text-align:left;padding:11px 13px;border-radius:10px;display:flex;gap:11px;align-items:center;font-size:13px;font-weight:700;transition:.18s}
+.g-nav button:hover{background:rgba(255,255,255,.03);color:#edf2f2}
+.g-nav button.active{color:#f1d18e;background:linear-gradient(90deg,rgba(216,170,88,.17),rgba(216,170,88,.05));border-color:rgba(216,170,88,.22);box-shadow:inset 3px 0 0 #d8aa58}
+.g-nav .ico{width:20px;text-align:center;font-size:16px}
+.g-side-footer{margin-top:auto;padding:13px 8px;color:#64777d;font-size:9px;line-height:1.7}
+.g-workspace{min-width:0;padding:18px 18px 24px}
+.g-main-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:13px}
+.g-main-head h2{font:700 25px Georgia,serif;letter-spacing:.03em;color:#f4e2bb;margin:0}
+.g-main-head p{font-size:11px;color:#7f939a;margin:5px 0 0}
+.g-head-actions{display:flex;gap:8px;align-items:center}
+.g-iconbtn{width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:#0d1a20;color:#a9b7bb}
+.g-resources{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.g-resource{min-width:84px;padding:8px 11px;border:1px solid rgba(216,170,88,.16);background:rgba(13,27,34,.88);border-radius:10px;font-size:11px;color:#bcc9cc}
+.g-resource b{color:#f0ce8d;margin-left:5px}
+.g-profile{display:flex;gap:10px;align-items:center;padding:7px 10px;border:1px solid rgba(255,255,255,.06);background:#0a161d;border-radius:12px}
+.g-avatar{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#111d22;border:1px solid rgba(216,170,88,.3);display:grid;place-items:center}
+.g-avatar svg{width:100%;height:100%}
+.g-profile .small{font-size:10px;color:#7e9399}.g-profile strong{font-size:12px;color:#f3e3c0;display:block}
+.g-tabs{display:flex;gap:7px;overflow:auto;padding-bottom:8px;margin-bottom:7px}
+.g-tabs button{border:1px solid rgba(255,255,255,.05);background:#0d1a20;color:#7c9197;border-radius:9px;padding:8px 12px;font-size:11px;white-space:nowrap}
+.g-tabs button.active{color:#f0cd86;border-color:rgba(216,170,88,.24);background:#122029}
+.g-panel{background:linear-gradient(180deg,rgba(15,29,37,.96),rgba(8,17,22,.98));border:1px solid rgba(209,188,140,.14);border-radius:12px;box-shadow:0 16px 36px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.02)}
+.g-panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid rgba(255,255,255,.05)}
+.g-panel-head h3{font:700 13px Georgia,serif;color:#e4d0a3;margin:0}.g-panel-head span{font-size:9px;color:#73878d}
+.g-grid-main{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px}
+.g-word-card{min-height:420px;position:relative;overflow:hidden;padding:25px;background:
+ radial-gradient(circle at 85% 20%,rgba(82,124,145,.22),transparent 23%),
+ linear-gradient(150deg,#162d39 0%,#0d1a21 50%,#091319 100%);border-radius:11px;border:1px solid rgba(188,178,142,.18)}
+.g-word-card::before{content:"";position:absolute;inset:0;background:
+ linear-gradient(160deg,transparent 35%,rgba(17,59,50,.12) 36%,transparent 60%),
+ radial-gradient(circle at 15% 80%,rgba(27,95,67,.25),transparent 28%);pointer-events:none}
+.g-word-label{display:inline-flex;padding:5px 9px;border-radius:7px;border:1px solid rgba(216,170,88,.22);color:#bda86f;font-size:9px;letter-spacing:.13em;text-transform:uppercase;background:rgba(10,18,22,.45)}
+.g-word-title{font:700 38px Georgia,serif;color:#f2eee6;margin-top:34px;position:relative}
+.g-word-phon{font-size:12px;color:#809399;margin-top:4px}
+.g-word-meaning{font-size:15px;color:#f2d89a;margin-top:23px;font-weight:700}
+.g-word-example{margin-top:22px;padding:13px 15px;border-left:2px solid #8b6a36;background:rgba(4,9,12,.26);color:#bdc7c9;font-size:13px;line-height:1.65}
+.g-word-example em{color:#e6d7b1;font-style:normal}
+.g-word-actions{display:flex;gap:8px;margin-top:25px}
+.g-btn{border-radius:8px;padding:9px 13px;border:1px solid rgba(255,255,255,.08);background:#101d24;color:#bac7c9;font-size:11px;font-weight:700}.g-btn.gold{background:linear-gradient(180deg,#8a6a31,#5f4720);color:#fff2cf;border-color:#a7854e}.g-btn.green{background:#173827;color:#b7e3c1;border-color:#356a48}.g-btn.blue{background:#163848;color:#b5d9e8;border-color:#2c6479}.g-btn.red{background:#3b211f;color:#e7b3ad;border-color:#75413a}
+.g-statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.g-statbox{padding:11px 12px;border-radius:10px;background:#0c1920;border:1px solid rgba(255,255,255,.05)}.g-statbox .lbl{font-size:8px;color:#6f858c}.g-statbox .val{font-size:17px;font-weight:800;color:#e8d5ad;margin-top:4px}
+.g-progress{height:6px;background:#071015;border-radius:99px;overflow:hidden;margin-top:7px}.g-progress i{display:block;height:100%;background:linear-gradient(90deg,#8a5f27,#e6c06f);width:0}
+.g-rightcol{display:flex;flex-direction:column;gap:12px}
+.g-upgrade{padding:14px;background:
+ radial-gradient(circle at 70% 20%,rgba(84,108,189,.26),transparent 32%),
+ linear-gradient(140deg,#1a2037,#101621 60%,#0b1218);border:1px solid rgba(119,142,214,.18);border-radius:11px}
+.g-card-mini{display:grid;grid-template-columns:100px 1fr;gap:13px;align-items:center}.g-mini-card{height:140px;border-radius:10px;border:1px solid rgba(216,170,88,.3);background:linear-gradient(145deg,#221e29,#111419);padding:12px;display:flex;flex-direction:column;justify-content:space-between}.g-mini-card .star{color:#e7be58;letter-spacing:2px;font-size:11px}.g-mini-card b{font:700 18px Georgia,serif;color:#e6dcc6}.g-mini-card small{color:#748389;font-size:8px}
+.g-upgrade h4{font:700 14px Georgia,serif;margin:0 0 4px;color:#e5d3aa}.g-upgrade .line{display:flex;justify-content:space-between;font-size:10px;color:#7f939a;margin-top:7px}.g-upgrade .line b{color:#cfdad8}
+.g-quests{margin-top:12px}.g-quest-row{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.04)}.g-quest-row:last-child{border-bottom:none}.qicon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:#10232a;color:#cfd7d6}.qtext b{font-size:11px;color:#e0e8e6;display:block}.qtext span{font-size:9px;color:#71848a}.qreward{text-align:right;font-size:9px;color:#dfbe70}.qreward strong{display:block;color:#77bd8a}
+.g-worlds{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}.g-world{min-height:84px;border-radius:9px;padding:11px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:flex-end;background:
+ linear-gradient(180deg,rgba(11,20,25,.18),rgba(6,12,15,.86)),
+ radial-gradient(circle at 30% 30%,rgba(92,130,111,.32),transparent 34%),
+ linear-gradient(135deg,#1c3a31,#0d2521 50%,#081519)}
+.g-world:nth-child(2){background:linear-gradient(180deg,rgba(7,13,18,.1),rgba(6,11,15,.92)),radial-gradient(circle at 70% 35%,rgba(69,95,123,.3),transparent 32%),linear-gradient(135deg,#1a2b39,#0d1821)}
+.g-world:nth-child(3){background:linear-gradient(180deg,rgba(10,12,14,.1),rgba(6,9,12,.95)),radial-gradient(circle at 60% 30%,rgba(165,139,64,.22),transparent 34%),linear-gradient(135deg,#3a331e,#17160f)}
+.g-world:nth-child(4){background:linear-gradient(180deg,rgba(10,14,21,.1),rgba(5,10,15,.94)),radial-gradient(circle at 60% 30%,rgba(71,113,153,.24),transparent 34%),linear-gradient(135deg,#1c3444,#0e1c27)}
+.g-world strong{font:700 12px Georgia,serif;color:#e4dec8}.g-world span{font-size:8px;color:#a3afaf;margin-top:2px}
+.g-footerbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.g-footer-item{padding:10px 12px;text-align:center;border-top:1px solid rgba(255,255,255,.05);color:#71858b;font-size:9px}
+.g-footer-item b{display:block;color:#b7c2c3;font-size:10px;margin-bottom:2px}
+.g-dice-shell{background:linear-gradient(180deg,#09161d,#071016);border:1px solid rgba(216,170,88,.16);border-radius:13px;box-shadow:0 18px 36px rgba(0,0,0,.25)}
+.g-dice-shell .dd-hud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.g-dice-shell .dd-chip{background:#0b1820;border:1px solid rgba(216,170,88,.13);border-radius:9px;padding:8px;text-align:center}
+.g-dice-shell .dd-board{max-width:100%;gap:7px}.g-dice-shell .dd-cell{border-radius:10px;background:radial-gradient(circle at 50% 20%,rgba(54,80,86,.4),rgba(7,17,22,.98));border-color:rgba(216,170,88,.11)}.g-dice-shell .dd-cell.selected{border-color:#d8aa58;box-shadow:0 0 18px rgba(216,170,88,.25),inset 0 0 14px rgba(0,0,0,.65)}
+.g-dice-shell .dd-die{border-color:rgba(210,192,142,.24)}.g-dice-shell .dd-question{background:#0b1820;border:1px solid rgba(216,170,88,.14);border-radius:10px;padding:14px}.g-dice-shell .dd-answer{background:#10222b!important;border-color:rgba(255,255,255,.06)!important;color:#d9e1df!important}.g-dice-shell .dd-answer.correct{border-color:#60b57d!important;background:#143b27!important}
+.g-bottom-nav{display:none}
+.g-screen{display:none}.g-screen.active{display:block}
+.g-mobile-only{display:none}
+.g-hero-map{min-height:520px;border-radius:12px;border:1px solid rgba(216,170,88,.18);position:relative;overflow:hidden;background:
+ radial-gradient(circle at 72% 18%,rgba(71,140,181,.18),transparent 18%),
+ radial-gradient(circle at 26% 62%,rgba(57,107,67,.25),transparent 30%),
+ linear-gradient(155deg,#182f30 0%,#0e2324 34%,#0a1c21 70%,#08141a 100%);box-shadow:inset 0 0 80px rgba(0,0,0,.4)}
+.g-hero-map::before,.g-hero-map::after{content:"";position:absolute;border-radius:50%;filter:blur(1px)}
+.g-hero-map::before{width:420px;height:190px;left:-50px;bottom:-40px;background:radial-gradient(circle,rgba(34,86,54,.45),transparent 68%);transform:rotate(-12deg)}
+.g-hero-map::after{width:280px;height:160px;right:-25px;top:100px;background:radial-gradient(circle,rgba(47,78,105,.42),transparent 65%);transform:rotate(18deg)}
+.map-landmark{position:absolute;padding:7px 10px;border-radius:8px;background:rgba(5,12,16,.72);border:1px solid rgba(216,170,88,.3);font-size:9px;color:#ebd69e;backdrop-filter:blur(3px);text-align:center;min-width:72px;box-shadow:0 7px 18px rgba(0,0,0,.22)}
+.map-landmark b{display:block;font-size:20px;margin-bottom:3px}.map-landmark small{color:#87989d}.map-road{position:absolute;inset:0}.map-road::before{content:"";position:absolute;left:17%;top:26%;width:65%;height:48%;border:3px solid rgba(197,181,126,.22);border-top-color:transparent;border-left-color:transparent;border-radius:48% 52% 38% 62%;transform:rotate(-10deg)}
+.map-cta{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);min-width:220px}
+.compat{position:absolute;left:-99999px;top:-99999px;width:1px;height:1px;overflow:hidden}
+@media(max-width:1180px){.g-app{grid-template-columns:205px minmax(0,1fr)}.g-right-rail{display:none}.g-grid-main{grid-template-columns:minmax(0,1fr) 290px}}
+@media(max-width:860px){
+  .g-app{display:block;min-height:100dvh}.g-sidebar{display:none}.g-workspace{padding:11px 11px 86px}.g-mobile-only{display:block}
+  .g-main-head{margin-bottom:10px}.g-main-head h2{font-size:20px}.g-resources .g-resource{min-width:auto;padding:6px 8px}.g-profile{padding:5px 7px}.g-profile .small{display:none}
+  .g-grid-main{grid-template-columns:1fr}.g-rightcol{display:grid;grid-template-columns:1fr}.g-word-card{min-height:390px}.g-worlds{grid-template-columns:1fr 1fr}.g-statrow{grid-template-columns:1fr 1fr}.g-footerbar{grid-template-columns:1fr 1fr}
+  .g-bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:100;left:8px;right:8px;bottom:8px;padding:7px;border-radius:14px;background:rgba(8,18,23,.96);backdrop-filter:blur(14px);border:1px solid rgba(216,170,88,.16);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  .g-bottom-nav button{background:transparent;border:0;color:#708389;font-size:9px;padding:6px 2px}.g-bottom-nav button.active{color:#f0ce8d}.g-bottom-nav i{display:block;font-size:15px;margin-bottom:3px}
+}
+@media(max-width:560px){.g-main-head p{display:none}.g-tabs{display:none}.g-grid-main{display:block}.g-rightcol{display:block}.g-word-title{font-size:34px}.g-word-card{min-height:370px}.g-card-mini{grid-template-columns:92px 1fr}.g-mini-card{height:130px}.g-panel-head{padding:11px 12px}.g-panel-body{padding:12px!important}.g-hero-map{min-height:540px}.map-landmark{min-width:62px;padding:6px 7px}.map-landmark b{font-size:18px}}
+</style>
 
-    <div class="relative z-10 flex flex-col min-h-screen justify-between space-y-4">
 
-        <!-- HEADER / БАРНИЙ СТІЛ ТАВЕРНИ -->
-        <header class="w-full tavern-panel fireplace-anim vines-decoration p-4 sm:p-6 shadow-2xl relative overflow-hidden">
-            <div class="moss-corner top-0 left-0"></div>
-            <div class="moss-corner bottom-0 right-0"></div>
-
-            <div class="flex items-center justify-between gap-4">
-                
-                <div class="flex items-center gap-4">
-                    <button onclick="openHeroSelectModal()" class="relative group cursor-pointer interactive-btn">
-                        <div id="hero-chibi-container" class="w-20 h-20 bg-amber-950/70 border-2 border-amber-600/70 rounded-2xl flex items-center justify-center p-1 shadow-inner overflow-hidden"></div>
-                        <span class="absolute -bottom-2 inset-x-0 mx-auto w-max text-[9px] bg-amber-800 text-amber-100 px-2 py-0.5 rounded-full font-bold uppercase border border-amber-500">Змінити</span>
-                    </button>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span id="hero-lvl-badge" class="text-xs bg-amber-900/80 text-amber-300 px-2 py-0.5 rounded font-mono font-bold border border-amber-600/50">LVL 1</span>
-                            <span id="hero-title" class="text-lg sm:text-xl font-medieval text-amber-200 font-bold tracking-wide">Ронан</span>
-                        </div>
-                        <div class="w-32 sm:w-48 bg-stone-950 h-2.5 rounded-full overflow-hidden border border-amber-900/60 mt-1.5">
-                            <div id="hero-xp-bar" class="h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-400" style="width: 0%"></div>
-                        </div>
-                        <div class="text-xs text-amber-300/80 font-mono mt-1 flex items-center gap-2">
-                            <span>⚔️ Атака: <b id="total-atk-text" class="text-amber-400">10</b></span>
-                            <span>|</span>
-                            <span>🍺 Монети: <b id="gold-amount-text" class="text-yellow-400">0</b></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <div id="enemy-box" onclick="manualClickAttack(event)" class="interactive-btn bg-stone-950/90 hover:bg-stone-900 px-4 py-3 rounded-2xl border border-amber-800/70 flex items-center gap-3 shadow-lg relative">
-                        <div class="flex flex-col text-right font-mono">
-                            <span id="enemy-name-text" class="text-xs font-bold text-amber-200">Чібі-Вампірчик</span>
-                            <span id="enemy-hp-text" class="text-xs text-red-400 font-black">50/50</span>
-                        </div>
-                        
-                        <div id="monster-chibi-svg" class="w-12 h-12 flex items-center justify-center">
-                            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">
-                                <path d="M 20 50 Q 10 20 30 15 Q 50 5 70 15 Q 90 20 80 50 Q 95 70 80 85 Q 50 95 20 85 Q 5 70 20 50 Z" fill="#18181b" stroke="#27272a" stroke-width="3"/>
-                                <polygon points="25,20 15,0 35,12" fill="#09090b"/>
-                                <polygon points="75,20 85,0 65,12" fill="#09090b"/>
-                                <circle cx="38" cy="45" r="12" fill="#ffffff"/>
-                                <circle cx="62" cy="45" r="12" fill="#ffffff"/>
-                                <circle cx="40" cy="45" r="7" fill="#ef4444"/>
-                                <circle cx="64" cy="45" r="7" fill="#ef4444"/>
-                                <circle cx="42" cy="42" r="2.5" fill="#ffffff"/>
-                                <circle cx="66" cy="42" r="2.5" fill="#ffffff"/>
-                                <path d="M 40 68 Q 50 75 60 68" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
-                                <polygon points="42,68 45,76 47,68" fill="#ffffff"/>
-                                <polygon points="53,68 55,76 58,68" fill="#ffffff"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <button onclick="openMusicSelectModal()" class="interactive-btn p-3 rounded-xl bg-stone-900 border border-amber-800/60 text-amber-400 text-sm" title="Музика та Налаштування"><i class="fa-solid fa-guitar"></i></button>
-                    <button onclick="confirmResetProgress()" class="interactive-btn p-3 rounded-xl bg-red-950/80 border border-red-800/60 text-red-400 text-sm" title="Скидання"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </div>
-        </header>
-
-        <!-- НАВІГАЦІЯ ТАВЕРНИ -->
-        <nav class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 my-2">
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-amber-800 text-amber-100 border border-amber-500 font-medieval flex items-center justify-center gap-1.5 shadow-md">
-                🏰 Центр
-            </button>
-            <button onclick="switchTab('dice')" id="tab-dice" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-violet-300/80 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
-                🎲 Dice Arena
-            </button>
-            <button onclick="switchTab('cards')" id="tab-cards" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
-                📜 Пергаменти
-            </button>
-            <button onclick="switchTab('exam')" id="tab-exam" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
-                ⚔️ Випробування
-            </button>
-            <button onclick="switchTab('inventory')" id="tab-inventory" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
-                🛡️ Герой
-            </button>
-            <button onclick="switchTab('cube')" id="tab-cube" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
-                🔮 Алхімія
-            </button>
-            <button onclick="switchTab('dictionary')" id="tab-dictionary" class="interactive-btn py-3 rounded-xl text-xs sm:text-sm font-bold bg-stone-900 text-amber-400/70 border border-stone-800 font-medieval flex items-center justify-center gap-1.5">
-                🏆 Трофеї
-            </button>
-        </nav>
-
-        <main class="w-full flex-1 flex flex-col justify-between space-y-4">
-            
-
-            <!-- DEUTSCH DICE ARENA v0.003 -->
-            <section id="sec-dice" class="hidden w-full dd-shell p-3 sm:p-5 space-y-4">
-                <div class="flex items-center justify-between gap-3 border-b border-violet-900/50 pb-3">
-                    <div>
-                        <div class="text-[10px] uppercase tracking-[.22em] text-violet-300/70 font-mono">DEUTSCH QUEST</div>
-                        <h2 class="text-xl sm:text-2xl font-cinzel font-black text-violet-100">🎲 DICE ARENA</h2>
-                        <p class="text-[11px] sm:text-xs text-violet-200/70 font-mono">5×3 • Roll • Spawn • Merge • Learn • Destroy</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="ddShowHowToPlay()" class="dd-action px-3 bg-stone-950 text-violet-200 text-xs">❔ Правила</button>
-                        <button onclick="ddResetBattle()" class="dd-action px-3 bg-red-950/50 text-red-300 text-xs">↺ Скинути бій</button>
-                    </div>
-                </div>
-                <div class="dd-hud">
-                    <div class="dd-chip"><div class="text-[10px] text-slate-400">🌊 WAVE</div><b id="dd-wave" class="text-violet-200">1/10</b></div>
-                    <div class="dd-chip"><div class="text-[10px] text-slate-400">❤️ BASE</div><b id="dd-base" class="text-red-300">100</b></div>
-                    <div class="dd-chip"><div class="text-[10px] text-slate-400">💧 MANA</div><b id="dd-mana" class="text-cyan-300">30</b></div>
-                    <div class="dd-chip"><div class="text-[10px] text-slate-400">⚔️ POWER</div><b id="dd-power" class="text-amber-300">0</b></div>
-                    <div class="dd-chip"><div class="text-[10px] text-slate-400">🔥 COMBO</div><b id="dd-combo" class="text-emerald-300">x0</b></div>
-                </div>
-                <div class="grid lg:grid-cols-[1.35fr_.65fr] gap-4">
-                    <div class="space-y-3">
-                        <div class="tavern-panel p-3 rounded-2xl">
-                            <div class="flex items-center justify-between gap-2 mb-2">
-                                <div class="text-xs text-violet-200 font-bold">Вороги</div>
-                                <div class="text-[10px] text-violet-300/60 font-mono">Правильні відповіді заряджають наступну атаку</div>
-                            </div>
-                            <div id="dd-enemies" class="dd-enemies"></div>
-                        </div>
-                        <div class="tavern-panel p-3 sm:p-4 rounded-2xl">
-                            <div class="flex items-center justify-between mb-3 gap-3">
-                                <div class="text-xs font-bold text-violet-200">Battle Board</div>
-                                <div class="text-[10px] text-violet-300/60 font-mono" id="dd-board-help">Обери кубик → такий самий → MERGE</div>
-                            </div>
-                            <div id="dd-board" class="dd-board"></div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="ddRoll()" class="dd-action bg-violet-700 hover:bg-violet-600 text-white">🎲 ROLL <span id="dd-roll-cost">5</span></button>
-                            <button onclick="ddStartWave()" id="dd-wave-btn" class="dd-action bg-amber-700 hover:bg-amber-600 text-white">⚔️ START WAVE</button>
-                            <button onclick="ddAutoMerge()" class="dd-action bg-cyan-800 hover:bg-cyan-700 text-cyan-50">⚡ AUTO MERGE</button>
-                        </div>
-                    </div>
-                    <aside class="space-y-3">
-                        <div class="dd-question">
-                            <div class="flex items-center justify-between gap-2 mb-2"><span class="text-[10px] uppercase tracking-widest text-violet-300/70 font-mono">LANGUAGE POWER</span><span id="dd-question-timer" class="text-[10px] text-amber-300 font-mono">READY</span></div>
-                            <div id="dd-question-word" class="text-xl font-cinzel font-black text-white">Запусти хвилю</div>
-                            <div id="dd-question-prompt" class="text-xs text-violet-200/70 mt-1">Тут з'явиться німецьке слово.</div>
-                            <div id="dd-answer-grid" class="grid grid-cols-1 gap-2 mt-3"></div>
-                            <div id="dd-question-result" class="min-h-[30px] mt-2 text-xs font-bold"></div>
-                        </div>
-                        <div class="tavern-panel p-4 rounded-2xl space-y-2">
-                            <div class="flex items-center justify-between text-xs"><span class="text-violet-200 font-bold">🃏 Колода</span><b id="dd-deck-count" class="text-violet-300">0</b></div>
-                            <div id="dd-deck" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
-                        </div>
-                        <div class="tavern-panel p-4 rounded-2xl space-y-2 text-xs">
-                            <div class="flex justify-between"><span class="text-slate-400">XP</span><b id="dd-xp" class="text-amber-300">0</b></div>
-                            <div class="flex justify-between"><span class="text-slate-400">Coins</span><b id="dd-coins" class="text-yellow-300">0</b></div>
-                            <div class="flex justify-between"><span class="text-slate-400">Mastery hit</span><b id="dd-mastery" class="text-emerald-300">0</b></div>
-                            <div class="flex justify-between"><span class="text-slate-400">Best wave</span><b id="dd-best" class="text-violet-300">0</b></div>
-                        </div>
-                    </aside>
-                </div>
-                <div class="text-[10px] text-violet-300/50 font-mono text-center">Prototype Battle Engine • mobile-first • no external assets</div>
-            </section>
-
-            <!-- СЕКЦІЯ СУВОЇВ -->
-            <section id="sec-cards" class="w-full space-y-4">
-                <div class="flex items-center justify-between tavern-panel px-5 py-3 rounded-xl text-xs sm:text-sm font-mono">
-                    <span id="card-counter-text" class="text-amber-400 font-bold">Сувій 1 / 84</span>
-                    <button onclick="openTamingTrial()" class="interactive-btn bg-amber-900/80 text-amber-200 border border-amber-600/70 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow">
-                        🏆 Освоїти Слово
-                    </button>
-                </div>
-
-                <div class="w-full h-72 sm:h-80 lg:h-96 perspective cursor-pointer group" onclick="flipCard()">
-                    <div id="card-inner" class="w-full h-full relative transform-style-3d transition-transform duration-500 rounded-3xl shadow-2xl">
-                        <!-- НІМЕЦЬКА СТОРОНА -->
-                        <div class="absolute inset-0 w-full h-full backface-hidden tavern-panel rounded-3xl p-8 flex flex-col justify-between items-center text-center">
-                            <div class="w-full flex justify-between items-center text-xs font-mono text-amber-400/80">
-                                <span class="bg-amber-950 px-3 py-1 rounded-lg border border-amber-800">DEUTSCH 🇩🇪</span>
-                                <button onclick="speakWord(event)" class="interactive-btn text-amber-400 hover:text-amber-200 p-1 text-lg"><i class="fa-solid fa-volume-high"></i></button>
-                            </div>
-                            <div class="my-auto space-y-2">
-                                <div id="card-front-word" class="text-3xl sm:text-5xl font-medieval font-black text-amber-100 tracking-wide">...</div>
-                                <div id="card-front-grammar" class="text-xs font-mono text-amber-400 bg-amber-950/90 px-3 py-1 rounded-full border border-amber-800 inline-block">...</div>
-                                <div id="card-trophy-status" class="hidden text-xs font-bold text-yellow-400 font-mono mt-2">
-                                    🏆 Трофей розблоковано!
-                                </div>
-                            </div>
-                            <span class="text-xs text-amber-500/70 font-mono"><i class="fa-solid fa-hand-pointer"></i> Торкніться для перевороту</span>
-                        </div>
-                        <!-- УКРАЇНСЬКА СТОРОНА -->
-                        <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 parchment-scroll rounded-3xl p-8 flex flex-col justify-between items-center text-center">
-                            <div class="w-full flex justify-between items-center text-xs font-mono text-amber-200/80">
-                                <span class="bg-amber-950/80 px-3 py-1 rounded-lg border border-amber-800/60 font-bold">ПЕРЕКЛАД 🇺🇦</span>
-                            </div>
-                            <div class="my-auto space-y-3">
-                                <div id="card-back-emoji" class="text-5xl animate-bounce filter drop-shadow">📦</div>
-                                <div id="card-back-trans" class="text-2xl sm:text-4xl font-black font-medieval text-amber-100">...</div>
-                            </div>
-                            <span class="text-xs text-amber-400/70 font-mono">Торкніться для повернення</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-3">
-                    <button onclick="prevCard()" class="interactive-btn tavern-panel text-amber-200 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5"><i class="fa-solid fa-arrow-left"></i> Назад</button>
-                    <button onclick="flipCard()" class="interactive-btn tavern-panel text-amber-400 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5"><i class="fa-solid fa-rotate"></i> Оберт</button>
-                    <button onclick="nextCard()" class="interactive-btn bg-amber-800 text-amber-100 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 border border-amber-500">Далі <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-            </section>
-
-            <!-- СЕКЦІЯ ІСПИТУ -->
-            <section id="sec-exam" class="hidden w-full tavern-panel p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-amber-900/60 pb-3 font-mono text-xs sm:text-sm">
-                    <span class="text-amber-400 font-bold uppercase tracking-wider font-medieval">⚔️ Іспит Шинкаря</span>
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center gap-2 bg-stone-950 px-3 py-1 rounded-xl border border-amber-800/60">
-                            <div id="key-icon-container" class="text-xl">❌</div>
-                            <span id="key-name-text" class="text-xs font-bold text-stone-500">Немає ключа</span>
-                        </div>
-                        <button onclick="openChestRoulette()" id="open-chest-btn" class="interactive-btn bg-amber-600 text-stone-950 font-black px-3 py-1.5 rounded-lg text-xs font-medieval">Скриня 🎁</button>
-                    </div>
-                </div>
-                <div id="exam-box" class="space-y-4"></div>
-            </section>
-
-            <!-- СЕКЦІЯ ІНВЕНТАРЯ -->
-            <section id="sec-inventory" class="hidden w-full tavern-panel p-6 space-y-5">
-                <div>
-                    <h4 class="text-xs sm:text-sm font-mono text-amber-300 font-bold mb-3 border-b border-amber-900/60 pb-2">
-                        Екіпірування (<span id="current-hero-class-name" class="text-amber-100">Ронан</span>):
-                    </h4>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="hero-equip-slots-grid"></div>
-                </div>
-                <div class="border-t border-amber-900/60 pt-4">
-                    <h4 class="text-xs sm:text-sm font-mono text-amber-300 font-bold mb-3">
-                        Сховище (<span id="storage-count-text" class="text-yellow-400">0</span>/36):
-                    </h4>
-                    <div id="storage-grid" class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-9 gap-2 max-h-72 overflow-y-auto p-1"></div>
-                </div>
-            </section>
-
-            <!-- СЕКЦІЯ АЛХІМІЇ -->
-            <section id="sec-cube" class="hidden w-full tavern-panel p-6 space-y-4 text-center">
-                <h3 class="font-bold text-amber-300 font-medieval text-base border-b border-amber-900/60 pb-2">🔮 Алхімічний Переплав (9в1)</h3>
-                <div class="max-w-xs mx-auto bg-stone-950 p-3 rounded-2xl grid grid-cols-3 gap-2 border border-amber-900/70">
-                    <div onclick="removeCubeSlot(0)" id="cube-slot-0" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
-                    <div onclick="removeCubeSlot(1)" id="cube-slot-1" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
-                    <div onclick="removeCubeSlot(2)" id="cube-slot-2" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
-                    <div onclick="removeCubeSlot(3)" id="cube-slot-3" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
-                    <div onclick="removeCubeSlot(4)" id="cube-slot-4" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
-                    <div onclick="removeCubeSlot(5)" id="cube-slot-5" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
-                    <div onclick="removeCubeSlot(6)" id="cube-slot-6" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
-                    <div onclick="removeCubeSlot(7)" id="cube-slot-7" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
-                    <div onclick="removeCubeSlot(8)" id="cube-slot-8" class="h-20 border border-dashed border-amber-800/50 rounded-xl flex items-center justify-center cursor-pointer"></div>
-                </div>
-                <div class="flex gap-2 max-w-xs mx-auto">
-                    <button onclick="autoFillCube()" class="interactive-btn flex-1 bg-stone-900 text-amber-300 text-xs py-2.5 rounded-xl border border-amber-800/60">⚡ Авто</button>
-                    <button onclick="craftCubeTransmute()" class="interactive-btn flex-1 bg-amber-700 text-amber-100 text-xs font-bold py-2.5 rounded-xl border border-amber-500 font-medieval">Сплавити 🔮</button>
-                </div>
-            </section>
-
-            <!-- СЕКЦІЯ ТРОФЕЇВ -->
-            <section id="sec-dictionary" class="hidden w-full tavern-panel p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-amber-900/60 pb-3 gap-2">
-                    <h3 class="font-bold text-amber-300 font-medieval text-base">🏆 Колекція Слів (<span id="trophy-count-badge">0</span>/20)</h3>
-                    <input type="text" id="dict-search-input" oninput="filterDictionary()" placeholder="Пошук..." class="bg-stone-950 border border-amber-800/70 rounded-lg px-3 py-1 text-xs text-amber-100 focus:outline-none">
-                </div>
-                <div id="dict-words-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-96 overflow-y-auto pr-1"></div>
-            </section>
-
-        </main>
+<body id="app-body">
+<div class="g-app">
+  <aside class="g-sidebar">
+    <div class="g-brand">
+      <div class="g-brand-mark">G</div>
+      <div><h1>GESTALT</h1><p>LANGUAGE RPG • A2 → B1</p></div>
     </div>
+    <div class="g-nav" id="desktop-nav">
+      <button data-screen="dashboard" onclick="gNav('dashboard')" class="active"><span class="ico">⌂</span>Головна</button>
+      <button data-screen="cards" onclick="gNav('cards')"><span class="ico">▣</span>Слова</button>
+      <button data-screen="cards" onclick="gNav('cards')"><span class="ico">◈</span>Картки</button>
+      <button data-screen="dice" onclick="gNav('dice')"><span class="ico">◉</span>Dice</button>
+      <button data-screen="quests" onclick="gNav('quests')"><span class="ico">◇</span>Квести</button>
+      <button data-screen="shop" onclick="gNav('shop')"><span class="ico">◆</span>Магазин</button>
+      <button data-screen="profile" onclick="gNav('profile')"><span class="ico">◌</span>Профіль</button>
+      <button data-screen="settings" onclick="gNav('settings')"><span class="ico">⚙</span>Налаштування</button>
+    </div>
+    <div class="g-side-footer">
+      HTML • CSS • JS<br>Offline-ready shell<br>Telegram-compatible<br>Dark / Light theme
+    </div>
+  </aside>
 
-
-    <div id="dd-help-modal" class="fixed inset-0 bg-stone-950/90 backdrop-blur-md z-[80] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-200">
-        <div class="dd-shell w-full max-w-lg p-5 space-y-4 border border-violet-700/40">
-            <div class="flex items-center justify-between"><h3 class="text-lg font-cinzel font-black text-violet-100">🎲 Як грати</h3><button onclick="ddCloseHowToPlay()" class="text-violet-300 text-xl">×</button></div>
-            <div class="grid gap-2 text-xs text-violet-100/80">
-                <div class="dd-mission"><div class="check">1</div><div><b>ROLL</b><br>витрачай Mana та випадково створюй бойові кубики.</div></div>
-                <div class="dd-mission"><div class="check">2</div><div><b>MERGE</b><br>натисни два кубики одного типу — отримай сильніший рівень.</div></div>
-                <div class="dd-mission"><div class="check">3</div><div><b>LANGUAGE POWER</b><br>правильний переклад дає наступній атаці великий бонус.</div></div>
-                <div class="dd-mission"><div class="check">4</div><div><b>WAVE / BOSS</b><br>переживи 10 хвиль. Кожна 5-та — бос.</div></div>
-            </div>
-            <button onclick="ddCloseHowToPlay()" class="dd-action w-full bg-violet-700 text-white">Почати бій</button>
+  <main class="g-workspace">
+    <header class="g-main-head">
+      <div>
+        <div class="g-mobile-only" style="font-size:9px;color:#6e8389;letter-spacing:.18em;margin-bottom:3px">GESTALT</div>
+        <h2 id="g-page-title">Вивчення слів</h2>
+        <p id="g-page-subtitle">Додавай слова, повторюй їх та прокачуй картки через gameplay.</p>
+      </div>
+      <div class="g-head-actions">
+        <div class="g-resources">
+          <div class="g-resource">🪙 <b id="g-gold">0</b></div>
+          <div class="g-resource">◆ <b id="g-gems">0</b></div>
+          <div class="g-resource">◉ <b id="g-energy">5</b></div>
         </div>
+        <button class="g-iconbtn" onclick="openMusicSelectModal()" title="Звук">♫</button>
+        <button class="g-iconbtn g-mobile-only" onclick="gNav('profile')" title="Профіль">☰</button>
+      </div>
+    </header>
+
+    <div class="g-tabs" id="top-tabs">
+      <button data-screen="dashboard" onclick="gNav('dashboard')" class="active">Огляд</button>
+      <button data-screen="cards" onclick="gNav('cards')">Вчити</button>
+      <button data-screen="dice" onclick="gNav('dice')">Random Dice</button>
+      <button data-screen="quests" onclick="gNav('quests')">Щоденні</button>
     </div>
-    <div id="dd-toast" class="dd-toast"></div>
-    <!-- МОДАЛКИ -->
-    <div id="hero-modal" class="fixed inset-0 bg-stone-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="tavern-panel rounded-3xl w-full max-w-md p-6 space-y-4 text-center border-2 border-amber-600">
-            <h3 class="font-bold text-lg text-amber-200 font-medieval">Обрати Героя Таверни</h3>
-            <div class="grid grid-cols-3 gap-2" id="hero-select-options-grid"></div>
-            <button onclick="closeHeroSelectModal()" class="interactive-btn text-xs text-amber-500 font-mono">Закрити</button>
+
+    <section id="sec-dashboard" class="g-screen active">
+      <div class="g-statrow">
+        <div class="g-statbox"><div class="lbl">ВСЬОГО СЛІВ</div><div class="val" id="g-total-words">0</div></div>
+        <div class="g-statbox"><div class="lbl">ВИВЧЕНО</div><div class="val" id="g-mastered-words">0</div><div class="g-progress"><i id="g-master-progress"></i></div></div>
+        <div class="g-statbox"><div class="lbl">В ПРОЦЕСІ</div><div class="val" id="g-learning-words">0</div></div>
+        <div class="g-statbox"><div class="lbl">НОВІ</div><div class="val" id="g-new-words">0</div></div>
+      </div>
+
+      <div class="g-panel" style="padding:8px 10px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <div><b style="font-size:10px;color:#d7b66e">🔥 STREAK</b><span id="g-streak" style="font-size:11px;color:#b5c4c5;margin-left:7px">0 днів</span></div>
+          <div style="font-size:9px;color:#70838a">До повторення: <b id="g-due" style="color:#e0ce9f">0</b></div>
+          <button class="g-btn gold" onclick="gNav('cards')">Почати повторення</button>
         </div>
-    </div>
+      </div>
 
-    <div id="trial-modal" class="fixed inset-0 bg-stone-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="tavern-panel rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl border-2 border-amber-600">
-            <div class="flex items-center justify-between border-b border-amber-900/60 pb-2">
-                <h3 class="font-bold text-sm text-amber-300 font-medieval">Випробування: <span id="trial-word-name" class="text-amber-100"></span></h3>
-                <button onclick="closeTrialModal()" class="text-amber-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      <div class="g-grid-main">
+        <div>
+          <div class="g-panel" style="margin-bottom:12px;overflow:hidden">
+            <div class="g-panel-head"><div><h3>Картка слова</h3><span>Ваша наступна одиниця прогресу</span></div><button class="g-iconbtn" style="width:34px;height:32px" onclick="gSpeakFeatured(event)">🔊</button></div>
+            <div class="g-word-card">
+              <span class="g-word-label">GERMAN • B1</span>
+              <div class="g-word-title" id="g-feature-word">Wunder</div>
+              <div class="g-word-phon" id="g-feature-grammar">[ˈvʊndɐ] • Nomen</div>
+              <div class="g-word-meaning" id="g-feature-meaning">Диво, чудо</div>
+              <div class="g-word-example" id="g-feature-example">Das ist ein Wunder!<br><em>Це справжнє диво!</em></div>
+              <div class="g-word-actions">
+                <button class="g-btn" onclick="gReview(false)">↻ Знову</button>
+                <button class="g-btn" onclick="gHard()">Складно</button>
+                <button class="g-btn green" onclick="gReview(true)">Добре</button>
+                <button class="g-btn blue" onclick="gEasy()">Легко</button>
+              </div>
             </div>
-            <p class="text-xs text-amber-200/80 font-mono">Обери правильний переклад для розблокування Трофею!</p>
-            <div id="trial-opts" class="space-y-2"></div>
+          </div>
+
+          <div class="g-panel">
+            <div class="g-panel-head"><div><h3>Квести</h3><span>Твої задачі на сьогодні</span></div><button class="g-btn" onclick="gNav('quests')">Всі</button></div>
+            <div id="g-home-quests">
+              <div class="g-quest-row"><div class="qicon">📖</div><div class="qtext"><b>Вчитель слів</b><span>Вивчи 20 нових слів</span></div><div class="qreward">XP 200<strong>🪙 100</strong></div></div>
+              <div class="g-quest-row"><div class="qicon">⭐</div><div class="qtext"><b>Майстер карток</b><span>Переглянь 50 карток</span></div><div class="qreward">XP 300<strong>🪙 150</strong></div></div>
+              <div class="g-quest-row"><div class="qicon">◉</div><div class="qtext"><b>Dice виклик</b><span>Використай Random Dice 10 разів</span></div><div class="qreward">XP 150<strong>🪙 75</strong></div></div>
+              <div class="g-quest-row"><div class="qicon">☾</div><div class="qtext"><b>Щоденне тренування</b><span>Вивчай слова 7 днів поспіль</span></div><div class="qreward">XP 250<strong>🪙 125</strong></div></div>
+            </div>
+          </div>
         </div>
-    </div>
 
-    <div id="roulette-modal" class="fixed inset-0 bg-stone-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-        <div id="roulette-modal-card" class="tavern-panel rounded-3xl w-full max-w-md p-6 space-y-4 border-2 border-amber-600 text-center relative">
-            <div class="flex items-center justify-between border-b border-amber-900/60 pb-2 font-mono">
-                <h3 class="font-bold text-xs text-amber-300">Відкриття Скрині <span id="roulette-key-title" class="text-amber-100">LVL 1</span></h3>
-                <button onclick="closeRouletteModal()" id="roulette-close-btn" class="text-amber-400"><i class="fa-solid fa-xmark"></i></button>
+        <div class="g-rightcol">
+          <div class="g-upgrade">
+            <div class="g-card-mini">
+              <div class="g-mini-card">
+                <small id="g-upgrade-rarity">RARE</small>
+                <b id="g-upgrade-word">Haus</b>
+                <span class="star" id="g-upgrade-stars">★★★☆☆</span>
+              </div>
+              <div>
+                <h4>Прокачка картки</h4>
+                <div style="font-size:10px;color:#7e9096">Рівень <b id="g-card-level">3 / 5</b></div>
+                <div class="g-progress"><i id="g-card-xpbar" style="width:64%"></i></div>
+                <div class="line"><span>+ Досвід</span><b id="g-bonus-xp">+30% XP</b></div>
+                <div class="line"><span>+ Золото</span><b id="g-bonus-gold">+20%</b></div>
+                <div class="line"><span>+ Шанс Dice</span><b id="g-bonus-dice">+15%</b></div>
+                <button class="g-btn gold" style="width:100%;margin-top:10px" onclick="gUpgradeCard()">Покращити 🪙 <span id="g-upgrade-cost">750</span></button>
+              </div>
             </div>
-            <div class="bg-stone-950/80 border border-amber-800/40 p-2 rounded-xl text-xs font-mono text-amber-400 font-bold" id="pity-counter-text">
-                ДО ГАРАНТОВАНОЇ ЛЕГЕНДАРКИ: 10 КРУТОК
+          </div>
+
+          <div class="g-panel">
+            <div class="g-panel-head"><div><h3>Світи</h3><span>Нова область відкривається з рівнем</span></div></div>
+            <div class="g-worlds">
+              <button class="g-world" onclick="gWorldToast('Зелений луг')"><strong>Зелений луг</strong><span>Легкий рівень</span></button>
+              <button class="g-world" onclick="gWorldToast('Темний ліс')"><strong>Темний ліс</strong><span>Середній рівень</span></button>
+              <button class="g-world" onclick="gWorldToast('Забута фортеця')"><strong>Забута фортеця</strong><span>Складний рівень</span></button>
+              <button class="g-world" onclick="gWorldToast('Небесна вежа')"><strong>Небесна вежа</strong><span>Експертний рівень</span></button>
             </div>
-            <div class="flex items-center justify-center gap-3 bg-stone-950 p-2 rounded-xl border border-amber-900/40">
-                <div id="modal-key-icon" class="text-3xl">🗡️</div>
-                <div class="text-left font-mono">
-                    <div id="modal-key-name" class="text-xs font-bold text-amber-100">Іржавий залізняк</div>
-                    <div id="modal-key-chance" class="text-[10px] text-amber-400/80">Шанс порожнечі: 70%</div>
-                </div>
-            </div>
-            <div class="roulette-container">
-                <div class="roulette-pointer"></div>
-                <div id="roulette-track" class="roulette-track"></div>
-            </div>
-            <div id="roulette-result-box" class="min-h-[35px] text-xs font-mono font-bold text-amber-300 flex items-center justify-center">
-                Вставити ключ та прокрутити!
-            </div>
-            <button onclick="spinRouletteCSGO()" id="spin-btn" class="interactive-btn w-full bg-amber-600 hover:bg-amber-500 text-stone-950 font-black py-3 rounded-xl font-medieval text-sm uppercase">
-                Використати Ключ 🔑
-            </button>
+          </div>
+
+          <div class="g-panel" style="padding:12px">
+            <div style="font-size:9px;color:#76888e;letter-spacing:.12em;margin-bottom:8px">РЕКОМЕНДАЦІЯ</div>
+            <div id="g-recommendation" style="font:700 14px Georgia,serif;color:#e8d8b4">—</div>
+            <div style="font-size:9px;color:#76888e;margin-top:5px">Слово з найвищим пріоритетом повторення.</div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- МЕНЮ МУЗИКИ ТА НАЛАШТУВАННЯ ГУЧНОСТІ -->
-    <div id="music-modal" class="fixed inset-0 bg-stone-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-        <div class="tavern-panel rounded-3xl w-full max-w-sm p-6 space-y-4 border border-amber-800">
-            <div class="flex items-center justify-between border-b border-amber-900/60 pb-2">
-                <h3 class="font-bold text-sm text-amber-300 font-medieval">🎵 Музика та Гучність Таверни</h3>
-                <button onclick="closeMusicModal()" class="text-amber-400"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <!-- СЛАЙДЕРИ ГУЧНОСТІ -->
-            <div class="space-y-3 font-mono text-xs text-amber-200">
-                <div>
-                    <div class="flex justify-between mb-1"><span>🎚️ Гучність Музики:</span><b id="music-vol-val">50%</b></div>
-                    <input type="range" min="0" max="100" value="50" oninput="changeMusicVolume(this.value)" class="w-full accent-amber-600 cursor-pointer">
-                </div>
-                <div>
-                    <div class="flex justify-between mb-1"><span>🔊 Гучність Ефектів:</span><b id="sfx-vol-val">70%</b></div>
-                    <input type="range" min="0" max="100" value="70" oninput="changeSfxVolume(this.value)" class="w-full accent-amber-600 cursor-pointer">
-                </div>
-            </div>
+      <div class="g-footerbar">
+        <div class="g-footer-item"><b>▣ ПК + Телефон</b>Responsive UI</div>
+        <div class="g-footer-item"><b>◌ Offline</b>Local save</div>
+        <div class="g-footer-item"><b>◈ Backup ready</b>Google Drive-ready flow</div>
+        <div class="g-footer-item"><b>⌁ Без фреймворків</b>HTML / CSS / JS</div>
+      </div>
+    </section>
 
-            <!-- ВИБІР МУЗИЧНИХ ТРЕКІВ -->
-            <div class="space-y-2 font-mono text-xs border-t border-amber-900/60 pt-3">
-                <div class="text-[10px] text-amber-400 font-bold uppercase tracking-wider mb-1">Оберіть трек таверни:</div>
-                <button onclick="selectMusicStyle('tavern_lute')" class="interactive-btn w-full bg-stone-950 border border-amber-800/50 p-2.5 rounded-xl text-left font-bold text-amber-200">🪕 Перебори Лютні (Затишок)</button>
-                <button onclick="selectMusicStyle('bard_song')" class="interactive-btn w-full bg-stone-950 border border-amber-800/50 p-2.5 rounded-xl text-left font-bold text-amber-200">🎶 Пісня Бродячого Барда</button>
-                <button onclick="selectMusicStyle('tavern_flute')" class="interactive-btn w-full bg-stone-950 border border-amber-800/50 p-2.5 rounded-xl text-left font-bold text-amber-200">🪵 Дерев'яна Флейта та Камін</button>
-                <button onclick="selectMusicStyle('epic_tavern')" class="interactive-btn w-full bg-stone-950 border border-amber-800/50 p-2.5 rounded-xl text-left font-bold text-amber-200">🍻 Святковий Гіллястий Гімн</button>
-            </div>
+    <section id="sec-cards" class="g-screen">
+      <div class="g-panel" style="overflow:hidden">
+        <div class="g-panel-head"><div><h3>Картки / Anki</h3><span>Spaced repetition • Mastery 0–5</span></div><div style="font-size:10px;color:#71858b" id="card-counter-text">Слово 1</div></div>
+        <div style="padding:14px">
+          <div class="g-word-card" style="min-height:340px" onclick="flipCard()">
+            <span class="g-word-label">DEUTSCH 🇩🇪</span>
+            <div class="g-word-title" id="card-front-word">Wunder</div>
+            <div class="g-word-phon" id="card-front-grammar">Nomen</div>
+            <div style="margin-top:26px;color:#6f848a;font-size:11px">Торкнися, щоб перевернути</div>
+            <div id="card-back-emoji" class="compat"></div>
+            <div id="card-back-trans" class="compat"></div>
+            <div id="card-trophy-status" class="compat"></div>
+          </div>
+          <div class="g-word-actions" style="margin-top:12px">
+            <button class="g-btn" onclick="prevCard()">← Назад</button>
+            <button class="g-btn gold" onclick="flipCard()">Оберт</button>
+            <button class="g-btn" onclick="nextCard()">Далі →</button>
+            <button class="g-btn green" onclick="openTamingTrial()">Освоїти слово</button>
+            <button class="g-iconbtn" onclick="speakWord(event)">🔊</button>
+          </div>
         </div>
-    </div>
+      </div>
+    </section>
 
-    <script>
+    <section id="sec-dice" class="g-screen">
+      <div class="g-dice-shell" style="padding:13px">
+        <div class="g-panel-head" style="border-bottom-color:rgba(216,170,88,.12);padding-left:2px;padding-right:2px"><div><h3>Random Dice Arena</h3><span>Roll • Spawn • Merge • Learn • Destroy</span></div><div style="display:flex;gap:6px"><button class="g-btn" onclick="ddShowHowToPlay()">Правила</button><button class="g-btn red" onclick="ddResetBattle()">Скинути</button></div></div>
+        <div class="dd-hud" style="margin-top:10px">
+          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">WAVE</div><b id="dd-wave" style="color:#d9c58f">1/10</b></div>
+          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">BASE</div><b id="dd-base" style="color:#de8a7f">100</b></div>
+          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">MANA</div><b id="dd-mana" style="color:#74bad0">30</b></div>
+          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">POWER</div><b id="dd-power" style="color:#e5c47a">0</b></div>
+          <div class="dd-chip"><div style="font-size:8px;color:#6d8188">COMBO</div><b id="dd-combo" style="color:#7fca96">x0</b></div>
+        </div>
+        <div class="g-grid-main" style="margin-top:10px">
+          <div>
+            <div class="g-panel" style="padding:12px;margin-bottom:10px"><div class="g-panel-head" style="padding:0 0 9px"><h3>Вороги</h3><span>Language Power заряджає атаки</span></div><div id="dd-enemies" class="dd-enemies"></div></div>
+            <div class="g-panel" style="padding:12px"><div class="g-panel-head" style="padding:0 0 9px"><h3>Battle Board • 5 × 3</h3><span id="dd-board-help">Обери однакові кубики для MERGE</span></div><div id="dd-board" class="dd-board"></div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:9px">
+              <button class="g-btn gold" onclick="ddRoll()" style="width:100%">🎲 ROLL <span id="dd-roll-cost">5</span></button>
+              <button class="g-btn" onclick="ddStartWave()" id="dd-wave-btn" style="width:100%">⚔ START WAVE</button>
+              <button class="g-btn blue" onclick="ddAutoMerge()" style="width:100%">⚡ AUTO MERGE</button>
+            </div>
+          </div>
+          <aside class="g-rightcol">
+            <div id="dd-question" class="g-panel" style="padding:13px">
+              <div class="g-panel-head" style="padding:0 0 10px"><h3>Language Power</h3><span id="dd-question-timer">READY</span></div>
+              <div id="dd-question-word" style="font:700 25px Georgia,serif;color:#f2e4c5">Запусти хвилю</div>
+              <div id="dd-question-prompt" style="font-size:10px;color:#71858b;margin-top:5px">Тут з’явиться німецьке слово.</div>
+              <div id="dd-answer-grid" style="display:grid;gap:7px;margin-top:11px"></div>
+              <div id="dd-question-result" style="min-height:28px;margin-top:7px;font-size:10px"></div>
+            </div>
+            <div class="g-panel" style="padding:13px"><div class="g-panel-head" style="padding:0 0 8px"><h3>Колода</h3><span id="dd-deck-count">0</span></div><div id="dd-deck" class="space-y-2"></div></div>
+            <div class="g-panel" style="padding:13px"><div class="line" style="display:flex;justify-content:space-between;font-size:10px;color:#77888e"><span>XP</span><b id="dd-xp" style="color:#e1c67f">0</b></div><div class="line" style="display:flex;justify-content:space-between;font-size:10px;color:#77888e;margin-top:7px"><span>Coins</span><b id="dd-coins" style="color:#e4c472">0</b></div><div class="line" style="display:flex;justify-content:space-between;font-size:10px;color:#77888e;margin-top:7px"><span>Mastery hit</span><b id="dd-mastery" style="color:#7fca96">0</b></div><div class="line" style="display:flex;justify-content:space-between;font-size:10px;color:#77888e;margin-top:7px"><span>Best wave</span><b id="dd-best" style="color:#d7bb78">0</b></div></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-quests" class="g-screen">
+      <div class="g-panel"><div class="g-panel-head"><div><h3>Квести</h3><span>Daily • Weekly • Progression</span></div></div>
+        <div id="g-quest-screen" style="padding:6px 0">
+          <div class="g-quest-row"><div class="qicon">📖</div><div class="qtext"><b>Вчитель слів</b><span>Вивчи 20 нових слів</span></div><div class="qreward">200 XP<strong>100 🪙</strong></div></div>
+          <div class="g-quest-row"><div class="qicon">⭐</div><div class="qtext"><b>Майстер карток</b><span>Перейди mastery 5 для 3 слів</span></div><div class="qreward">300 XP<strong>150 🪙</strong></div></div>
+          <div class="g-quest-row"><div class="qicon">◉</div><div class="qtext"><b>Dice виклик</b><span>Зроби 10 ролів на арені</span></div><div class="qreward">150 XP<strong>75 🪙</strong></div></div>
+          <div class="g-quest-row"><div class="qicon">⚡</div><div class="qtext"><b>Perfect recall</b><span>10 правильних відповідей сьогодні</span></div><div class="qreward">250 XP<strong>125 🪙</strong></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-shop" class="g-screen">
+      <div class="g-panel"><div class="g-panel-head"><div><h3>Магазин</h3><span>Не pay-to-win — лише прогрес та косметика</span></div></div>
+        <div style="padding:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+          <div class="g-panel" style="padding:14px"><div style="font-size:24px">🎁</div><b style="font:700 14px Georgia,serif;color:#ead6ab">Starter Chest</b><p style="font-size:10px;color:#71858b">3 випадкові картки</p><button class="g-btn gold" onclick="gShop('Starter Chest')">Купити • 250 🪙</button></div>
+          <div class="g-panel" style="padding:14px"><div style="font-size:24px">✨</div><b style="font:700 14px Georgia,serif;color:#ead6ab">Lucky Roll</b><p style="font-size:10px;color:#71858b">Шанс на Rare Dice</p><button class="g-btn gold" onclick="gShop('Lucky Roll')">Купити • 400 🪙</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-profile" class="g-screen">
+      <div class="g-panel" style="padding:18px">
+        <div style="display:flex;gap:14px;align-items:center"><div class="g-avatar" style="width:60px;height:60px" id="g-profile-avatar"></div><div><div style="font:700 20px Georgia,serif;color:#ecd7ab">Wanderer</div><div style="font-size:10px;color:#72868d">Deutsch Quest Adventurer</div></div></div>
+        <div class="g-statrow" style="margin-top:16px"><div class="g-statbox"><div class="lbl">РІВЕНЬ</div><div class="val" id="g-profile-level">1</div></div><div class="g-statbox"><div class="lbl">XP</div><div class="val" id="g-profile-xp">0</div></div><div class="g-statbox"><div class="lbl">STREAK</div><div class="val" id="g-profile-streak">0</div></div><div class="g-statbox"><div class="lbl">MASTERED</div><div class="val" id="g-profile-mastered">0</div></div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="g-btn gold" onclick="openHeroSelectModal()">Змінити героя</button><button class="g-btn" onclick="openMusicSelectModal()">Налаштувати звук</button><button class="g-btn red" onclick="confirmResetProgress()">Скинути прогрес</button></div>
+      </div>
+    </section>
+
+    <section id="sec-settings" class="g-screen">
+      <div class="g-panel" style="padding:18px"><div class="g-panel-head" style="padding:0 0 12px"><div><h3>Налаштування</h3><span>Audio, appearance, accessibility</span></div></div>
+        <div style="display:grid;gap:9px">
+          <button class="g-btn" onclick="openMusicSelectModal()">♫ Музика та гучність</button>
+          <button class="g-btn" onclick="gToggleMotion()">◌ Reduced motion</button>
+          <button class="g-btn" onclick="gToggleTheme()">◐ Темна тема</button>
+          <button class="g-btn" onclick="gWorldToast('Telegram WebApp працює без mandatory API')">◈ Telegram compatibility</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Existing systems kept alive and restyled -->
+    <section id="sec-exam" class="g-screen"><div class="g-panel" style="padding:14px"><div class="g-panel-head" style="padding:0 0 10px"><div><h3>Випробування</h3><span>Quiz / Chest / Boss content</span></div><button class="g-btn gold" onclick="startExam()">Почати</button></div><div id="exam-box"></div></div></section>
+    <section id="sec-inventory" class="g-screen"><div class="g-panel" style="padding:14px"><div class="g-panel-head" style="padding:0 0 10px"><div><h3>Інвентар Героя</h3><span>Equipment • Storage</span></div></div><div id="hero-equip-slots-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div><div style="height:1px;background:rgba(255,255,255,.05);margin:12px 0"></div><div style="font-size:10px;color:#7d8e93;margin-bottom:7px">Сховище <span id="storage-count-text">0</span>/36</div><div id="storage-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-height:300px;overflow:auto"></div></div></section>
+    <section id="sec-cube" class="g-screen"><div class="g-panel" style="padding:14px;text-align:center"><div class="g-panel-head" style="padding:0 0 12px"><div><h3>Алхімічний переплав</h3><span>9 карт → 1 stronger card</span></div></div><div id="legacy-cube-slots" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:330px;margin:0 auto"></div><div style="display:flex;gap:7px;max-width:330px;margin:10px auto"><button class="g-btn" onclick="autoFillCube()" style="flex:1">⚡ Авто</button><button class="g-btn gold" onclick="craftCubeTransmute()" style="flex:1">Сплавити</button></div></div></section>
+    <section id="sec-dictionary" class="g-screen"><div class="g-panel"><div class="g-panel-head"><div><h3>Колекція слів</h3><span>Пошук та mastery</span></div><input id="dict-search-input" oninput="filterDictionary()" placeholder="Пошук..." style="background:#08151b;border:1px solid rgba(255,255,255,.06);border-radius:7px;padding:7px 9px;color:#dce4e3;font-size:10px"></div><div id="dict-words-list" style="padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-height:600px;overflow:auto"></div></div></section>
+
+  </main>
+
+  <aside class="g-right-rail" style="padding:18px 16px 24px 0">
+    <div class="g-panel" style="padding:14px;position:sticky;top:18px">
+      <div class="g-profile" style="margin-bottom:12px">
+        <div class="g-avatar" id="hero-chibi-container"></div>
+        <div style="flex:1"><div class="small">Рівень <span id="hero-lvl-badge">1</span></div><strong id="hero-title">Wanderer</strong><div class="g-progress"><i id="hero-xp-bar"></i></div></div>
+        <div style="font-size:9px;color:#71858b">⚔ <b id="total-atk-text" style="color:#d6bb7b">10</b></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px">
+        <div class="g-statbox"><div class="lbl">СЕРІЯ</div><div class="val" id="g-side-streak">0</div></div>
+        <div class="g-statbox"><div class="lbl">ДО ПОВТОРЕННЯ</div><div class="val" id="g-side-due">0</div></div>
+      </div>
+      <div class="g-panel" style="padding:12px;margin-bottom:10px"><div class="g-panel-head" style="padding:0 0 9px"><div><h3>Картка дня</h3><span id="g-side-card-label">Wunder</span></div></div><div style="font:700 24px Georgia,serif;color:#eee3c9" id="g-side-word">Wunder</div><div style="font-size:10px;color:#71858b;margin-top:5px" id="g-side-meaning">Диво, чудо</div><div class="g-progress" style="margin-top:10px"><i id="g-side-cardbar" style="width:64%"></i></div></div>
+      <button class="g-btn gold" style="width:100%;margin-bottom:10px" onclick="gNav('dice')">Запустити Dice Battle</button>
+      <div style="font-size:9px;color:#6f8187;line-height:1.6">Знання слова дає атаці bonus. Mastered word дає постійний прогрес.</div>
+    </div>
+  </aside>
+</div>
+
+<nav class="g-bottom-nav">
+  <button data-screen="dashboard" onclick="gNav('dashboard')" class="active"><i>⌂</i>Головна</button>
+  <button data-screen="cards" onclick="gNav('cards')"><i>▣</i>Слова</button>
+  <button data-screen="dice" onclick="gNav('dice')"><i>◉</i>Dice</button>
+  <button data-screen="quests" onclick="gNav('quests')"><i>◇</i>Квести</button>
+  <button data-screen="profile" onclick="gNav('profile')"><i>◌</i>Профіль</button>
+</nav>
+
+<div id="toast-container"></div>
+<div id="dd-help-modal" class="fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-4 opacity-0 pointer-events-none">
+  <div class="g-panel" style="max-width:420px;width:100%;padding:18px"><div style="font:700 18px Georgia,serif;color:#e7d5ae">Як грати в Random Dice</div><p style="font-size:11px;color:#809198;line-height:1.6">ROLL створює кубики. Два однакових рівня → MERGE. START WAVE починає бій. Під час бою відповідай на питання німецькою: правильна відповідь заряджає Language Power.</p><div style="display:flex;gap:7px;margin-top:12px"><button class="g-btn gold" onclick="ddCloseHowToPlay()">Зрозуміло</button></div></div>
+</div>
+<div id="dd-toast" class="fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-5 bg-[#132028] text-[#e7d19f] border border-[#7d693e] px-4 py-2 rounded-lg text-xs z-[100] opacity-0 pointer-events-none"></div>
+
+<!-- Hidden compatibility surface for legacy systems -->
+<div class="compat" id="legacy-compat"><div id="card-inner"></div><div id="enemy-box"></div><span id="enemy-name-text"></span><span id="enemy-hp-text"></span><div id="monster-chibi-svg"></div><div id="modal-key-icon"></div><div id="modal-key-name"></div><div id="modal-key-chance"></div><div id="dq-battle-modal"></div><div id="dq-battle-board"></div><div id="dq-battle-hp"></div><div id="dq-battle-hpbar"></div><div id="dq-battle-options"></div><div id="dq-battle-prompt"></div><div id="dq-battle-result"></div><div id="dq-battle-wave"></div><div id="dq-battle-word"></div><div id="tab-dashboard"></div>
+  <span id="gold-amount-text"></span><span id="current-hero-class-name">Wanderer</span><span id="trophy-count-badge"></span><span id="hero-level-label"></span><span id="hero-streak-label"></span>
+  <span id="hero-xp-bar-compat"></span><div id="key-icon-container"></div><span id="key-name-text"></span><button id="open-chest-btn"></button>
+  <span id="trophy-count-badge"></span><div id="pity-counter-text"></div>
+  <div id="heroes-modal-content"></div><div id="achievements-modal-content"></div><div id="cube-slot-0"></div><div id="cube-slot-1"></div><div id="cube-slot-2"></div><div id="cube-slot-3"></div><div id="cube-slot-4"></div><div id="cube-slot-5"></div><div id="cube-slot-6"></div><div id="cube-slot-7"></div><div id="cube-slot-8"></div><div id="profile-content"></div><div id="skills-content"></div><div id="boss-content"></div><div id="dialogues-content"></div><div id="quiz-content"></div><div id="dictation-content"></div><div id="sentence-content"></div><div id="verbs-content"></div><div id="article-content"></div><div id="match-content"></div><div id="speedrush-content"></div><div id="leitner-content"></div><div id="leitner-actions"></div><div id="leitner-back-section"></div>
+  <input id="compact-search-input"><div id="compact-words-grid"></div><div id="game-view-container"></div><div id="flashcard-inner"></div><div id="card-bookmark-btn"></div><div id="card-emoji"></div><div id="card-german"></div><div id="card-grammar"></div><div id="card-ukrainian"></div><div id="card-hint"></div><div id="card-rarity-badge"></div><div id="mode-compact-btn"></div><div id="mode-game-btn"></div>
+  <span id="stat-bookmarks"></span><span id="stat-level"></span><span id="stat-mastered-count"></span><span id="stat-streak-count"></span><span id="stat-xp"></span><span id="theme-progress-text"></span><span id="volume-val-label"></span><span id="sound-icon"></span><button id="sound-autospeak-btn"></button><button id="sound-master-btn"></button><button id="sound-master-btn-header"></button><button id="sound-rate-btn"></button><button id="soul-hack-btn"></button>
+</div>
+
+<!-- Old modal markup kept; mostly invisible until called -->
+<div id="hero-modal" class="fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 opacity-0 pointer-events-none">
+  <div class="g-panel" style="max-width:430px;width:100%;padding:18px"><div style="font:700 18px Georgia,serif;color:#e7d5ae">Оберіть героя</div><div id="hero-select-options-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px"></div><button class="g-btn" onclick="closeHeroSelectModal()" style="margin-top:12px">Закрити</button></div>
+</div>
+<div id="trial-modal" class="fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 opacity-0 pointer-events-none">
+  <div class="g-panel" style="max-width:430px;width:100%;padding:18px"><div id="trial-word-name" style="font:700 24px Georgia,serif;color:#f2deae">—</div><div id="trial-opts" style="display:grid;gap:7px;margin-top:12px"></div><button class="g-btn" onclick="closeTrialModal()">Закрити</button></div>
+</div>
+<div id="roulette-modal" class="fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="g-panel" style="max-width:560px;width:100%;padding:18px"><span id="roulette-key-title"></span><div id="roulette-modal-card"></div><div id="roulette-result-box"></div><div id="roulette-track"></div><button id="spin-btn" onclick="spinRouletteCSGO()" class="g-btn gold">Крутити</button><button onclick="closeRouletteModal()" class="g-btn">Закрити</button></div></div>
+<div id="music-modal" class="fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="g-panel" style="max-width:380px;width:100%;padding:18px"><h3 style="font:700 18px Georgia,serif;color:#f0d8a3">Музика</h3><div style="display:flex;gap:7px;margin-top:10px"><button class="g-btn" onclick="changeMusicVolume(-0.1)">−</button><button class="g-btn" onclick="changeMusicVolume(0.1)">+</button><button class="g-btn" onclick="changeSfxVolume(-0.1)">SFX −</button><button class="g-btn" onclick="changeSfxVolume(0.1)">SFX +</button></div><button class="g-btn" onclick="closeMusicModal()" style="margin-top:10px">Закрити</button><span id="music-vol-val" class="compat"></span><span id="sfx-vol-val" class="compat"></span></div></div>
+
+<script>
         function getHeroSVG(cls) {
             if (cls === 'knight') {
                 return `<svg viewBox="0 0 100 100" class="w-full h-full"><path d="M 25 35 Q 50 10 75 35 Q 80 20 50 15 Q 20 20 25 35 Z" fill="#271c19"/><circle cx="50" cy="42" r="22" fill="#fbcfe8"/><path d="M 28 32 Q 50 20 72 32 Z" fill="#3f2e2b"/><circle cx="41" cy="42" r="4" fill="#78350f"/><circle cx="59" cy="42" r="4" fill="#78350f"/><circle cx="42" cy="40" r="1.5" fill="#ffffff"/><circle cx="60" cy="40" r="1.5" fill="#ffffff"/><path d="M 45 52 Q 50 56 55 52" stroke="#9f1239" stroke-width="2" fill="none"/><path d="M 28 62 L 72 62 L 68 92 L 32 92 Z" fill="#94a3b8" stroke="#475569" stroke-width="2"/><circle cx="26" cy="66" r="8" fill="#64748b"/><circle cx="74" cy="66" r="8" fill="#64748b"/><rect x="76" y="45" width="4" height="35" fill="#cbd5e1" stroke="#475569"/><rect x="71" y="75" width="14" height="4" fill="#b45309"/></svg>`;
@@ -1514,7 +1567,6 @@
         setTimeout(dqRenderDashboard,50);
 
     </script>
-
 <script>
 // ============================================================
 // DEUTSCH QUEST v0.003 — DICE ARENA / LANGUAGE AS GAMEPLAY
@@ -1662,6 +1714,73 @@
   setTimeout(()=>{buildWave();render();window.switchTab('dice')},120);
 })();
 </script>
-
+<script>
+(() => {
+  const titles={dashboard:['Вивчення слів','Додавай слова, переклади, приклади та вчи їх через короткі game loops.'],cards:['Картки / Anki','Інтелектуальне повторення для довготривалої памʼяті.'],dice:['Random Dice','Кидай кубики, обʼєднуй їх і перетворюй знання на силу.'],quests:['Квести','Щоденні та тижневі цілі з XP, coins і progression.'],shop:['Магазин','Відкривай chest, косметику та нові можливості без pay-to-win.'],profile:['Профіль','Герой, рівень, streak, mastery та довготривалий прогрес.'],settings:['Налаштування','Звук, тема, доступність та сумісність.']};
+  let featured={german:'Wunder',ukrainian:'Диво, чудо',grammar:'[ˈvʊndɐ] • Nomen',example:'Das ist ein Wunder!<br><em>Це справжнє диво!</em>'};
+  function getM(){try{return JSON.parse(localStorage.getItem(typeof DQ_SAVE_KEY!=='undefined'?DQ_SAVE_KEY:'deutsch_quest_v002')||'{}')}catch(e){return {mastery:{},review:{},daily:{},streak:0}}}
+  function gSpeakFeatured(e){if(e)e.stopPropagation();const w=document.getElementById('g-feature-word')?.textContent||'Wunder';try{if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w);u.lang='de-DE';speechSynthesis.speak(u);}}catch(err){}}
+  function gNav(screen){
+    const all=['dashboard','cards','dice','quests','shop','profile','settings','exam','inventory','cube','dictionary'];
+    all.forEach(s=>document.getElementById('sec-'+s)?.classList.remove('active','hidden'));
+    (document.getElementById('sec-'+screen)||document.getElementById('sec-dashboard')).classList.add('active');
+    document.querySelectorAll('[data-screen]').forEach(b=>b.classList.toggle('active',b.dataset.screen===screen));
+    const t=titles[screen]||titles.dashboard; document.getElementById('g-page-title').textContent=t[0];document.getElementById('g-page-subtitle').textContent=t[1];
+    try{if(screen==='cards')updateCard();}catch(e){}
+    try{if(screen==='dice'){buildWave();render();}}catch(e){}
+    try{if(screen==='dashboard')syncFeatured();}catch(e){}
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function syncFeatured(){
+    let w=featured;
+    try{ if(typeof dqPickWord==='function'){const x=dqPickWord(); if(x)w={german:x.german,ukrainian:x.ukrainian,grammar:x.grammar||'Deutsch',example:x.sentence?x.sentence+'<br><em>Приклад</em>':''};}}catch(e){}
+    if(!w.example)w.example='Lerne dieses Wort und benutze es im Satz.<br><em>Використай його в реченні.</em>';
+    const mastery=getM().mastery||{};const level=Math.max(0,Number(mastery[w.german]||0));
+    document.getElementById('g-feature-word').textContent=w.german;document.getElementById('g-feature-meaning').textContent=w.ukrainian;document.getElementById('g-feature-grammar').textContent=w.grammar;document.getElementById('g-feature-example').innerHTML=w.example;
+    document.getElementById('g-upgrade-word').textContent=(w.german.split(' ').slice(-1)[0]||w.german).replace(/^der |^die |^das /i,'');
+    document.getElementById('g-card-level').textContent=`${Math.max(1,Math.min(5,level||3))} / 5`;
+    document.getElementById('g-card-xpbar').style.width=`${Math.max(18,Math.min(100,(level/5)*100))}%`;
+    document.getElementById('g-upgrade-stars').textContent='★★★★★'.slice(0,level||3)+'☆☆☆☆☆'.slice(0,5-(level||3));
+    document.getElementById('g-feature-word').dataset.word=w.german;
+    document.getElementById('g-side-word').textContent=w.german;
+    document.getElementById('g-side-meaning').textContent=w.ukrainian;
+    document.getElementById('g-side-card-label').textContent=w.german;
+    document.getElementById('g-side-cardbar').style.width=`${Math.max(16,Math.min(100,(level/5)*100))}%`;
+    const rec=document.getElementById('g-recommendation');if(rec)rec.textContent=`${w.german} — ${w.ukrainian}`;
+  }
+  function syncStats(){
+    const m=getM(), mastery=m.mastery||{}, values=Object.values(mastery).map(Number);
+    const total=Array.isArray(masterVocabulary)?masterVocabulary.length:0;
+    const mastered=values.filter(v=>v>=5).length;
+    const learning=values.filter(v=>v>0&&v<5).length;
+    const fresh=Math.max(0,total-mastered-learning);
+    document.getElementById('g-total-words').textContent=total;
+    document.getElementById('g-mastered-words').textContent=mastered;
+    document.getElementById('g-learning-words').textContent=learning;
+    document.getElementById('g-new-words').textContent=fresh;
+    document.getElementById('g-master-progress').style.width=total?`${mastered/total*100}%`:'0%';
+    const due=typeof dqDueCount==='function'?dqDueCount():0;const streak=m.streak||0;
+    document.getElementById('g-due').textContent=due;document.getElementById('g-streak').textContent=`${streak} днів`;
+    document.getElementById('g-side-due').textContent=due;document.getElementById('g-side-streak').textContent=streak;
+    document.getElementById('g-profile-level').textContent=state?.heroLvl||1;document.getElementById('g-profile-xp').textContent=state?.heroXp||0;document.getElementById('g-profile-streak').textContent=streak;document.getElementById('g-profile-mastered').textContent=mastered;
+    document.getElementById('g-gold').textContent=state?.gold||0;document.getElementById('g-gems').textContent=0;document.getElementById('g-energy').textContent=5;
+    try{document.getElementById('g-profile-avatar').innerHTML=getHeroSVG(state.heroClass)}catch(e){}
+    syncFeatured();
+  }
+  function reviewSet(correct,step){const w=document.getElementById('g-feature-word').dataset.word||featured.german;try{if(typeof dqMasteryValue==='function'&&typeof dqSetMastery==='function'){dqSetMastery(w,correct)} else {const m=getM();m.mastery=m.mastery||{};m.mastery[w]=Math.max(0,Math.min(5,(Number(m.mastery[w]||0)+(correct?1:-1))));localStorage.setItem(typeof DQ_SAVE_KEY!=='undefined'?DQ_SAVE_KEY:'deutsch_quest_v002',JSON.stringify(m));}}catch(e){};try{state.heroXp=(state.heroXp||0)+step;state.gold=(state.gold||0)+(correct?2:0);if(typeof updateUI==='function')updateUI()}catch(e){}; syncStats();gWorldToast(correct?'Правильно! Mastery +1':'Повертаємо слово в цикл повторення');}
+  function gReview(c){reviewSet(c,c?8:2)} function gHard(){reviewSet(true,5)} function gEasy(){reviewSet(true,12)}
+  function gUpgradeCard(){const cost=Number(document.getElementById('g-upgrade-cost').textContent||750);if((state.gold||0)>=cost){state.gold-=cost;state.heroXp=(state.heroXp||0)+25;document.getElementById('g-upgrade-cost').textContent=Math.round(cost*1.25);syncStats();gWorldToast('Картку покращено!')}else gWorldToast('Недостатньо монет')}
+  function gWorldToast(msg){const t=document.getElementById('dd-toast');if(t){t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',1500)}}
+  function gShop(msg){if((state.gold||0)<250){gWorldToast('Потрібно більше монет')}else{state.gold-=250;syncStats();gWorldToast(msg+' відкрито!')}}
+  function gToggleMotion(){document.documentElement.classList.toggle('reduced-motion');gWorldToast('Motion mode змінено')}
+  function gToggleTheme(){document.documentElement.classList.toggle('light-theme');gWorldToast('Theme toggled')}
+  function syncHeroUI(){
+    try{document.getElementById('hero-lvl-badge').textContent=`${state.heroLvl||1}`;document.getElementById('hero-title').textContent=(HERO_CLASSES?.[state.heroClass]?.name)||'Wanderer';document.getElementById('total-atk-text').textContent=typeof calculateHeroAttack==='function'?calculateHeroAttack():10;document.getElementById('hero-xp-bar').style.width=`${Math.min(100,(state.heroXp||0)/Math.max(1,(state.heroLvl||1)*100)*100)}%`;document.getElementById('hero-chibi-container').innerHTML=getHeroSVG(state.heroClass)}catch(e){}
+  }
+  const oldUpdate=window.updateUI;
+  window.updateUI=function(){try{oldUpdate&&oldUpdate()}catch(e){};syncHeroUI();syncStats();}
+  window.gNav=gNav;window.gSpeakFeatured=gSpeakFeatured;window.gReview=gReview;window.gHard=gHard;window.gEasy=gEasy;window.gUpgradeCard=gUpgradeCard;window.gWorldToast=gWorldToast;window.gShop=gShop;window.gToggleMotion=gToggleMotion;window.gToggleTheme=gToggleTheme;
+  setTimeout(()=>{try{updateUI()}catch(e){};try{syncStats()}catch(e){};gNav('dashboard')},150);
+})();
+</script>
 </body>
-</html>
