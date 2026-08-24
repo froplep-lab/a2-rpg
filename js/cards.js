@@ -7,18 +7,30 @@ import { addXp } from './xp.js';
 import { showToast } from './utils.js';
 
 export function updateCard() {
+    if (!cards || cards.length === 0) return;
+    if (currentIndex < 0 || currentIndex >= cards.length) {
+        currentIndex = 0;
+    }
     const card = cards[currentIndex];
     if (!card) return;
 
-    document.getElementById("card-german").innerText = card.german;
-    document.getElementById("card-grammar").innerText = card.grammar;
-    document.getElementById("card-ukrainian").innerText = card.ukrainian;
-    document.getElementById("card-hint").innerText = card.hint;
-    document.getElementById("card-sentence").innerText = card.sentence;
-    document.getElementById("card-emoji").innerText = card.emoji || '📌';
-    document.getElementById("card-index-indicator").innerText = `${currentIndex + 1} / ${cards.length}`;
+    const germanEl = document.getElementById("card-german");
+    const grammarEl = document.getElementById("card-grammar");
+    const ukrainianEl = document.getElementById("card-ukrainian");
+    const hintEl = document.getElementById("card-hint");
+    const sentenceEl = document.getElementById("card-sentence");
+    const emojiEl = document.getElementById("card-emoji");
+    const indexIndEl = document.getElementById("card-index-indicator");
 
-    const rObj = [{ name: 'звичайний', color: 'border-cyan-500/30 text-cyan-300' }, { name: 'рідкісний', color: 'border-cyan-400 text-cyan-300' }, { name: 'епічний', color: 'border-purple-400 text-purple-300' }, { name: 'легендарний', color: 'border-yellow-400 text-yellow-300' }].find(r => r.name === card.rarity) || { name: 'звичайний', color: 'border-cyan-500/30 text-cyan-300' };
+    if (germanEl) germanEl.innerText = card.german || '';
+    if (grammarEl) grammarEl.innerText = card.grammar || '';
+    if (ukrainianEl) ukrainianEl.innerText = card.ukrainian || '';
+    if (hintEl) hintEl.innerText = card.hint || '';
+    if (sentenceEl) sentenceEl.innerText = card.sentence || '';
+    if (emojiEl) emojiEl.innerText = card.emoji || '📌';
+    if (indexIndEl) indexIndEl.innerText = `${currentIndex + 1} / ${cards.length}`;
+
+    const rObj = [{ name: 'звичайний', color: 'border-cyan-500/30 text-cyan-300' }, { name: 'рідкісний', color: 'border-cyan-400 text-cyan-300' }, { name: 'епічний', color: 'border-purple-400 text-purple-300' }, { name: 'легендарний', color: 'border-yellow-400 text-yellow-300' }].find(r => r.name === (card.rarity || '').toLowerCase()) || { name: 'звичайний', color: 'border-cyan-500/30 text-cyan-300' };
     const badge = document.getElementById("card-rarity-badge");
     if (badge) {
         badge.className = `text-[10px] font-black px-2.5 py-1 rounded-md border ${rObj.color} uppercase`;
@@ -55,6 +67,7 @@ export function flipCard(forceReset = false) {
 export function nextCard() {
     AudioEngine.play('click');
     Haptics.trigger('light');
+    if (!cards || cards.length === 0) return;
     setCurrentIndex((currentIndex + 1) % cards.length);
     updateCard();
 }
@@ -62,11 +75,13 @@ export function nextCard() {
 export function prevCard() {
     AudioEngine.play('click');
     Haptics.trigger('light');
+    if (!cards || cards.length === 0) return;
     setCurrentIndex((currentIndex - 1 + cards.length) % cards.length);
     updateCard();
 }
 
 export function updateMasteredUI() {
+    if (!cards || cards.length === 0) return;
     const card = cards[currentIndex];
     if (!card) return;
     const isM = masteredWords.has(card.german);
@@ -94,6 +109,7 @@ export function updateMasteredUI() {
 }
 
 export function attackEnemyClick() {
+    if (!cards || cards.length === 0) return;
     const card = cards[currentIndex];
     if (!card || masteredWords.has(card.german)) return;
 
@@ -109,6 +125,7 @@ export function attackEnemyClick() {
 }
 
 export function toggleBookmark() {
+    if (!cards || cards.length === 0) return;
     const card = cards[currentIndex];
     if (!card) return;
     
@@ -127,6 +144,7 @@ export function toggleBookmark() {
 }
 
 export function updateCardBookmarkUI() {
+    if (!cards || cards.length === 0) return;
     const card = cards[currentIndex];
     const btn = document.getElementById("card-bookmark-btn");
     if (!card || !btn) return;

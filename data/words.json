@@ -1,5 +1,95 @@
 [
   {
+    "german": "der Hund",
+    "grammar": "Nomen, m.",
+    "ukrainian": "собака",
+    "hint": "Вірний домашній улюбленець",
+    "emoji": "🐕",
+    "sentence": "Der Hund spielt im Park mit einem Ball.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Katze",
+    "grammar": "Nomen, f.",
+    "ukrainian": "кішка",
+    "hint": "Домашня тварина, що любить тепло",
+    "emoji": "🐈",
+    "sentence": "Die Katze schläft auf dem Sofa.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "das Haus",
+    "grammar": "Nomen, n.",
+    "ukrainian": "будинок",
+    "hint": "Місце, де живуть люди",
+    "emoji": "🏠",
+    "sentence": "Wir haben ein neues Haus gekauft.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "das Auto",
+    "grammar": "Nomen, n.",
+    "ukrainian": "автомобіль",
+    "hint": "Транспортний засіб на чотирьох колесах",
+    "emoji": "🚗",
+    "sentence": "Sein Auto ist schnell und modern.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Apfel",
+    "grammar": "Nomen, m.",
+    "ukrainian": "яблуко",
+    "hint": "Соковитий фрукт",
+    "emoji": "🍎",
+    "sentence": "Ich esse jeden Tag einen frischen Apfel.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Sonne",
+    "grammar": "Nomen, f.",
+    "ukrainian": "сонце",
+    "hint": "Головне світило на небі",
+    "emoji": "☀️",
+    "sentence": "Heute scheint die Sonne sehr hell.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "das Wasser",
+    "grammar": "Nomen, n.",
+    "ukrainian": "вода",
+    "hint": "Життєво необхідна рідина",
+    "emoji": "💧",
+    "sentence": "Trinkst du gerne kaltes Wasser?",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "laufen",
+    "grammar": "Verb",
+    "ukrainian": "бігти, ходити",
+    "hint": "Швидкий рух ногами",
+    "emoji": "🏃",
+    "sentence": "Er läuft jeden Morgen im Park.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "essen",
+    "grammar": "Verb",
+    "ukrainian": "їсти",
+    "hint": "Споживати їжу",
+    "emoji": "🍽️",
+    "sentence": "Wir essen gemeinsam zu Abend.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "schlafen",
+    "grammar": "Verb",
+    "ukrainian": "спати",
+    "hint": "Відпочинок вночі",
+    "emoji": "😴",
+    "sentence": "Kinder müssen viel schlafen.",
+    "rarity": "звичайний"
+  },
+  {
     "german": "das Beispiel",
     "grammar": "Nomen, n.",
     "ukrainian": "приклад",

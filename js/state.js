@@ -13,13 +13,20 @@ export let hero = StorageEngine.get('a2_hero', {
 });
 
 export function setCards(newCards) {
-    cards = newCards;
+    cards = Array.isArray(newCards) ? newCards : [];
+    if (currentIndex >= cards.length) {
+        currentIndex = 0;
+    }
 }
 
 export function setCurrentIndex(idx) {
-    currentIndex = idx;
+    if (cards && cards.length > 0) {
+        currentIndex = (idx + cards.length) % cards.length;
+    } else {
+        currentIndex = 0;
+    }
 }
 
 export function setIsFlipped(val) {
-    isFlipped = val;
+    isFlipped = Boolean(val);
 }

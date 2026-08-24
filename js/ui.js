@@ -7,11 +7,19 @@ export function closeSoundSettingsModal() { AudioEngine.play('click'); toggleMod
 
 export function openStatsModal() {
     AudioEngine.play('click');
-    document.getElementById("stat-mastered-count").innerText = `${masteredWords.size} / ${cards.length || 84}`;
-    document.getElementById("stat-streak-count").innerText = `${hero.streak}x`;
-    document.getElementById("stat-level").innerText = `LVL ${hero.level}`;
-    document.getElementById("stat-xp").innerText = `${hero.xp} XP`;
-    document.getElementById("stat-bookmarks").innerText = bookmarkedWords.size;
+    const total = cards && cards.length > 0 ? cards.length : 16;
+    const masteredEl = document.getElementById("stat-mastered-count");
+    const streakEl = document.getElementById("stat-streak-count");
+    const levelEl = document.getElementById("stat-level");
+    const xpEl = document.getElementById("stat-xp");
+    const bookmarksEl = document.getElementById("stat-bookmarks");
+
+    if (masteredEl) masteredEl.innerText = `${masteredWords.size} / ${total}`;
+    if (streakEl) streakEl.innerText = `${hero.streak}x`;
+    if (levelEl) levelEl.innerText = `LVL ${hero.level}`;
+    if (xpEl) xpEl.innerText = `${hero.xp} XP`;
+    if (bookmarksEl) bookmarksEl.innerText = bookmarkedWords.size;
+
     toggleModal("stats-modal", "stats-box", true);
 }
 export function closeStatsModal() { AudioEngine.play('click'); toggleModal("stats-modal", "stats-box", false); }
