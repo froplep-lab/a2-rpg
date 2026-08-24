@@ -1,4 +1,3 @@
-import './speedrush.js';
 import './profile.js';
 import './leitner.js';
 import './sentence.js';

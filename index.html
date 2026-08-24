@@ -62,9 +62,6 @@
             <button onclick="openLeitnerModal()" aria-label="Лейтнер" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Інтервальне повторення (Лейтнер)">
                 <i class="fa-solid fa-layer-group"></i>
             </button>
-            <button onclick="openSpeedRushModal()" aria-label="Раш" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Артикль-Раш (Speed Rush)">
-                <i class="fa-solid fa-bolt-lightning"></i>
-            </button>
             <button onclick="openExamSimulator()" aria-label="Екзамен B1" class="interactive-btn glass-panel text-pink-400 px-3 py-2.5 rounded-xl border border-pink-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
                 <i class="fa-solid fa-graduation-cap"></i>
             </button>
@@ -444,22 +441,6 @@
                 <div class="text-center py-6 space-y-4">
                     <div class="text-4xl">🛡️</div>
                     <div class="text-sm font-bold text-slate-300">Профіль агента</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SPEED RUSH MODAL -->
-    <div id="speedrush-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel border border-amber-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(245,158,11,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="speedrush-box">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b border-amber-500/20">
-                <h3 class="font-black text-sm text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-bolt-lightning mr-2"></i> Артикль-Раш (Speed Rush)</h3>
-                <button onclick="closeSpeedRushModal()" aria-label="Закрити" class="interactive-btn text-amber-400 hover:text-white p-2 bg-amber-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="speedrush-content" class="space-y-4">
-                <div class="text-center py-6 space-y-4">
-                    <div class="text-4xl">⚡</div>
-                    <div class="text-sm font-bold text-slate-300">Артикль-Раш</div>
                 </div>
             </div>
         </div>
