@@ -1,31 +1,7 @@
 import Phaser from 'phaser';
-
-export class Unit {
-  constructor(scene, x, y, wordData) {
-    this.scene = scene; this.x = x; this.y = y; this.wordData = wordData;
-    this.range = 120; this.cooldown = 0; this.attackRate = 60;
-    this.container = scene.add.container(x, y);
-    const bg = scene.add.circle(0, 0, 20, 0x3b82f6);
-    const emoji = scene.add.text(0, 0, wordData.emoji, { fontSize: '18px' }).setOrigin(0.5);
-    this.container.add([bg, emoji]);
-  }
-  update(enemies) {
-    if (this.cooldown > 0) this.cooldown--;
-    if (this.cooldown === 0 && enemies.length > 0) {
-      let target = null; let minDist = this.range;
-      for (let enemy of enemies) {
-        let dist = Phaser.Math.Distance.Between(this.x, this.y, enemy.x, enemy.y);
-        if (dist <= minDist) { minDist = dist; target = enemy; }
-      }
-      if (target) { this.shoot(target); this.cooldown = this.attackRate; }
-    }
-  }
-  shoot(target) {
-    const bullet = this.scene.add.circle(this.x, this.y, 4, 0xfbbf24);
-    this.scene.tweens.add({
-      targets: bullet, x: target.x, y: target.y, duration: 250,
-      onComplete: () => { bullet.destroy(); if (target && target.takeDamage) target.takeDamage(25); }
-    });
-  }
-  destroy() { if (this.container) this.container.destroy(); }
+export class Unit{
+ constructor(scene,x,y,word){this.scene=scene;this.x=x;this.y=y;this.word=word;this.range=145;this.cooldown=0;this.attackRate=720;this.container=scene.add.container(x,y);this.container.add([scene.add.circle(0,0,22,0x5b4bdb),scene.add.text(0,0,word.emoji,{fontSize:'20px'}).setOrigin(.5),scene.add.text(0,31,word.word.split(' ').pop(),{fontSize:'10px',color:'#d8dcef'}).setOrigin(.5)])}
+ update(enemies,dt){this.cooldown=Math.max(0,this.cooldown-dt);if(this.cooldown>0)return;let target=null,dist=this.range;for(const e of enemies){const d=Phaser.Math.Distance.Between(this.x,this.y,e.x,e.y);if(!e.dead&&d<dist){dist=d;target=e}}if(target){this.shoot(target);this.cooldown=this.attackRate}}
+ shoot(target){const b=this.scene.add.circle(this.x,this.y,4,0xffc857);this.scene.tweens.add({targets:b,x:target.x,y:target.y,duration:180,onComplete:()=>{b.destroy();if(target&&!target.dead)target.takeDamage(28)}})}
+ destroy(){this.container?.destroy()}
 }

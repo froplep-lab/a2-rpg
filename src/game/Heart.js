@@ -1,14 +1,1 @@
-export class Heart {
-  constructor(scene, x, y) {
-    this.scene = scene; this.maxHp = 100; this.hp = 100;
-    this.graphics = scene.add.graphics(); this.x = x; this.y = y; this.draw();
-  }
-  takeDamage(amount) {
-    this.hp = Math.max(0, this.hp - amount); this.draw(); return this.hp === 0;
-  }
-  draw() {
-    this.graphics.clear();
-    this.graphics.fillStyle(0xef4444, 1); this.graphics.fillCircle(this.x, this.y, 24);
-    this.graphics.lineStyle(2, 0xffffff, 1); this.graphics.strokeCircle(this.x, this.y, 24);
-  }
-}
+export class Heart{constructor(scene,x,y){this.scene=scene;this.x=x;this.y=y;this.maxHp=100;this.hp=100;this.g=scene.add.graphics();this.draw()}takeDamage(n){this.hp=Math.max(0,this.hp-n);this.draw();return this.hp===0}draw(){this.g.clear();this.g.fillStyle(0xef4444,1);this.g.fillCircle(this.x,this.y,27);this.g.lineStyle(3,0xffffff,.9);this.g.strokeCircle(this.x,this.y,27);this.g.fillStyle(0xffffff,.18);this.g.fillCircle(this.x-8,this.y-9,7)}}

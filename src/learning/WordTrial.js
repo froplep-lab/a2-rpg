@@ -1,100 +1,10 @@
-import { TelegramBridge } from '../telegram/TelegramBridge.js';
-
-export class WordTrial {
-  constructor(wordsData, state, onComplete) {
-    this.words = wordsData; 
-    this.state = state; 
-    this.onComplete = onComplete;
-    this.currentIndex = 0; 
-    this.earnedXP = {}; 
-    this.questions = this.generateQuestions();
-  }
-
-  generateQuestions() {
-    const qList = [];
-    const shuffled = [...this.words].sort(() => 0.5 - Math.random());
-    for (let i = 0; i < Math.min(3, shuffled.length); i++) {
-      const correct = shuffled[i];
-      const distractors = this.words.filter(w => w.id !== correct.id).sort(() => 0.5 - Math.random()).slice(0, 3);
-      const options = [...distractors, correct].sort(() => 0.5 - Math.random());
-      qList.push({
-        wordObj: correct, 
-        questionText: `What does "${correct.word}" mean?`,
-        options: options.map(o => o.translation), 
-        correctAnswer: correct.translation
-      });
-    }
-    return qList;
-  }
-
-  speakWord(text) {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'de-DE';
-      window.speechSynthesis.speak(utterance);
-    }
-  }
-
-  render(container) {
-    if (this.currentIndex >= this.questions.length) { 
-      this.finish(container); 
-      return; 
-    }
-    
-    const q = this.questions[this.currentIndex];
-    this.speakWord(q.wordObj.word);
-
-    container.innerHTML = `
-      <div style="padding: 20px; display: flex; flex-direction: column; height: 100%; justify-content: space-between; max-width: 400px; margin: 0 auto;">
-        <div>
-          <div style="font-size: 14px; color: #9ca3af; margin-bottom: 8px;">Word Trial (${this.currentIndex + 1}/${this.questions.length})</div>
-          <div style="font-size: 22px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-            ${q.wordObj.emoji} ${q.questionText}
-            <button id="btn-repeat-audio" style="background:none; border:none; cursor:pointer; font-size: 20px;">🔊</button>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 10px;" id="options-list">
-            ${q.options.map(opt => `<button class="btn-secondary option-btn" data-val="${opt}" style="text-align: left; padding: 14px;">${opt}</button>`).join('')}
-          </div>
-        </div>
-        <button id="trial-exit" class="btn-secondary" style="background: transparent; border: none; color: #9ca3af;">Exit Trial</button>
-      </div>
-    `;
-
-    container.querySelector('#btn-repeat-audio').onclick = () => {
-      this.speakWord(q.wordObj.word);
-    };
-
-    container.querySelectorAll('.option-btn').forEach(btn => {
-      btn.onclick = (e) => {
-        if (btn.disabled) return;
-        container.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-
-        const val = e.target.getAttribute('data-val');
-        const isCorrect = val === q.correctAnswer;
-        TelegramBridge.haptic(isCorrect ? 'success' : 'error');
-        
-        btn.style.backgroundColor = isCorrect ? '#10b981' : '#ef4444';
-        btn.style.color = '#fff';
-
-        if (isCorrect) {
-          const reward = 120;
-          this.earnedXP[q.wordObj.id] = (this.earnedXP[q.wordObj.id] || 0) + reward;
-        }
-        
-        setTimeout(() => {
-          this.currentIndex++;
-          this.render(container);
-        }, 600);
-      };
-    });
-    
-    container.querySelector('#trial-exit').onclick = () => { 
-      this.finish(container); 
-    };
-  }
-
-  finish(container) { 
-    container.innerHTML = ''; 
-    this.onComplete(this.earnedXP); 
-  }
+import {TelegramBridge} from '../telegram/TelegramBridge.js';
+export class WordTrial{
+ constructor(words,state,onComplete){this.words=words;this.state=state;this.onComplete=onComplete;this.i=0;this.earnedXP={};this.questions=this.makeQuestions();}
+ makeQuestions(){const pool=[...this.words].sort(()=>Math.random()-.5);return pool.slice(0,Math.min(5,pool.length)).map(correct=>{const others=this.words.filter(w=>w.id!==correct.id).sort(()=>Math.random()-.5).slice(0,3);return{wordObj:correct,options:[correct,...others].sort(()=>Math.random()-.5).map(w=>w.translation),correct:correct.translation}})}
+ speak(text){if(!this.state.settings.sound||!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='de-DE';u.rate=.88;window.speechSynthesis.speak(u)}
+ render(el){if(this.i>=this.questions.length)return this.finish(el);const q=this.questions[this.i];this.speak(q.wordObj.word);el.innerHTML=`<div class="trial-wrap"><div class="topbar" style="margin:-20px -16px 0"><button id="trial-back" class="btn-secondary" style="padding:7px 10px">←</button><h2>🧪 Word Trial</h2><span>${this.i+1}/${this.questions.length}</span></div><div class="trial-word">${q.wordObj.emoji} ${q.wordObj.word}</div><div class="trial-trans">Що означає це слово? <button id="speak" class="btn-secondary" style="padding:4px 8px">🔊</button></div><div class="options">${q.options.map((x,n)=>`<button class="btn-secondary option-btn" data-i="${n}">${x}</button>`).join('')}</div><div id="feedback" class="feedback"></div><p class="subtitle">Правильна відповідь дає +120 XP картці.</p></div>`;
+ el.querySelector('#speak').onclick=()=>this.speak(q.wordObj.word);el.querySelector('#trial-back').onclick=()=>this.finish(el);
+ el.querySelectorAll('.option-btn').forEach(b=>b.onclick=()=>{if(b.disabled)return;el.querySelectorAll('.option-btn').forEach(x=>x.disabled=true);const ok=b.textContent===q.correct;b.style.background=ok?'#10b981':'#ef4444';b.style.color='#fff';el.querySelector('#feedback').textContent=ok?'✓ Правильно! +120 XP':'✕ Правильна відповідь: '+q.correct;TelegramBridge.haptic(ok?'success':'error');if(ok)this.earnedXP[q.wordObj.id]=(this.earnedXP[q.wordObj.id]||0)+120;setTimeout(()=>{this.i++;this.render(el)},650)})}
+ finish(el){el.innerHTML='';this.onComplete(this.earnedXP)}
 }

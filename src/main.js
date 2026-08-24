@@ -1,175 +1,21 @@
 import Phaser from 'phaser';
-import { TelegramBridge } from './telegram/TelegramBridge.js';
-import { StorageManager } from './storage/StorageManager.js';
-import { CardManager } from './cards/CardManager.js';
-import { WordTrial } from './learning/WordTrial.js';
-import { GameScene } from './game/GameScene.js';
-import wordsData from '../data/words.json';
-
-class App {
-  constructor() {
-    TelegramBridge.init();
-    this.state = StorageManager.load();
-    this.wordsData = wordsData;
-    this.initDOM(); 
-    this.renderHome();
-  }
-
-  initDOM() {
-    const backBtn = document.getElementById('btn-back-home');
-    if (backBtn) {
-      backBtn.onclick = () => {
-        if (this.gameInstance) {
-          this.gameInstance.scene.stop('GameScene');
-        }
-        this.switchScreen('screen-home');
-        this.renderHome();
-      };
-    }
-  }
-
-  switchScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
-  }
-
-  renderHome() {
-    const screen = document.getElementById('screen-home');
-    screen.className = 'screen active';
-    
-    let totalXPNeeded = this.state.playerLevel * 200;
-    let xpPercent = Math.min(100, (this.state.playerXP / totalXPNeeded) * 100);
-    
-    screen.innerHTML = `
-      <div class="home-container">
-        <div class="title">🎲 Random Deutsch</div>
-        <div class="player-card">
-          <div style="font-weight: 700; font-size: 15px;">⭐ Level ${this.state.playerLevel}</div>
-          <div class="xp-bar-bg"><div class="xp-bar-fill" style="width: ${xpPercent}%"></div></div>
-          <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">XP: ${this.state.playerXP} / ${totalXPNeeded} | 🪙 Coins: ${this.state.coins}</div>
-        </div>
-        <div class="menu-buttons">
-          <button id="btn-play" class="btn-primary">⚔️ PLAY</button>
-          <button id="btn-collection" class="btn-secondary">🃏 CARDS (${Object.keys(this.state.cards).length})</button>
-          <button id="btn-trial" class="btn-secondary">🧪 WORD TRIAL</button>
-          <button class="btn-locked">🤝 CO-OP (Coming Soon)</button>
-          <button class="btn-locked">⚔️ PVP (Coming Soon)</button>
-        </div>
-      </div>
-    `;
-    
-    document.getElementById('btn-play').onclick = () => this.startBattle();
-    document.getElementById('btn-collection').onclick = () => this.renderCollection();
-    document.getElementById('btn-trial').onclick = () => this.startTrial();
-  }
-
-  startBattle() {
-    this.switchScreen('game-container'); 
-    TelegramBridge.haptic('medium');
-    
-    if (!this.gameInstance) {
-      const config = {
-        type: Phaser.AUTO, 
-        width: window.innerWidth, 
-        height: window.innerHeight,
-        parent: 'game-container', 
-        backgroundColor: '#0f111a', 
-        scene: [GameScene]
-      };
-      this.gameInstance = new Phaser.Game(config);
-    }
-    
-    this.gameInstance.scene.start('GameScene', {
-      wordsData: this.wordsData,
-      onComplete: (victory) => {
-        this.switchScreen('screen-rewards'); 
-        this.renderRewards(victory);
-      }
-    });
-  }
-
-  renderRewards(victory) {
-    const screen = document.getElementById('screen-rewards');
-    screen.innerHTML = `
-      <div class="home-container">
-        <div class="title" style="color: ${victory ? '#10b981' : '#ef4444'}">${victory ? 'VICTORY!' : 'DEFEAT'}</div>
-        <p style="color: #9ca3af;">${victory ? 'You successfully defended the heart and earned rewards!' : 'The heart fell. Try reviewing words in Word Trial.'}</p>
-        <button id="btn-reward-ok" class="btn-primary" style="width: 100%; max-width: 320px;">Continue</button>
-      </div>
-    `;
-    
-    if (victory) {
-      this.state.coins += 50; 
-      this.state.playerXP += 100; 
-      let totalXPNeeded = this.state.playerLevel * 200;
-      while (this.state.playerXP >= totalXPNeeded) {
-        this.state.playerXP -= totalXPNeeded;
-        this.state.playerLevel++;
-        totalXPNeeded = this.state.playerLevel * 200;
-      }
-      StorageManager.save(this.state);
-    }
-    
-    document.getElementById('btn-reward-ok').onclick = () => { 
-      this.switchScreen('screen-home'); 
-      this.renderHome(); 
-    };
-  }
-
-  startTrial() {
-    this.switchScreen('screen-trial');
-    const screen = document.getElementById('screen-trial');
-    const trial = new WordTrial(this.wordsData, this.state, (earnedXP) => {
-      for (let [cardId, xp] of Object.entries(earnedXP)) { 
-        CardManager.addXP(this.state, cardId, xp); 
-      }
-      StorageManager.save(this.state); 
-      this.switchScreen('screen-home');
-      this.renderHome();
-    });
-    trial.render(screen);
-  }
-
-  renderCollection() {
-    const screen = document.getElementById('screen-collection');
-    screen.className = 'screen active';
-    screen.innerHTML = `
-      <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #374151;">
-        <h2 style="font-size: 18px;">Card Collection</h2>
-        <button id="col-back" class="btn-secondary" style="padding: 6px 12px;">Back</button>
-      </div>
-      <div style="padding: 12px; color: #9ca3af; font-size: 13px; text-align: center;">Click a card to hear pronunciation 🔊</div>
-      <div class="grid-cards" id="cards-grid"></div>
-    `;
-    
-    document.getElementById('col-back').onclick = () => {
-      this.switchScreen('screen-home');
-      this.renderHome();
-    };
-    
-    const grid = document.getElementById('cards-grid');
-    grid.innerHTML = this.wordsData.map(word => {
-      const cardData = this.state.cards[word.id] || { level: 1, xp: 0 };
-      const tier = CardManager.getRarityTier(cardData.level);
-      return `
-        <div class="card-item tier-${tier}" data-word="${word.word}">
-          <div class="card-emoji">${word.emoji}</div>
-          <div class="card-word">${word.word}</div>
-          <div class="card-trans">${word.translation}</div>
-          <div class="card-level">Lvl ${cardData.level}</div>
-        </div>
-      `;
-    }).join('');
-
-    grid.querySelectorAll('.card-item').forEach(card => {
-      card.onclick = () => {
-        const text = card.getAttribute('data-word');
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'de-DE';
-        window.speechSynthesis.speak(utterance);
-        TelegramBridge.haptic('light');
-      };
-    });
-  }
+import{TelegramBridge}from'./telegram/TelegramBridge.js';import{StorageManager}from'./storage/StorageManager.js';import{CardManager}from'./cards/CardManager.js';import{WordTrial}from'./learning/WordTrial.js';import{GameScene}from'./game/GameScene.js';import wordsData from'../data/words.json';
+class App{
+ constructor(){TelegramBridge.init();this.wordsData=wordsData;this.state=StorageManager.load(wordsData);this.game=null;this.bindGlobal();this.renderHome()}
+ save(){StorageManager.save(this.state)}
+ active(){const today=StorageManager.today();if(this.state.lastActiveDate===today)return;const prev=this.state.lastActiveDate;if(prev){const d=(new Date(today)-new Date(prev))/86400000;this.state.streak=d===1?this.state.streak+1:1}else this.state.streak=1;this.state.lastActiveDate=today;this.save()}
+ bindGlobal(){document.getElementById('btn-back-home').onclick=()=>this.stopGame();window.addEventListener('resize',()=>this.game?.scale.resize(window.innerWidth,window.innerHeight))}
+ show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')}
+ renderHome(){this.show('screen-home');const el=document.getElementById('screen-home');const req=this.state.playerLevel*200;const pct=Math.min(100,this.state.playerXP/req*100);const today=this.state.daily.date===StorageManager.today()?this.state.daily:{trial:0,battles:0};el.innerHTML=`<div class="home-container"><div class="title">🎲 Random Deutsch<br><span style="font-size:14px;color:#9aa3b5;font-weight:600">Kards • Learn • Defend</span></div><div class="player-card"><div class="player-top"><span class="level">⭐ Level ${this.state.playerLevel}</span><span class="coins">🪙 ${this.state.coins}</span></div><div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${pct}%"></div></div><div class="subtitle" style="text-align:left;margin-top:6px">${this.state.playerXP} / ${req} XP до наступного рівня</div><div class="stats"><div class="stat"><b>🔥 ${this.state.streak}</b><span>streak</span></div><div class="stat"><b>🃏 ${Object.keys(this.state.cards).length}</b><span>cards</span></div><div class="stat"><b>📚 ${this.wordsData.length}</b><span>words</span></div></div></div><div class="section-title">🎯 Daily Bounties</div><div class="bounties"><div class="bounty ${today.trial?'done':''}"><span>🧪 Заверши Word Trial<br><small>+100 XP • ${today.trial?'готово':'сьогодні'}</small></span><b>${today.trial?'✓':'100 XP'}</b></div><div class="bounty ${today.battles?'done':''}"><span>⚔️ Захисти Heart<br><small>+50 🪙 • ${today.battles?'готово':'сьогодні'}</small></span><b>${today.battles?'✓':'50 🪙'}</b></div></div><div class="menu-buttons"><button id="play" class="btn-primary">⚔️ PLAY — DEFEND THE HEART</button><button id="trial" class="btn-secondary">🧪 WORD TRIAL — 5 питань</button><button id="cards" class="btn-secondary">🃏 CARD COLLECTION</button><button id="settings" class="btn-secondary">⚙️ Settings</button></div><p class="subtitle" style="margin-top:14px">Вчи слова → прокачуй картки → захищай серце → отримуй нагороди.</p></div>`;el.querySelector('#play').onclick=()=>this.startBattle();el.querySelector('#trial').onclick=()=>this.startTrial();el.querySelector('#cards').onclick=()=>this.renderCollection();el.querySelector('#settings').onclick=()=>this.renderSettings()}
+ startBattle(){this.active();this.show('game-container');TelegramBridge.haptic('medium');if(!this.game){this.game=new Phaser.Game({type:Phaser.AUTO,width:window.innerWidth,height:window.innerHeight,parent:'game-container',backgroundColor:'#090b12',scene:[GameScene],scale:{mode:Phaser.Scale.RESIZE,width:window.innerWidth,height:window.innerHeight},render:{antialias:true}})}this.game.scene.start('GameScene',{wordsData:this.wordsData,onComplete:v=>this.battleComplete(v)})}
+ stopGame(){if(this.game){this.game.scene.stop('GameScene')}this.show('screen-home');this.renderHome()}
+ battleComplete(v){if(v){this.state.coins+=50;this.addPlayerXP(100);this.state.daily.battles=1;this.save()}this.renderRewards(v)}
+ addPlayerXP(xp){this.state.playerXP+=xp;let req=this.state.playerLevel*200;while(this.state.playerXP>=req){this.state.playerXP-=req;this.state.playerLevel++;req=this.state.playerLevel*200;TelegramBridge.haptic('success')}}
+ renderRewards(v){this.show('screen-rewards');document.getElementById('screen-rewards').innerHTML=`<div class="home-container reward"><div class="reward-icon">${v?'🏆':'💔'}</div><h2>${v?'VICTORY!':'DEFEAT'}</h2><p>${v?'Ти захистив Heart!<br><b>+100 XP • +50 🪙</b>':'Heart знищено. Повтори Trial, прокачай картки й спробуй ще раз.'}</p><button id="reward" class="btn-primary" style="width:100%">Продовжити</button></div>`;document.getElementById('reward').onclick=()=>this.renderHome()}
+ startTrial(){this.active();this.show('screen-trial');const el=document.getElementById('screen-trial');const trial=new WordTrial(this.wordsData,this.state,xp=>{for(const[id,n]of Object.entries(xp))CardManager.addXP(this.state,id,n);if(Object.keys(xp).length){this.state.coins+=10;this.state.daily.trial=1;this.addPlayerXP(Object.values(xp).reduce((a,b)=>a+b,0));this.save()}this.renderHome()});trial.render(el)}
+ renderCollection(){this.show('screen-collection');const el=document.getElementById('screen-collection');el.innerHTML=`<div class="topbar"><button id="back" class="btn-secondary" style="padding:7px 10px">←</button><h2>🃏 Card Collection</h2><span>${this.wordsData.length}</span></div><div class="subtitle" style="padding:10px 16px">Натисни картку, щоб почути німецьку вимову.</div><div id="grid" class="grid-cards"></div>`;el.querySelector('#back').onclick=()=>this.renderHome();el.querySelector('#grid').innerHTML=this.wordsData.map(w=>{const c=this.state.cards[w.id]||{level:1,xp:0,mastery:0};return`<div class="card-item tier-${CardManager.getRarityTier(c.level)}" data-word="${this.escape(w.word)}"><div class="card-emoji">${w.emoji}</div><div class="card-word">${this.escape(w.word)}</div><div class="card-trans">${this.escape(w.translation)}</div><div class="card-level">Lv ${c.level} • ${c.mastery||0}%</div></div>`}).join('');el.querySelectorAll('.card-item').forEach(c=>c.onclick=()=>{this.speak(c.dataset.word);TelegramBridge.haptic('light')})}
+ renderSettings(){this.show('screen-collection');const el=document.getElementById('screen-collection');el.innerHTML=`<div class="topbar"><button id="back" class="btn-secondary" style="padding:7px 10px">←</button><h2>⚙️ Settings</h2></div><div class="home-container"><div class="panel"><button id="sound" class="btn-secondary" style="width:100%">🔊 Sound: ${this.state.settings.sound?'ON':'OFF'}</button><button id="reset" class="btn-secondary" style="width:100%;margin-top:10px">♻️ Reset progress</button></div><p class="subtitle" style="margin-top:14px">Прогрес зберігається локально на цьому пристрої.</p></div>`;el.querySelector('#back').onclick=()=>this.renderHome();el.querySelector('#sound').onclick=()=>{this.state.settings.sound=!this.state.settings.sound;this.save();this.renderSettings()};el.querySelector('#reset').onclick=()=>{if(confirm('Скинути весь прогрес?')){this.state=StorageManager.reset(this.wordsData);this.renderHome()}}}
+ speak(text){if(!this.state.settings.sound||!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='de-DE';u.rate=.88;window.speechSynthesis.speak(u)}
+ escape(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 }
-window.addEventListener('DOMContentLoaded', () => { new App(); });
+window.addEventListener('DOMContentLoaded',()=>new App());

@@ -1,15 +1,2 @@
-import Phaser from 'phaser';
-import { BattleManager } from './BattleManager.js';
-
-export class GameScene extends Phaser.Scene {
-  constructor() { super('GameScene'); }
-  init(data) { this.wordsData = data.wordsData; this.onComplete = data.onComplete; }
-  create() {
-    this.battleManager = new BattleManager(this, this.wordsData, (victory) => {
-      this.scene.stop(); this.onComplete(victory);
-    });
-  }
-  update(time, delta) {
-    if (this.battleManager) this.battleManager.update(time, delta);
-  }
-}
+import Phaser from 'phaser';import{BattleManager}from'./BattleManager.js';
+export class GameScene extends Phaser.Scene{constructor(){super('GameScene')}init(d){this.wordsData=d.wordsData;this.onComplete=d.onComplete}create(){this.cameras.main.setBackgroundColor('#090b12');this.battleManager=new BattleManager(this,this.wordsData,this.onComplete)}update(t,d){this.battleManager?.update(t,d)}shutdown(){this.battleManager?.destroy()}}

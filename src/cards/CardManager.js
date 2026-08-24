@@ -1,23 +1,5 @@
-export class CardManager {
-  static getRarityTier(level) {
-    if (level >= 50) return 'legendary'; 
-    if (level >= 25) return 'epic';
-    if (level >= 10) return 'rare'; 
-    if (level >= 5) return 'uncommon'; 
-    return 'common';
-  }
-  static getXPForNextLevel(level) { return level * 100; }
-  static addXP(state, cardId, amount) {
-    if (!state.cards[cardId]) state.cards[cardId] = { level: 1, xp: 0, mastery: 0, bookmarked: false };
-    let card = state.cards[cardId];
-    card.xp += amount;
-    let requiredXP = this.getXPForNextLevel(card.level);
-    while (card.xp >= requiredXP) {
-      card.xp -= requiredXP; 
-      card.level += 1; 
-      card.mastery += 10;
-      requiredXP = this.getXPForNextLevel(card.level);
-    }
-    return card;
-  }
+export class CardManager{
+ static getRarityTier(level){return level>=50?'legendary':level>=25?'epic':level>=10?'rare':level>=5?'uncommon':'common'}
+ static getXPForNextLevel(level){return Math.max(100,level*100)}
+ static addXP(state,id,amount){if(!state.cards[id])state.cards[id]={level:1,xp:0,mastery:0,bookmarked:false};const c=state.cards[id];c.xp+=amount;let req=this.getXPForNextLevel(c.level);while(c.xp>=req){c.xp-=req;c.level++;c.mastery=Math.min(100,c.mastery+10);req=this.getXPForNextLevel(c.level)}return c}
 }
