@@ -1,29 +1,39 @@
-# Deutsch Dice — Learn & Defend
+# Deutsch Quest — B1 RPG v0.001
 
-Responsive Vite + Phaser Telegram Mini App for learning German through a tower-defense / merge loop.
+Це велика playtest-база перед наступним апдейтом.
 
-## What is included
+## Що всередині
+- 287 словникових карток A2/B1 з німецьким словом, українським перекладом, граматикою, прикладом, emoji, темою та rarity.
+- Flashcards + озвучка німецькою.
+- Leitner / spaced repetition.
+- Quiz, dictation, articles, verbs, sentence builder, dialogues.
+- Boss / RPG mechanics, quests, achievements, heroes, XP, streak.
+- Memory match та Speed Rush.
+- Telegram WebApp bridge.
+- Новий responsive shell для iPhone / Android / tablet / desktop.
+- Нижня mobile navigation.
+- PWA manifest + service worker для web-app/offline shell.
+- Playtest Center для швидкої перевірки основних підсистем перед релізом.
+- Safe-area підтримка iOS, reduced-motion, touch-friendly controls, desktop wide layout.
 
-- Responsive UI for desktop, iPhone and Android with safe-area support
-- Mobile-first layout that expands into desktop panels instead of stretching phone-sized text
-- Random-Dice-inspired core loop: board grid, deployable cards, merge upgrades, enemy waves and a roll hand
-- German vocabulary cards with pronunciation, XP, mastery and rarity
-- Word Trial for five questions
-- Daily missions, streak, level, coins and local save migration
-- Telegram WebApp initialization and haptics
-- Standalone web-app manifest for mobile install
-
-The visual language is original: it uses the same broad tower-defense/merge interaction pattern as the genre reference, while keeping the Deutsch Dice identity and original UI elements/assets.
-
-## Run
-
-```bash
-npm install
-npm run dev
-```
-
-Production build:
+## Запуск
+Рекомендовано через VS Code Live Server або будь-який локальний HTTP server:
 
 ```bash
-npm run build
+python -m http.server 8080
 ```
+
+Потім відкрити `http://localhost:8080`.
+
+## Playtest
+На головному екрані є **PLAYTEST CENTER**. Він перевіряє:
+- vocabulary database
+- localStorage
+- speech synthesis
+- Web Audio
+- responsive viewport
+- touch support
+- Telegram WebApp availability
+
+## Важливо
+Сервіс-воркер працює тільки через HTTP(S), не через `file://`.
