@@ -1,20 +1,14 @@
-# CHANGELOG
+# GESTALT v0.016
 
-## v0.014
+## Added
+- Source-only vocabulary from Schritte plus Neu 3+4, lessons 8–14 (to the end of the glossary).
+- Per-word emoji, source lesson and PDF page metadata.
+- Topic navigation for lessons 8–14.
 
-### Added
-- Окрема тема **Тема 8 · Am Wochenende**.
-- Вибір теми для навчання та колекції.
-- Підтримка майбутніх тем без змішування наборів.
-- 120+ лексичних записів із джерела користувача позначені `topic-8`.
-- Swipe right = Запам’ятав, swipe left = Забув.
+## Fixed
+- Mirrored flashcard back/front rendering: faces now rotate independently, preventing reverse/mirrored text.
+- Removed non-book vocabulary from the bundled dataset; runtime book data starts at lesson 8.
 
-### Fixed
-- Навігація більше не перезапускає навчальну сесію без потреби.
-- Порожня SRS-сесія тепер показує коректний стан замість старої картки.
-- Німецька озвучка має надійніший fallback для iOS/Android.
-- SRS box/interval після "Запам’ятав" узгоджений із 1/2/4/7/14/30 днями.
-
-### Improved
-- Додані topic metadata у словник.
-- Додані topic-aware статистика, повторення та колекції.
+## Learning
+- Card order follows the glossary order after due reviews are prioritized.
+- Current topic remains persistent.

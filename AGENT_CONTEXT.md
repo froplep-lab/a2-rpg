@@ -40,6 +40,15 @@ Use the provided mobile screenshot as the primary visual reference: dark premium
 - Keep Telegram sync asynchronous and debounced.
 
 
-## v0.014 focus
+## v0.015 focus
+- Stability pass on SRS review queue, audio behavior, Telegram sync timestamps, and test harness.
+- Never auto-speak after a card answer unless auto-speak is explicitly enabled.
+- Forgotten cards should reappear later in the same session once, then follow SRS.
+- Review mode must contain only due cards.
+
+v0.014 focus
 - Topic-based vocabulary. User-provided textbook words belong to topic-8 (Am Wochenende).
 - Future user-provided lists must be stored as separate topics, never mixed silently.
+
+## v0.016 directive
+Source-of-truth vocabulary is the uploaded book glossary from lesson 8 to the end. Do not inject words from outside the book into the bundled dataset. Add future user-provided lists as new topic blocks. Preserve card-first premium UX.
