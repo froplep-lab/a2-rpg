@@ -380,49 +380,25 @@ function speakWord(e) {
     }
 }
 
-// ВИПРАВЛЕНИЙ ТА ПОКРАЩЕНИЙ РУШІЙ ОЗВУЧКИ (гарантовано знаходить німецьку мову в Telegram / Webview)
+// ГАРАНТОВАНА НІМЕЦЬКА ОЗВУЧКА ЧЕРЕЗ ОФІЦІЙНИЙ GOOGLE TTS СЕРВІС (ідеальна вимова носієм)
 function speakCompactWord(wordStr) {
     if (!wordStr) return;
     let cleanText = wordStr.split('/')[0];
     cleanText = cleanText.split(',')[0];
     cleanText = cleanText.replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
     
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        
-        const executeSpeech = () => {
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=de&client=tw-ob`;
+    const audio = new Audio(url);
+    audio.play().catch(err => {
+        console.warn("Audio play error:", err);
+        // Fallback на браузерний синтез, якщо мережа недоступна
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(cleanText);
             utterance.lang = 'de-DE';
-            utterance.rate = 0.95;
-            
-            const voices = window.speechSynthesis.getVoices();
-            // Гнучкий пошук німецького голосу за кодом або назвою
-            const germanVoice = voices.find(v => 
-                v.lang.toLowerCase().includes('de') || 
-                v.name.toLowerCase().includes('german') || 
-                v.name.toLowerCase().includes('deutsch')
-            );
-            
-            if (germanVoice) {
-                utterance.voice = germanVoice;
-            }
-            
             window.speechSynthesis.speak(utterance);
-        };
-
-        const voices = window.speechSynthesis.getVoices();
-        if (voices && voices.length > 0) {
-            executeSpeech();
-        } else {
-            window.speechSynthesis.onvoiceschanged = () => {
-                executeSpeech();
-                window.speechSynthesis.onvoiceschanged = null;
-            };
-            setTimeout(executeSpeech, 100);
         }
-    } else {
-        console.warn("Speech synthesis is not supported on this device.");
-    }
+    });
 }
 
 function speakTrialWord() {
