@@ -7,6 +7,8 @@ import './skills.js';
 import './dictation.js';
 import './match.js';
 import './articles.js';
+import './dialogues.js';
+import './verbs.js';
 import { initHeroes } from './heroes.js';
 import { openQuizModal, closeQuizModal, startQuickQuiz, checkQuizAnswer } from './quiz.js';
 import { initAchievements } from './achievements.js';

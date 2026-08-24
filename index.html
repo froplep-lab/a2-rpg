@@ -47,6 +47,12 @@
             <button onclick="openArticleTrainerModal()" aria-label="Артиклі" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Тренажер артиклів">
                 <i class="fa-solid fa-book-bookmark"></i>
             </button>
+            <button onclick="openDialoguesModal()" aria-label="Діалоги B1" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Рольові діалоги B1 (Szenarien)">
+                <i class="fa-solid fa-comments"></i>
+            </button>
+            <button onclick="openVerbsModal()" aria-label="Дієслова B1" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Арена дієслів B1 (Präteritum / Perfekt)">
+                <i class="fa-solid fa-bolt-lightning"></i>
+            </button>
             <button onclick="openMatchModal()" aria-label="Меморі" class="interactive-btn glass-panel text-purple-400 px-3 py-2.5 rounded-xl border border-purple-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Меморі дуель слів">
                 <i class="fa-solid fa-puzzle-piece"></i>
             </button>
@@ -477,6 +483,38 @@
                     <div class="text-4xl">🎓</div>
                     <div class="text-sm font-bold text-slate-300">Перевір готовність до іспиту B1! Тест складається з 10 випадкових питань.</div>
                     <button onclick="startExamSession()" class="interactive-btn w-full max-w-xs mx-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white py-4 rounded-2xl font-black text-sm shadow-[0_10px_25px_rgba(236,72,153,0.4)]">ПОЧАТИ ТЕСТ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- B1 DIALOGUES & SCENARIOS MODAL -->
+    <div id="dialogues-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="dialogues-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
+                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-comments mr-2"></i> Життєві діалоги B1</h3>
+                <button onclick="closeDialoguesModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="dialogues-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">💬</div>
+                    <div class="text-sm font-bold text-slate-300">Рольові сценарії B1 для підготовки до розмовної частини іспиту!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- B1 VERBS ARENA MODAL -->
+    <div id="verbs-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-amber-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(245,158,11,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="verbs-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-amber-500/20">
+                <h3 class="font-black text-sm text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-bolt-lightning mr-2"></i> Арена дієслів B1</h3>
+                <button onclick="closeVerbsModal()" aria-label="Закрити" class="interactive-btn text-amber-400 hover:text-white p-2 bg-amber-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="verbs-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">⚡📚</div>
+                    <div class="text-sm font-bold text-slate-300">Тренування граматичних форм дієслів для рівня B1!</div>
                 </div>
             </div>
         </div>
