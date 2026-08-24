@@ -150,3 +150,18 @@ export function updateCardBookmarkUI() {
         : "interactive-btn glass-panel text-slate-400 hover:text-yellow-400 py-3 px-1 rounded-2xl border border-slate-700 flex flex-col items-center shadow-md";
     btn.innerHTML = `<i class="${isBookmarked ? 'fa-solid' : 'fa-regular'} fa-star text-sm mb-1"></i> <span class="truncate">ЗІРКА</span>`;
 }
+
+document.addEventListener('keydown', (e) => {
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+    
+    if (e.key === 'ArrowRight' || e.key === 'd') {
+        nextCard();
+    } else if (e.key === 'ArrowLeft' || e.key === 'a') {
+        prevCard();
+    } else if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        flipCard();
+    } else if (e.key === 's' || e.key === 'S') {
+        speakWord();
+    }
+});

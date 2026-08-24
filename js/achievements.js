@@ -78,3 +78,21 @@ export function renderAchievementsModalContent() {
         </div>
     `).join('');
 }
+
+import { toggleModal } from './utils.js';
+
+export function openAchievementsModal() {
+    AudioEngine.play('click');
+    Haptics.trigger('light');
+    renderAchievementsModalContent();
+    toggleModal("achievements-modal", "achievements-box", true);
+}
+
+export function closeAchievementsModal() {
+    AudioEngine.play('click');
+    Haptics.trigger('light');
+    toggleModal("achievements-modal", "achievements-box", false);
+}
+
+window.openAchievementsModal = openAchievementsModal;
+window.closeAchievementsModal = closeAchievementsModal;
