@@ -1,146 +1,758 @@
 [
   {
-    "german": "der Hund",
+    "german": "der Witwer, - / die Witwe, -n",
+    "grammar": "Nomen",
+    "ukrainian": "вдівець / вдова",
+    "hint": "Людина, яка втратила дружину/чоловіка",
+    "emoji": "🧓",
+    "sentence": "Der Witwer lebt allein im Haus.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "das Stadtzentrum, -zentren",
+    "grammar": "Nomen, n.",
+    "ukrainian": "центр міста",
+    "hint": "Головна частина міста",
+    "emoji": "🏙️",
+    "sentence": "Wir treffen uns im Stadtzentrum.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Stadtrand, ̈-er",
     "grammar": "Nomen, m.",
-    "ukrainian": "собака",
-    "hint": "Вірний домашній улюбленець",
-    "emoji": "🐕",
-    "sentence": "Der Hund spielt im Park mit einem Ball.",
+    "ukrainian": "околиця міста",
+    "hint": "Периферія міста",
+    "emoji": "🌳",
+    "sentence": "Sie wohnen am ruhigen Stadtrand.",
     "rarity": "звичайний"
   },
   {
-    "german": "die Katze",
-    "grammar": "Nomen, f.",
-    "ukrainian": "кішка",
-    "hint": "Домашня тварина, що любить тепло",
-    "emoji": "🐈",
-    "sentence": "Die Katze schläft auf dem Sofa.",
+    "german": "sich wohl·fühlen",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "почуватися добре",
+    "hint": "Бути в гарному затишному стані",
+    "emoji": "😌",
+    "sentence": "Hier kann man sich sehr wohlfühlen.",
     "rarity": "звичайний"
   },
   {
-    "german": "das Haus",
-    "grammar": "Nomen, n.",
-    "ukrainian": "будинок",
-    "hint": "Місце, де живуть люди",
-    "emoji": "🏠",
-    "sentence": "Wir haben ein neues Haus gekauft.",
+    "german": "aus·schlafen",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "виспатися",
+    "hint": "Добре відпочити уві сні",
+    "emoji": "🛌",
+    "sentence": "Am Wochenende möchte ich lange ausschlafen.",
     "rarity": "рідкісний"
   },
   {
-    "german": "das Auto",
-    "grammar": "Nomen, n.",
-    "ukrainian": "автомобіль",
-    "hint": "Транспортний засіб на чотирьох колесах",
-    "emoji": "🚗",
-    "sentence": "Sein Auto ist schnell und modern.",
+    "german": "die Disko, -s / die Disko(thek), -en",
+    "grammar": "Nomen",
+    "ukrainian": "дискотека",
+    "hint": "Місце для танців і музики",
+    "emoji": "🪩",
+    "sentence": "Wir gehen heute Abend in die Disko.",
     "rarity": "звичайний"
   },
   {
-    "german": "der Apfel",
-    "grammar": "Nomen, m.",
-    "ukrainian": "яблуко",
-    "hint": "Соковитий фрукт",
-    "emoji": "🍎",
-    "sentence": "Ich esse jeden Tag einen frischen Apfel.",
+    "german": "aus·gehen",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "виходити (у світ, на прогулянку)",
+    "hint": "Проводити вечір поза домом",
+    "emoji": "🚶‍♂️",
+    "sentence": "Wollen wir heute Abend ausgehen?",
     "rarity": "звичайний"
   },
   {
-    "german": "die Sonne",
-    "grammar": "Nomen, f.",
-    "ukrainian": "сонце",
-    "hint": "Головне світило на небі",
-    "emoji": "☀️",
-    "sentence": "Heute scheint die Sonne sehr hell.",
-    "rarity": "рідкісний"
-  },
-  {
-    "german": "das Wasser",
-    "grammar": "Nomen, n.",
-    "ukrainian": "вода",
-    "hint": "Життєво необхідна рідина",
-    "emoji": "💧",
-    "sentence": "Trinkst du gerne kaltes Wasser?",
-    "rarity": "звичайний"
-  },
-  {
-    "german": "laufen",
+    "german": "verbringen",
     "grammar": "Verb",
-    "ukrainian": "бігти, ходити",
-    "hint": "Швидкий рух ногами",
-    "emoji": "🏃",
-    "sentence": "Er läuft jeden Morgen im Park.",
-    "rarity": "звичайний"
-  },
-  {
-    "german": "essen",
-    "grammar": "Verb",
-    "ukrainian": "їсти",
-    "hint": "Споживати їжу",
-    "emoji": "🍽️",
-    "sentence": "Wir essen gemeinsam zu Abend.",
-    "rarity": "звичайний"
-  },
-  {
-    "german": "schlafen",
-    "grammar": "Verb",
-    "ukrainian": "спати",
-    "hint": "Відпочинок вночі",
-    "emoji": "😴",
-    "sentence": "Kinder müssen viel schlafen.",
-    "rarity": "звичайний"
-  },
-  {
-    "german": "das Beispiel",
-    "grammar": "Nomen, n.",
-    "ukrainian": "приклад",
-    "hint": "Демонстрація чогось",
-    "emoji": "📌",
-    "sentence": "Das ist ein gutes Beispiel für unsere Arbeit.",
-    "rarity": "звичайний"
-  },
-  {
-    "german": "entwickeln",
-    "grammar": "Verb",
-    "ukrainian": "розробляти",
-    "hint": "Створювати щось нове",
-    "emoji": "💻",
-    "sentence": "Wir entwickeln eine neue Web-App.",
-    "rarity": "рідкісний"
-  },
-  {
-    "german": "die Gelegenheit",
-    "grammar": "Nomen, f.",
-    "ukrainian": "можливість, нагода",
-    "hint": "Сприятливий момент",
-    "emoji": "✨",
-    "sentence": "Das ist eine tolle Gelegenheit.",
+    "ukrainian": "проводити (час)",
+    "hint": "Витрачати час на щось",
+    "emoji": "⏳",
+    "sentence": "Ich verbringe den Urlaub am Meer.",
     "rarity": "епічний"
   },
   {
-    "german": "zuverlässig",
-    "grammar": "Adjektiv",
-    "ukrainian": "надійний",
-    "hint": "Той, на кого можна покластися",
-    "emoji": "🛡️",
-    "sentence": "Er ist ein sehr zuverlässiger Partner.",
+    "german": "die Wäsche (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "білизна, прання",
+    "hint": "Одяг для прання",
+    "emoji": "🧺",
+    "sentence": "Ich muss heute noch die Wäsche machen.",
     "rarity": "рідкісний"
   },
   {
-    "german": "die Herausforderung",
+    "german": "unternehmen",
+    "grammar": "Verb",
+    "ukrainian": "робити, здійснювати",
+    "hint": "Панрувати активність",
+    "emoji": "🎯",
+    "sentence": "Was unternehmen wir am Wochenende?",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "das Ding, -e",
+    "grammar": "Nomen, n.",
+    "ukrainian": "річ, штука",
+    "hint": "Будь-який предмет",
+    "emoji": "📦",
+    "sentence": "Das ist eine interessante Sache.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der See, -n",
+    "grammar": "Nomen, m.",
+    "ukrainian": "озеро",
+    "hint": "Велика водойма суші",
+    "emoji": "🌊",
+    "sentence": "Wir schwimmen im Sommer im See.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "trotzdem",
+    "grammar": "Adjektiv / Adverb",
+    "ukrainian": "незважаючи на це, все одно",
+    "hint": "Всупереч чомусь",
+    "emoji": "🔄",
+    "sentence": "Es regnet, aber wir gehen trotzdem spazieren.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "die Radtour, -en",
     "grammar": "Nomen, f.",
-    "ukrainian": "виклики, складне завдання",
-    "hint": "Важке але цікаве завдання",
-    "emoji": "⚡",
-    "sentence": "Diese Prüfung ist eine große Herausforderung.",
+    "ukrainian": "велосипедний тур",
+    "hint": "Поїздка на велосипедах",
+    "emoji": "🚴",
+    "sentence": "Wir machen am Sonntag eine Radtour.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Flohmarkt, ̈-e",
+    "grammar": "Nomen, m.",
+    "ukrainian": "блошиний ринок",
+    "hint": "Ярмарок вживаних речей",
+    "emoji": "🏷️",
+    "sentence": "Auf dem Flohmarkt kann man günstig kaufen.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "erkältet sein",
+    "grammar": "Verb",
+    "ukrainian": "бути застуженим",
+    "hint": "Мати застуду",
+    "emoji": "🤒",
+    "sentence": "Er ist erkältet und bleibt im Bett.",
     "rarity": "легендарний"
   },
   {
-    "german": "erfolgreich",
-    "grammar": "Adjektiv",
-    "ukrainian": "успішний",
-    "hint": "З хорошим результатом",
-    "emoji": "🏆",
-    "sentence": "Das Projekt war äußerst erfolgreich.",
+    "german": "ständig",
+    "grammar": "Adjektiv / Adverb",
+    "ukrainian": "постійно",
+    "hint": "Безперервно",
+    "emoji": "♾️",
+    "sentence": "Er redet ständig über seine Arbeit.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "weg·legen",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "відкласти",
+    "hint": "Покласти кудись осторонь",
+    "emoji": "📥",
+    "sentence": "Leg bitte das Handy weg.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Vorschlag, ̈-e",
+    "grammar": "Nomen, m.",
+    "ukrainian": "пропозиція",
+    "hint": "Ідея для обговорення",
+    "emoji": "💡",
+    "sentence": "Das ist ein ausgezeichneter Vorschlag.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Rundfahrt, -en",
+    "grammar": "Nomen, f.",
+    "ukrainian": "поїдкa, тур, екскурсія",
+    "hint": "Оглядова поїздка",
+    "emoji": "🚌",
+    "sentence": "Wir machen eine Stadtrundfahrt.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "einverstanden",
+    "grammar": "Verb",
+    "ukrainian": "згодний",
+    "hint": "Виявлення згоди",
+    "emoji": "👍",
+    "sentence": "Bist du mit diesem Plan einverstanden?",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "positiv",
+    "grammar": "Adjektiv / Adverb",
+    "ukrainian": "позитивний",
+    "hint": "Сприятливий, схвальний",
+    "emoji": "➕",
+    "sentence": "Sie hat eine sehr positive Einstellung.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "reagieren",
+    "grammar": "Verb",
+    "ukrainian": "реагувати",
+    "hint": "Давати відповідь на подразник",
+    "emoji": "⚡",
+    "sentence": "Wie hat er auf die Nachricht reagiert?",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "negativ",
+    "grammar": "Adjektiv / Adverb",
+    "ukrainian": "негативний",
+    "hint": "Несприятливий",
+    "emoji": "➖",
+    "sentence": "Das Testergebnis war negativ.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Bar, -s",
+    "grammar": "Nomen, f.",
+    "ukrainian": "бар",
+    "hint": "Заклад з напоями",
+    "emoji": "🍸",
+    "sentence": "Wir trinken einen Saft in der Bar.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "die Kultur (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "культура",
+    "hint": "Сукупність духовних цінностей",
+    "emoji": "🎭",
+    "sentence": "Berlin hat eine reiche Kultur.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Natur (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "природа",
+    "hint": "Провідний природний світ",
+    "emoji": "🌲",
+    "sentence": "Ich genieße die Ruhe in der Natur.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Oper, -n",
+    "grammar": "Nomen, f.",
+    "ukrainian": "опера",
+    "hint": "Музично-театральний жанр",
+    "emoji": "🎶",
+    "sentence": "Wir hören heute Abend klassische Musik in der Oper.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "bügeln",
+    "grammar": "Verb",
+    "ukrainian": "прасувати",
+    "hint": "Розгладжувати одяг праскою",
+    "emoji": "👔",
+    "sentence": "Ich muss noch meine Hemden bügeln.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "wochentags",
+    "grammar": "Verb",
+    "ukrainian": "у будні дні",
+    "hint": "З понеділка по п'ятницю",
+    "emoji": "📅",
+    "sentence": "Wochentags arbeite ich von neun bis sechs.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Eintrittskarte, -n",
+    "grammar": "Nomen, f.",
+    "ukrainian": "квиток",
+    "hint": "Пропуск на захід",
+    "emoji": "🎟️",
+    "sentence": "Hast du schon die Eintrittskarten gekauft?",
+    "rarity": "легендарний"
+  },
+  {
+    "german": "der Sender, -",
+    "grammar": "Nomen, m.",
+    "ukrainian": "канал (ТБ / радіо)",
+    "hint": "Телерадіокомпанія",
+    "emoji": "📡",
+    "sentence": "Welchen Sender hörst du am liebsten?",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "mit·spielen",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "грати разом",
+    "hint": "Брати участь у грі",
+    "emoji": "🤝",
+    "sentence": "Wer möchte mitspielen?",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "das Fremdwort, ̈-er",
+    "grammar": "Nomen, n.",
+    "ukrainian": "запозичене / іноземне слово",
+    "hint": "Слово з іншої мови",
+    "emoji": "🔤",
+    "sentence": "Dieses Fremdwort kommt aus dem Englischen.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Veranstaltungskalender, -",
+    "grammar": "Nomen, m.",
+    "ukrainian": "календар подій",
+    "hint": "Розклад заходів",
+    "emoji": "🗓️",
+    "sentence": "Schau in den Veranstaltungskalender.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Treffpunkt, -e",
+    "grammar": "Nomen, m.",
+    "ukrainian": "місце зустрічі",
+    "hint": "Пункт збору",
+    "emoji": "📍",
+    "sentence": "Unser Treffpunkt ist vor dem Bahnhof.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "das Rathaus, ̈-er",
+    "grammar": "Nomen, n.",
+    "ukrainian": "ратуша",
+    "hint": "Будівля міської влади",
+    "emoji": "🏛️",
+    "sentence": "Das Rathaus liegt im Stadtzentrum.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "die Teilnahme, -n",
+    "grammar": "Nomen, f.",
+    "ukrainian": "участь",
+    "hint": "Долучення до чогось",
+    "emoji": "🎫",
+    "sentence": "Die Teilnahme an dem Kurs ist kostenlos.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "kostenfrei",
+    "grammar": "Verb",
+    "ukrainian": "безкоштовно",
+    "hint": "Без оплати",
+    "emoji": "🆓",
+    "sentence": "Der Eintritt in dieses Museum ist kostenfrei.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "auf·treten",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "виступати",
+    "hint": "Давати концерт чи промову",
+    "emoji": "🎤",
+    "sentence": "Die Band wird heute Abend auftreten.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Bahn, -en",
+    "grammar": "Nomen, f.",
+    "ukrainian": "потяг, залізниця",
+    "hint": "Залізничний транспорт",
+    "emoji": "🚆",
+    "sentence": "Ich fahre lieber mit der Bahn.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "offen",
+    "grammar": "Verb",
+    "ukrainian": "відкритий",
+    "hint": "Не зачинений",
+    "emoji": "🚪",
+    "sentence": "Das Geschäft ist heute den ganzen Tag offen.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Volkshochschule, -n",
+    "grammar": "Nomen, f.",
+    "ukrainian": "народна школа (VHS)",
+    "hint": "Заклад для дорослої освіти",
+    "emoji": "🏫",
+    "sentence": "Ich lerne Deutsch an der Volkshochschule.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "die Politik (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "політика",
+    "hint": "Державна діяльність",
+    "emoji": "🗳️",
+    "sentence": "Er interessiert sich für Politik.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Fotografie, -n",
+    "grammar": "Nomen, f.",
+    "ukrainian": "фотографія",
+    "hint": "Мистецтво знімків",
+    "emoji": "📸",
+    "sentence": "Ihre Fotografie ist wunderschön.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "die Literatur (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "література",
+    "hint": "Письмовство",
+    "emoji": "📚",
+    "sentence": "Sie liebt deutsche Literatur.",
+    "rarity": "легендарний"
+  },
+  {
+    "german": "erforderlich",
+    "grammar": "Adjektiv / Adverb",
+    "ukrainian": "необхідний",
+    "hint": "Потрібний для справи",
+    "emoji": "✅",
+    "sentence": "Diese Dokumente sind für den Antrag erforderlich.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "sich ein·schreiben",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "записуватися (на курс)",
+    "hint": "Реєструватися",
+    "emoji": "✍️",
+    "sentence": "Ich möchte mich für den Kurs einschreiben.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "das Semester, -",
+    "grammar": "Nomen, n.",
+    "ukrainian": "семестр",
+    "hint": "Навчальний період у виші",
+    "emoji": "🎓",
+    "sentence": "Das neue Semester beginnt im Oktober.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "die Wanderung, -en",
+    "grammar": "Nomen, f.",
+    "ukrainian": "похід, піша прогулянка",
+    "hint": "Прогулянка природою",
+    "emoji": "🥾",
+    "sentence": "Wir machen am Samstag eine Bergwanderung.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "das Programm, -e",
+    "grammar": "Nomen, n.",
+    "ukrainian": "програма",
+    "hint": "План дій",
+    "emoji": "📋",
+    "sentence": "Das Programm für heute ist sehr interessant.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Fan, -s",
+    "grammar": "Nomen, m.",
+    "ukrainian": "фанат",
+    "hint": "Прихильник чогось",
+    "emoji": "⭐",
+    "sentence": "Er ist ein großer Fan dieser Band.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Künstler, - / die Künstlerin, -nen",
+    "grammar": "Nomen",
+    "ukrainian": "артист / митець",
+    "hint": "Творча людина",
+    "emoji": "🎨",
+    "sentence": "Der Künstler malt ein neues Bild.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "Europa (Sg.)",
+    "grammar": "Adjektiv / Adverb",
+    "ukrainian": "Європа",
+    "hint": "Континент",
+    "emoji": "🇪🇺",
+    "sentence": "Europa ist ein faszinierender Kontinent.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "das Spielzeug, -e",
+    "grammar": "Nomen, n.",
+    "ukrainian": "іграшка",
+    "hint": "Предмет для гри",
+    "emoji": "🧸",
+    "sentence": "Kinder spielen gerne mit Spielzeug.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die CD, -s",
+    "grammar": "Nomen, f.",
+    "ukrainian": "диск",
+    "hint": "Носій аудіозапису",
+    "emoji": "💿",
+    "sentence": "Ich höre gerne Musik von einer CD.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Renovierung, -en",
+    "grammar": "Nomen, f.",
+    "ukrainian": "косметичний ремонт",
+    "hint": "Оновлення приміщення",
+    "emoji": "🔨",
+    "sentence": "Die Renovierung des Hauses dauert lange.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "die Wiedereröffnung, -en",
+    "grammar": "Nomen, f.",
+    "ukrainian": "повторне відкриття",
+    "hint": "Відкриття після перерви",
+    "emoji": "🎀",
+    "sentence": "Wir feiern die Wiedereröffnung des Ladens.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "an·nehmen",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "приймати",
+    "hint": "Погоджуватися або брати",
+    "emoji": "📥",
+    "sentence": "Ich nehme dein Angebot gerne an.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "ab·lehnen",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "відхиляти, відмовляти",
+    "hint": "Не погоджуватися",
+    "emoji": "❌",
+    "sentence": "Er muss dieses Angebot leider ablehnen.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "das Bedauern (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "жаль, шкодування",
+    "hint": "Висловлення жалю",
+    "emoji": "😔",
+    "sentence": "Er äußerte sein Bedauern über den Fehler.",
+    "rarity": "легендарний"
+  },
+  {
+    "german": "der Gegensatz, ̈-e",
+    "grammar": "Nomen, m.",
+    "ukrainian": "протилежність",
+    "hint": "Протилежне поняття",
+    "emoji": "↔️",
+    "sentence": "Das ist ein krasser Gegensatz.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Wirklichkeit (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "дійсність, реальність",
+    "hint": "Справжній стан речей",
+    "emoji": "🌐",
+    "sentence": "Das ist keine Träumerei, das ist Wirklichkeit.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Keller, -",
+    "grammar": "Nomen, m.",
+    "ukrainian": "підвал",
+    "hint": "Нижній поверх будинку",
+    "emoji": "🏚️",
+    "sentence": "Wir lagern Wein im kühlen Keller.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "erraten",
+    "grammar": "Verb",
+    "ukrainian": "розгадати",
+    "hint": "Вгадати правильну відповідь",
+    "emoji": "🔮",
+    "sentence": "Kannst du dieses Rätsel erraten?",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "berühmt",
+    "grammar": "Adjektiv / Adverb",
+    "ukrainian": "знаменитий, відомий",
+    "hint": "Популярний серед багатьох",
+    "emoji": "✨",
+    "sentence": "Das ist ein sehr berühmter Schauspieler.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Ärger (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "злість, неприємності",
+    "hint": "Роздратування чи проблеми",
+    "emoji": "💢",
+    "sentence": "Es gab nur Ärger mit diesem Gerät.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Polizei (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "поліція",
+    "hint": "Охоронці правопорядку",
+    "emoji": "🚓",
+    "sentence": "Die Polizei hat den Dieb gefasst.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "herrlich",
+    "grammar": "Adjektiv / Adverb",
+    "ukrainian": "чудовий, прекрасний",
+    "hint": "Прекрасний на вигляд чи смак",
+    "emoji": "🌟",
+    "sentence": "Wir haben heute herrliches Wetter.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "die Region, -en",
+    "grammar": "Nomen, f.",
+    "ukrainian": "регіон",
+    "hint": "Певна територія",
+    "emoji": "🗺️",
+    "sentence": "Diese Region ist bekannt für ihren Wein.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "der Kanal, ̈-e",
+    "grammar": "Nomen, m.",
+    "ukrainian": "канал",
+    "hint": "Штучна чи природна протока / ТБ",
+    "emoji": "📺",
+    "sentence": "Schiffe fahren durch den Kanal.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "die Werbung (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "реклама",
+    "hint": "Комерційні оголошення",
+    "emoji": "📺",
+    "sentence": "Im Fernsehen läuft zu viel Werbung.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "die Presse (Sg.)",
+    "grammar": "Nomen, Sg.",
+    "ukrainian": "преса",
+    "hint": "ЗМІ, газети та журнали",
+    "emoji": "📰",
+    "sentence": "Die Presse berichtet über den Skandal.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "die Bestellung, -en",
+    "grammar": "Nomen, f.",
+    "ukrainian": "замовлення",
+    "hint": "Замовлення товарів",
+    "emoji": "📦",
+    "sentence": "Deine Bestellung ist unterwegs.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "beantworten",
+    "grammar": "Verb",
+    "ukrainian": "відповідати (на щось)",
+    "hint": "Дати відповідь на запитання",
+    "emoji": "✉️",
+    "sentence": "Bitte beantworten Sie meine E-Mail.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "recherchieren",
+    "grammar": "Verb",
+    "ukrainian": "шукати інформацію в інтернеті",
+    "hint": "Збирати дані",
+    "emoji": "🔍",
+    "sentence": "Ich muss noch im Internet recherchieren.",
+    "rarity": "легендарний"
+  },
+  {
+    "german": "der Anhang, ̈-e",
+    "grammar": "Nomen, m.",
+    "ukrainian": "додаток, вкладення (у листі)",
+    "hint": "Файл у листі",
+    "emoji": "📎",
+    "sentence": "Die Dokumente finden Sie im Anhang.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "die Quelle, -n",
+    "grammar": "Nomen, f.",
+    "ukrainian": "джерело",
+    "hint": "Початок води або інформації",
+    "emoji": "⛲",
+    "sentence": "Wir müssen die Quelle überprüfen.",
+    "rarity": "епічний"
+  },
+  {
+    "german": "herunter·laden",
+    "grammar": "Verb (reflexiv / trennbar)",
+    "ukrainian": "завантажувати (з інтернету)",
+    "hint": "Зберігати файл з мережі",
+    "emoji": "⬇️",
+    "sentence": "Du kannst die Datei hier herunterladen.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "das Passwort, ̈-er",
+    "grammar": "Nomen, n.",
+    "ukrainian": "пароль",
+    "hint": "Кодове слово для доступу",
+    "emoji": "🔑",
+    "sentence": "Dein Passwort muss sicher sein.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "ändern",
+    "grammar": "Verb",
+    "ukrainian": "змінювати",
+    "hint": "Робити іншим",
+    "emoji": "⚙️",
+    "sentence": "Du kannst deine Einstellungen jederzeit ändern.",
+    "rarity": "рідкісний"
+  },
+  {
+    "german": "die Bankverbindung, -en",
+    "grammar": "Nomen, f.",
+    "ukrainian": "банківські реквізити",
+    "hint": "Дані банківського рахунку",
+    "emoji": "💳",
+    "sentence": "Bitte geben Sie Ihre Bankverbindung an.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "das Girokonto, -konten",
+    "grammar": "Nomen, n.",
+    "ukrainian": "поточний рахунок",
+    "hint": "Ранку в банку для розрахунків",
+    "emoji": "🏦",
+    "sentence": "Ich habe ein neues Girokonto eröffnet.",
+    "rarity": "звичайний"
+  },
+  {
+    "german": "geheim",
+    "grammar": "Adjektiv / Adverb",
+    "ukrainian": "секретний, таємний",
+    "hint": "Прихований від усіх",
+    "emoji": "🤫",
+    "sentence": "Diese Information muss geheim bleiben.",
     "rarity": "звичайний"
   }
 ]
