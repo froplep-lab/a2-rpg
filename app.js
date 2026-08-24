@@ -1,16 +1,17 @@
-const APP_VERSION = "v2.0.0 (Next-Gen)";
+const APP_VERSION = "v2.1.0 (Polished)";
 
-// Модуль тактильної віддачі (Вібрація в Telegram)
 const Haptics = {
     trigger(type = 'light') {
-        const tg = window.Telegram?.WebApp;
-        if (tg && tg.HapticFeedback) {
-            if (['light', 'medium', 'heavy', 'rigid', 'soft'].includes(type)) {
-                tg.HapticFeedback.impactOccurred(type);
-            } else if (['error', 'success', 'warning'].includes(type)) {
-                tg.HapticFeedback.notificationOccurred(type);
+        try {
+            const tg = window.Telegram?.WebApp;
+            if (tg && tg.HapticFeedback) {
+                if (['light', 'medium', 'heavy', 'rigid', 'soft'].includes(type)) {
+                    tg.HapticFeedback.impactOccurred(type);
+                } else if (['error', 'success', 'warning'].includes(type)) {
+                    tg.HapticFeedback.notificationOccurred(type);
+                }
             }
-        }
+        } catch (e) { console.warn("Haptics not supported"); }
     }
 };
 
@@ -123,7 +124,6 @@ const slangPhrases = ["Bock drauf!", "Digga, läuft!", "Sheesh!", "Ehrenmann!", 
 let cards = [];
 let currentIndex = 0;
 let isFlipped = false;
-let isShuffled = false;
 let maxBossHp = 3000;
 let wordHpMap = JSON.parse(localStorage.getItem('a2_word_hp_map') || '{}');
 let masteredWords = new Set(JSON.parse(localStorage.getItem('a2_mastered_thema8') || '[]'));
@@ -200,16 +200,21 @@ function updateHeroUI() {
     localStorage.setItem('a2_pet', hero.pet);
 }
 
-function addXp(amount, emoji, word) {
-    hero.streak++;
-    if (hero.streak > 1 && hero.streak % 3 === 0) {
-        AudioEngine.play('success');
-        Haptics.trigger('success');
+// Додано параметр isSystemReward для уникнення накрутки комбо місіями
+function addXp(amount, emoji, word, isSystemReward = false) {
+    if (!isSystemReward) {
+        hero.streak++;
+        if (hero.streak > 1 && hero.streak % 3 === 0) {
+            AudioEngine.play('success');
+            Haptics.trigger('success');
+        }
+        const mult = Math.min(5, 1 + Math.floor(hero.streak / 3));
+        hero.xp += amount * mult;
+    } else {
+        hero.xp += amount; // Фіксований досвід без комбо
     }
-    const mult = Math.min(5, 1 + Math.floor(hero.streak / 3));
-    hero.xp += amount * mult;
 
-    if (emoji) {
+    if (emoji && word) {
         const rand = Math.random();
         let acc = 0, chosen = rarities[0];
         for (let r of rarities) { acc += r.chance; if (rand <= acc) { chosen = r; break; } }
@@ -249,19 +254,19 @@ function attackEnemyClick() {
     const card = cards[currentIndex];
     if (!card || masteredWords.has(card.german)) return;
     
-    Haptics.trigger('rigid'); // Вібрація при ударі
+    Haptics.trigger('rigid'); 
     AudioEngine.play('hit');
 
     const heroBox = document.getElementById("hero-avatar-box");
     const enemyBox = document.getElementById("enemy-container");
     if (heroBox) {
         heroBox.classList.remove("anim-attack");
-        void heroBox.offsetWidth; // Force reflow
+        void heroBox.offsetWidth; 
         heroBox.classList.add("anim-attack");
     }
     if (enemyBox) {
         enemyBox.classList.remove("anim-hurt");
-        void enemyBox.offsetWidth; // Force reflow
+        void enemyBox.offsetWidth; 
         enemyBox.classList.add("anim-hurt");
     }
 
@@ -274,8 +279,8 @@ function attackEnemyClick() {
         masteredWords.add(card.german);
         localStorage.setItem('a2_mastered_thema8', JSON.stringify([...masteredWords]));
         if (enemyBox) enemyBox.classList.add("anim-soul");
-        addXp(35, card.emoji, card.german);
-        Haptics.trigger('heavy'); // Сильна вібрація при знищенні
+        addXp(35, card.emoji, card.german, false);
+        Haptics.trigger('heavy'); 
         if (typeof confetti === 'function') confetti({ particleCount: 80, spread: 100, origin: { y: 0.6 } });
         setTimeout(() => {
             if (enemyBox) enemyBox.classList.remove("anim-soul");
@@ -308,7 +313,6 @@ function toggleModal(modalId, boxId, show) {
     
     if (show) {
         modal.classList.remove("opacity-0", "pointer-events-none");
-        // Плавне пружне збільшення
         box.classList.remove("scale-90", "opacity-0", "translate-y-4");
         box.classList.add("scale-100", "opacity-100", "translate-y-0");
     } else {
@@ -346,7 +350,7 @@ function renderMarathonQuestion() {
     }
     const w = marathonWords[marathonIndex];
     const others = cards.filter(c => c.german !== w.german).sort(() => Math.random() - 0.5);
-    const opts = [w.ukrainian, others[0]?.ukrainian || "Помилка 1", others[1]?.ukrainian || "Помилка 2", others[2]?.ukrainian || "Помилка 3"].sort(() => Math.random() - 0.5);
+    const opts = [w.ukrainian, others[0]?.ukrainian || "Помилка", others[1]?.ukrainian || "Помилка", others[2]?.ukrainian || "Помилка"].sort(() => Math.random() - 0.5);
     const correctIdx = opts.indexOf(w.ukrainian);
 
     content.innerHTML = `
@@ -384,7 +388,7 @@ function renderMarathonQuestion() {
 function checkMarathonAnswer(selected, correct) {
     const btns = document.querySelectorAll(".marathon-btn");
     btns.forEach((btn, idx) => {
-        btn.disabled = true;
+        btn.disabled = true; // Захист від подвійних кліків
         btn.classList.remove("glass-panel", "hover:bg-slate-800", "border-cyan-500/20");
         if (idx === correct) {
             btn.classList.add("border-emerald-500", "bg-emerald-500/20", "text-emerald-300");
@@ -403,7 +407,12 @@ function checkMarathonAnswer(selected, correct) {
         Haptics.trigger('error');
     }
     marathonIndex++;
-    setTimeout(() => renderMarathonQuestion(), 850);
+    setTimeout(() => {
+        // Перевіряємо чи модалка ще відкрита перед рендером
+        if(!document.getElementById("marathon-modal").classList.contains("opacity-0")) {
+            renderMarathonQuestion();
+        }
+    }, 850);
 }
 
 // ----------------- RAID BOSS -----------------
@@ -418,7 +427,7 @@ function renderBossQuestion() {
         AudioEngine.play('levelup');
         Haptics.trigger('success');
         if (typeof confetti === 'function') confetti({ particleCount: 200, spread: 160, origin: { y: 0.5 } });
-        addXp(250, '👑', 'Bug-Lord Defeated');
+        addXp(250, '👑', 'Bug-Lord Defeated', true); // System reward
         content.innerHTML = `
             <div class="text-center py-8 space-y-4">
                 <div class="text-6xl animate-bounce drop-shadow-[0_0_20px_rgba(16,185,129,0.8)]">👑</div>
@@ -456,7 +465,7 @@ function renderBossQuestion() {
 function checkBossAnswer(selected, correct) {
     const btns = document.querySelectorAll(".boss-btn");
     btns.forEach((btn, idx) => {
-        btn.disabled = true;
+        btn.disabled = true; // Захист від подвійних кліків
         btn.classList.remove("glass-panel", "border-pink-500/30", "hover:border-pink-400");
         if (idx === correct) {
             btn.classList.add("border-emerald-500", "bg-emerald-500/20", "text-emerald-300");
@@ -469,7 +478,9 @@ function checkBossAnswer(selected, correct) {
     
     if (selected === correct) {
         AudioEngine.play('success'); Haptics.trigger('medium'); bossStep++;
-        setTimeout(() => renderBossQuestion(), 850);
+        setTimeout(() => {
+            if(!document.getElementById("marathon-modal").classList.contains("opacity-0")) renderBossQuestion();
+        }, 850);
     } else {
         AudioEngine.play('error'); Haptics.trigger('error');
         const content = document.getElementById("marathon-content");
@@ -520,7 +531,6 @@ function renderCompactBlock() {
     const grid = document.getElementById("compact-words-grid");
     if (!grid) return;
     
-    // Оптимізація: рендеримо все відразу як стрінг, без зайвих reflow
     grid.innerHTML = cards.map((w, idx) => {
         const isM = masteredWords.has(w.german);
         return `
@@ -548,8 +558,15 @@ function updateCard() {
     if (!cards[currentIndex]) currentIndex = 0;
     const card = cards[currentIndex];
     const cardInner = document.getElementById("card-inner");
-    if (cardInner) cardInner.classList.remove("rotate-y-180");
-    isFlipped = false;
+    
+    // Скидання класу перевороту миттєво
+    if (cardInner) {
+        cardInner.style.transition = 'none';
+        cardInner.classList.remove("rotate-y-180");
+        isFlipped = false;
+        // Відновлюємо транзишн після короткої затримки
+        setTimeout(() => { cardInner.style.transition = ''; }, 50);
+    }
 
     document.getElementById("card-front-word").innerText = card.german;
     document.getElementById("card-front-grammar").innerText = card.grammar;
@@ -613,7 +630,7 @@ function toggleShuffle() {
     currentIndex = 0; updateCard(); renderCompactBlock();
 }
 
-// Управління модалками через єдину функцію (оптимізація)
+// Управління модалками
 function openAchievementsModal() { AudioEngine.play('click'); Haptics.trigger('light'); toggleModal("achievements-modal", "achievements-box", true); renderAchievements(); }
 function closeAchievementsModal() { AudioEngine.play('click'); Haptics.trigger('light'); toggleModal("achievements-modal", "achievements-box", false); }
 
@@ -654,11 +671,11 @@ function claimAchievement(id, reward) {
     AudioEngine.play('success'); Haptics.trigger('success');
     claimedAchievements.push(id);
     localStorage.setItem('a2_achievements', JSON.stringify(claimedAchievements));
-    addXp(reward, null, null); // Add XP already handles level ups nicely
+    addXp(reward, null, null, true); // True = System Reward (Без множника стріка)
     renderAchievements();
 }
 
-// TRIAL, INVENTORY, WORD BROWSER - same logic, updated toggles
+// TRIAL, INVENTORY, WORD BROWSER 
 function openMasteryTrial() {
     AudioEngine.play('click'); Haptics.trigger('light');
     const card = cards[currentIndex];
@@ -704,7 +721,8 @@ function verifyTrialAssembly() {
         AudioEngine.play('success'); Haptics.trigger('success');
         masteredWords.add(currentTrialTarget.german);
         localStorage.setItem('a2_mastered_thema8', JSON.stringify([...masteredWords]));
-        setCurrentWordHp(0); updateEnemyHpUI(); addXp(50, currentTrialTarget.emoji, currentTrialTarget.german);
+        setCurrentWordHp(0); updateEnemyHpUI(); 
+        addXp(50, currentTrialTarget.emoji, currentTrialTarget.german, false);
         if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 90, origin: { y: 0.5 } });
         setTimeout(() => { closeTrial(); updateMasteredUI(); if(!document.getElementById("compact-block-view").classList.contains("hidden")) renderCompactBlock(); }, 800);
     } else {
@@ -769,7 +787,6 @@ function resetAllProgress() {
     }
 }
 
-// Inventory & Trophies simple renders...
 function renderClasses() {
     const classes = [{ name: 'Cyber-Runner', desc: 'Швидкість' }, { name: 'Trap-Hacker', desc: 'Злам ядер' }, { name: 'Neon-Mage', desc: 'Синтаксис' }];
     document.getElementById("class-list").innerHTML = classes.map(c => `<button onclick="setHeroClass('${c.name}')" class="interactive-btn p-3 rounded-2xl border ${hero.cls === c.name ? 'border-cyan-400 bg-cyan-900/30 text-cyan-300' : 'border-slate-800 glass-panel text-slate-400'} text-left text-xs"><div class="font-black text-white">${c.name}</div><div class="text-[10px] mt-1 opacity-80">${c.desc}</div></button>`).join('');
