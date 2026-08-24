@@ -1,4 +1,4 @@
-import { heroLevel, heroXp } from './xp.js';
+import { hero } from './state.js';
 import { AudioEngine } from './audio.js';
 import { Haptics } from './telegram.js';
 import { StorageEngine } from './storage.js';
@@ -36,7 +36,7 @@ export function renderSkillTreeContent() {
             <div class="space-y-2.5">
                 ${SKILLS.map(skill => {
                     const isUnlocked = unlockedSkills.has(skill.id);
-                    const canUnlock = heroLevel >= skill.costLevel && !isUnlocked;
+                    const canUnlock = hero.level >= skill.costLevel && !isUnlocked;
                     return `
                         <div class="glass-panel p-3.5 rounded-2xl border ${isUnlocked ? 'border-cyan-500/50 bg-cyan-950/20' : canUnlock ? 'border-amber-500/50' : 'border-slate-800 opacity-60'} flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -59,7 +59,7 @@ export function renderSkillTreeContent() {
 }
 
 export function unlockSkill(skillId, costLevel) {
-    if (heroLevel < costLevel) {
+    if (hero.level < costLevel) {
         showToast("Недостатній рівень агента!", "error");
         AudioEngine.play('error');
         Haptics.trigger('error');

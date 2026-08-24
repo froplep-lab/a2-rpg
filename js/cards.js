@@ -53,7 +53,7 @@ export function flipCard(forceReset = false) {
         progressQuest('review_cards', 1);
     }
 
-    if (isFlipped && autoSpeakOnFlip) {
+    if (isFlipped && autoSpeakOnFlip()) {
         speakWord();
     }
 }

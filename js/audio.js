@@ -90,6 +90,8 @@ export function updateAudioVolume(val) {
     if (lbl) lbl.innerText = `${val}%`;
 }
 
+export function autoSpeakOnFlip() { return autoSpeak; }
+
 export function toggleAutoSpeak() {
     autoSpeak = !autoSpeak;
     const btn = document.getElementById("sound-autospeak-btn");

@@ -49,3 +49,6 @@ export function checkDailyLoginBonus() {
         updateHeroUI();
     }
 }
+
+export function getXp() { return hero.xp || 0; }
+export function getLevel() { return hero.level || 1; }

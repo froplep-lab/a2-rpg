@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DEUTSCH QUEST — B1 RPG v0.003 · DICE ARENA</title>
+    <title>GESTALT — Deutsch Quest / B1 RPG v0.005 · Dice Arena</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -22,6 +22,13 @@
             color: #f3e5d8;
             overflow-x: hidden;
         }
+
+        html.reduced-motion *, html.reduced-motion *::before, html.reduced-motion *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+        html.light-theme body { background:#ecf1f3 !important; color:#18242b !important; }
+        html.light-theme .g-shell, html.light-theme .g-panel, html.light-theme .g-topbar, html.light-theme .g-side-card { background:rgba(245,248,249,.96) !important; color:#18242b !important; }
+        html.light-theme .g-nav, html.light-theme .g-bottom-nav { background:rgba(236,241,243,.98) !important; }
+        html.light-theme .g-screen, html.light-theme .g-panel span, html.light-theme .g-panel p { color:#33434b; }
+        @media (max-width: 720px) { body { padding-left:max(8px,var(--sal)); padding-right:max(8px,var(--sar)); padding-top:max(8px,var(--sat)); padding-bottom:max(78px,var(--sab)); } }
 
         .font-medieval { font-family: 'MedievalSharp', cursive; }
         .font-cinzel { font-family: 'Cinzel', serif; }
@@ -182,7 +189,7 @@
         .dq-streak-flame{font-size:2rem;filter:drop-shadow(0 0 10px rgba(245,158,11,.55))}
         @media(max-width:760px){.dq-dashboard-grid{grid-template-columns:1fr}.dq-battle-board{max-width:430px}}
 
-        /* v0.003 — DEUTSCH DICE ARENA */
+        /* v0.005 — GESTALT DICE ARENA */
         .dd-shell{background:radial-gradient(circle at 50% 0%,rgba(124,58,237,.12),transparent 38%),linear-gradient(180deg,rgba(10,5,20,.98),rgba(5,3,9,.98));border:1px solid rgba(168,85,247,.35);border-radius:1.5rem;box-shadow:inset 0 0 40px rgba(0,0,0,.5),0 18px 45px rgba(0,0,0,.45)}
         .dd-hud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.55rem}
         .dd-chip{background:rgba(15,8,24,.9);border:1px solid rgba(168,85,247,.28);border-radius:.85rem;padding:.65rem .55rem;text-align:center}
@@ -917,6 +924,33 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
             enemyHp: 50, maxEnemyHp: 50, enemyIdx: 1
         };
 
+        function persistRpgState() {
+            try {
+                localStorage.setItem('rpg_hero_class', state.heroClass);
+                localStorage.setItem('rpg_hero_lvl', String(state.heroLvl));
+                localStorage.setItem('rpg_hero_xp', String(state.heroXp));
+                localStorage.setItem('rpg_gold', String(state.gold));
+                localStorage.setItem('rpg_trophies', JSON.stringify(state.trophies || []));
+                localStorage.setItem('rpg_key_lvl', String(state.keyLvl || 0));
+                localStorage.setItem('rpg_pity_counter', String(state.pityCounter || 0));
+                localStorage.setItem('rpg_equipped', JSON.stringify(state.equipped || {}));
+                localStorage.setItem('rpg_storage', JSON.stringify(state.storage || []));
+            } catch (e) {}
+        }
+        function grantRpgReward(xp=0, gold=0) {
+            state.heroXp = Math.max(0, Number(state.heroXp || 0) + Math.max(0, Number(xp || 0)));
+            state.gold = Math.max(0, Number(state.gold || 0) + Math.max(0, Number(gold || 0)));
+            let leveled = false;
+            while (state.heroXp >= Math.max(100, state.heroLvl * 100)) {
+                state.heroXp -= Math.max(100, state.heroLvl * 100);
+                state.heroLvl += 1;
+                leveled = true;
+            }
+            persistRpgState();
+            if (leveled && typeof confetti === 'function') confetti({ particleCount: 70, spread: 80, origin: { y: 0.2 } });
+            return leveled;
+        }
+
         let cubeSlots = [null, null, null, null, null, null, null, null, null];
         let cards = [...masterVocabulary];
         let cardIdx = 0;
@@ -1039,11 +1073,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
 
             if (state.enemyHp <= 0) {
                 AudioEngine.play(800, 'sine', 0.15, 0.03);
-                state.heroXp += 35; state.gold += 15 + state.enemyIdx * 5;
-                if (state.heroXp >= state.heroLvl * 100) {
-                    state.heroXp -= state.heroLvl * 100; state.heroLvl++;
-                    if (typeof confetti === 'function') confetti({ particleCount: 60, spread: 70, origin: { y: 0.2 } });
-                }
+                grantRpgReward(35, 15 + state.enemyIdx * 5);
                 state.enemyIdx++; state.maxEnemyHp = 50 + state.enemyIdx * 30; state.enemyHp = state.maxEnemyHp;
             }
 
@@ -1412,16 +1442,21 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
         updateUI();
     
         // ============================================================
-        // DEUTSCH QUEST v0.003 — Command Center / Mastery / Daily Loop
+        // GESTALT v0.005 — Command Center / Mastery / Daily Loop
         // ============================================================
-        const DQ_VERSION = '0.002';
-        const DQ_SAVE_KEY = 'deutsch_quest_v002_meta';
+        const DQ_VERSION = '0.005';
+        const DQ_SAVE_KEY = 'deutsch_quest_v005_meta';
         const dqDefault = {
             saveVersion: 2, lastDay: '', streak: 0, daily: {learn:0,battle:0,correct:0},
             weeklyXP: 0, weeklyBattles: 0, weeklyCorrect: 0, mastery: {}, review: {}
         };
         let dqMeta;
-        try { dqMeta = Object.assign({}, dqDefault, JSON.parse(localStorage.getItem(DQ_SAVE_KEY) || '{}')); } catch(e) { dqMeta = {...dqDefault}; }
+        try {
+            const raws=[localStorage.getItem(DQ_SAVE_KEY), localStorage.getItem('deutsch_quest_v002_meta'), localStorage.getItem('deutsch_quest_v003_meta')].filter(Boolean);
+            dqMeta = {...dqDefault};
+            for(const raw of raws){ const part=JSON.parse(raw); dqMeta={...dqMeta,...part,daily:{...dqMeta.daily,...(part.daily||{})},mastery:{...dqMeta.mastery,...(part.mastery||{})},review:{...dqMeta.review,...(part.review||{})}}; }
+            dqMeta.saveVersion=5;
+        } catch(e) { dqMeta = {...dqDefault}; }
         dqMeta.daily = Object.assign({...dqDefault.daily}, dqMeta.daily || {});
         dqMeta.mastery = dqMeta.mastery || {}; dqMeta.review = dqMeta.review || {};
         function dqSave(){ try{localStorage.setItem(DQ_SAVE_KEY, JSON.stringify(dqMeta));}catch(e){} }
@@ -1519,20 +1554,20 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
             if(dqBattle.locked)return; dqBattle.locked=true;
             const correct=german===dqBattle.word.german; const result=document.getElementById('dq-battle-result');
             dqMeta.daily.correct += correct?1:0; dqMeta.daily.learn += 1; dqMeta.weeklyCorrect += correct?1:0;
-            dqSetMastery(german,correct);
+            dqSetMastery(dqBattle.word.german,correct);
             if(correct){
                 dqBattle.hp=Math.max(0,dqBattle.hp-20);
                 dqMeta.weeklyXP += 5;
-                state.heroXp=(state.heroXp||0)+5; state.gold=(state.gold||0)+2;
+                grantRpgReward(5, 2);
                 result.innerHTML='<span class="text-emerald-400">⚔️ Влучання! +5 XP · +2 🪙</span>';
             } else {
-                dqMeta.weeklyXP += 1; state.heroXp=(state.heroXp||0)+1;
+                dqMeta.weeklyXP += 1; grantRpgReward(1, 0);
                 result.innerHTML=`<span class="text-red-400">💥 Промах. Правильно: ${dqBattle.word.ukrainian}</span>`;
             }
             if(dqBattle.hp<=0){
                 dqBattle.wave++;
                 if(dqBattle.wave>5){
-                    dqMeta.daily.battle+=1; dqMeta.weeklyBattles+=1; state.gold=(state.gold||0)+15; state.heroXp=(state.heroXp||0)+25;
+                    dqMeta.daily.battle+=1; dqMeta.weeklyBattles+=1; grantRpgReward(25, 15);
                     dqSave(); if(typeof updateUI==='function')updateUI(); dqRenderDashboard();
                     result.innerHTML='<span class="text-yellow-300">🏆 Перемога! +25 XP · +15 🪙</span>';
                     setTimeout(dqCloseBattle,900); return;
@@ -1569,12 +1604,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
     </script>
 <script>
 // ============================================================
-// DEUTSCH QUEST v0.003 — DICE ARENA / LANGUAGE AS GAMEPLAY
+// GESTALT v0.005 — DICE ARENA / LANGUAGE AS GAMEPLAY
 // ============================================================
 (() => {
-  const DD_VERSION='0.003';
-  const DD_KEY='deutsch_dice_v003';
-  const SAVE_KEY='deutsch_quest_v003_meta';
+  const DD_VERSION='0.005';
+  const DD_KEY='deutsch_dice_v005';
+  const LEGACY_DD_KEY='deutsch_dice_v003';
+  const SAVE_KEY='deutsch_quest_v005_meta';
+  const LEGACY_SAVE_KEYS=['deutsch_quest_v002_meta','deutsch_quest_v003_meta'];
   const diceTypes=[
     {id:'lex',name:'Lexicon',icon:'📖',cls:'dd-common',base:7,rate:1400,role:'balanced'},
     {id:'art',name:'Article',icon:'⚜️',cls:'dd-rare',base:9,rate:1650,role:'precision'},
@@ -1583,14 +1620,30 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
     {id:'guard',name:'Shield',icon:'🛡️',cls:'dd-common',base:5,rate:1200,role:'support'},
     {id:'boss',name:'B1 Core',icon:'💎',cls:'dd-legendary',base:17,rate:2100,role:'legend'}
   ];
-  const defaultBattle={version:3,board:Array(15).fill(null),mana:30,wave:1,base:100,running:false,spawnTimer:null,attackTimer:null,qTimer:null,selected:-1,combo:0,power:0,bestWave:0,masteryHits:0,rolls:0,wins:0,activeQuestion:null,nextQuestionAt:0,deckCounts:{}};
+  const defaultBattle={version:5,board:Array(15).fill(null),mana:30,wave:1,base:100,running:false,completed:false,gameOver:false,spawnTimer:null,attackTimer:null,qTimer:null,selected:-1,combo:0,power:0,bestWave:0,masteryHits:0,rolls:0,wins:0,activeQuestion:null,nextQuestionAt:0,deckCounts:{}};
   let battle={...defaultBattle,board:[...defaultBattle.board],deckCounts:{}};
-  try { battle=Object.assign({...defaultBattle},JSON.parse(localStorage.getItem(DD_KEY)||'{}')); battle.board=Array.isArray(battle.board)?battle.board.slice(0,15):Array(15).fill(null); while(battle.board.length<15)battle.board.push(null); } catch(e) { battle={...defaultBattle,board:Array(15).fill(null)}; }
+  try {
+    const raw=localStorage.getItem(DD_KEY)||localStorage.getItem(LEGACY_DD_KEY)||'{}';
+    battle=Object.assign({...defaultBattle},JSON.parse(raw));
+    battle.board=Array.isArray(battle.board)?battle.board.slice(0,15):Array(15).fill(null);
+    while(battle.board.length<15)battle.board.push(null);
+    battle.completed=Boolean(battle.completed); battle.gameOver=Boolean(battle.gameOver);
+    if(!localStorage.getItem(DD_KEY) && localStorage.getItem(LEGACY_DD_KEY)) localStorage.setItem(DD_KEY,JSON.stringify({...battle,running:false,spawnTimer:null,attackTimer:null,qTimer:null}));
+  } catch(e) { battle={...defaultBattle,board:Array(15).fill(null)}; }
   let questionTimer=null;
   const $=id=>document.getElementById(id);
   function persist(){ try{ localStorage.setItem(DD_KEY,JSON.stringify({...battle,running:false,spawnTimer:null,attackTimer:null,qTimer:null})); }catch(e){} }
   function meta(){
-    try{let m=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}'); if(!m.daily)m.daily={learn:0,battle:0,correct:0}; if(!m.mastery)m.mastery={}; if(!m.review)m.review={}; return m;}catch(e){return {mastery:{},review:{},daily:{learn:0,battle:0,correct:0}}}
+    const base={saveVersion:5,daily:{learn:0,battle:0,correct:0},mastery:{},review:{},weeklyXP:0,weeklyBattles:0,weeklyCorrect:0};
+    try{
+      let m={...base};
+      const sources=[localStorage.getItem(SAVE_KEY),...LEGACY_SAVE_KEYS.map(k=>localStorage.getItem(k))].filter(Boolean);
+      for(const raw of sources){
+        const part=JSON.parse(raw); if(!part||typeof part!=='object') continue;
+        m={...m,...part,daily:{...m.daily,...(part.daily||{})},mastery:{...m.mastery,...(part.mastery||{})},review:{...m.review,...(part.review||{})}};
+      }
+      m.saveVersion=5; localStorage.setItem(SAVE_KEY,JSON.stringify(m)); return m;
+    }catch(e){return base;}
   }
   const cloneWord=w=>({german:w.german,ukrainian:w.ukrainian,emoji:w.emoji||'📘',sentence:w.sentence||'',grammar:w.grammar||'',id:w.id});
   function pickWord(){
@@ -1616,7 +1669,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
     }).join('');
     $('dd-wave').textContent=`${battle.wave}/10`; $('dd-base').textContent=battle.base; $('dd-mana').textContent=battle.mana; $('dd-power').textContent=battle.power; $('dd-combo').textContent=`x${battle.combo}`; $('dd-best').textContent=battle.bestWave||0;
     $('dd-xp').textContent=state.heroXp||0; $('dd-coins').textContent=state.gold||0; $('dd-mastery').textContent=battle.masteryHits||0; $('dd-roll-cost').textContent=Math.max(3,5+Math.floor((battle.wave-1)/3));
-    $('dd-wave-btn').disabled=battle.running; $('dd-wave-btn').style.opacity=battle.running?'.5':'1';
+    $('dd-wave-btn').disabled=battle.running||battle.completed||battle.gameOver; $('dd-wave-btn').style.opacity=(battle.running||battle.completed||battle.gameOver)?'.5':'1'; $('dd-wave-btn').textContent=battle.completed?'🏆 RUN COMPLETE':battle.gameOver?'☠️ GAME OVER':'⚔️ START WAVE';
     renderEnemies(); renderDeck();
   }
   let enemies=[];
@@ -1665,38 +1718,47 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
     const dps=Math.max(4,Math.round(totalDps()/2));
     const target=enemies.find(e=>e.hp>0); if(!target)return;
     const mult=1+(battle.power/100)+Math.min(0.8,battle.combo*0.05); target.hp-=Math.round(dps*mult);
-    if(target.hp<=0){state.heroXp=(state.heroXp||0)+4;state.gold=(state.gold||0)+1;battle.power=Math.max(0,battle.power-10);showToast(`⚔️ ${target.boss?'BOSS знищено!':'Ворог переможений'} +4 XP`); enemies=enemies.filter(e=>e.hp>0)}
+    if(target.hp<=0){grantRpgReward(4,1);battle.power=Math.max(0,battle.power-10);showToast(`⚔️ ${target.boss?'BOSS знищено!':'Ворог переможений'} +4 XP`); enemies=enemies.filter(e=>e.hp>0)} else {
+      const incoming=target.boss?Math.max(8,Math.floor(battle.wave*1.4)):Math.max(2,Math.floor(2+battle.wave/2));
+      battle.base=Math.max(0,battle.base-incoming);
+      if(battle.base<=0){ddGameOver();return;}
+    }
     if(enemies.length===0)finishWave();
     renderEnemies(); if(typeof updateUI==='function')updateUI(); persist();
+  }
+  function ddGameOver(){
+    battle.running=false; battle.gameOver=true; clearInterval(battle.attackTimer); clearInterval(questionTimer); battle.activeQuestion=null; showToast('☠️ Арена програна — база знищена'); render(); persist(); if(typeof updateUI==='function')updateUI();
   }
   function startQuestion(){
     if(!battle.running)return; const w=pickWord(); const pool=masterVocabulary.filter(x=>x.german!==w.german); const opts=[w,...pool.sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5); battle.activeQuestion={word:w,opts}; battle.nextQuestionAt=Date.now()+12000;
     $('dd-question-word').textContent=w.german; $('dd-question-prompt').textContent='Удар: обери правильний переклад'; $('dd-question-timer').textContent='12s'; $('dd-question-result').textContent='';
     $('dd-answer-grid').innerHTML=opts.map(o=>`<button class="dd-answer" onclick="ddAnswer('${String(o.german).replace(/'/g,"\\'")}')">${o.emoji||'📘'} ${o.ukrainian}</button>`).join('');
-    clearInterval(questionTimer); questionTimer=setInterval(()=>{const left=Math.max(0,Math.ceil((battle.nextQuestionAt-Date.now())/1000));$('dd-question-timer').textContent=`${left}s`;if(left<=0){clearInterval(questionTimer);$('dd-question-result').innerHTML='<span class="text-red-400">⏳ Пропущено — ворог атакує!</span>';battle.combo=0;setTimeout(startQuestion,650)}},250);
+    clearInterval(questionTimer); questionTimer=setInterval(()=>{const left=Math.max(0,Math.ceil((battle.nextQuestionAt-Date.now())/1000));$('dd-question-timer').textContent=`${left}s`;if(left<=0){clearInterval(questionTimer);battle.activeQuestion=null;[...$('dd-answer-grid').children].forEach(b=>b.disabled=true);$('dd-question-result').innerHTML='<span class="text-red-400">⏳ Пропущено — ворог атакує!</span>';battle.combo=0;battle.base=Math.max(0,battle.base-4);if(battle.base<=0){ddGameOver();return;}setTimeout(startQuestion,650)}},250);
   }
   function ddAnswer(german){
-    if(!battle.activeQuestion)return; clearInterval(questionTimer); const q=battle.activeQuestion; const correct=german===q.word.german; const m=meta(); m.mastery=m.mastery||{}; m.review=m.review||{}; const old=Number(m.mastery[q.word.german]||0); const next=correct?Math.min(5,old+1):Math.max(0,old-1); m.mastery[q.word.german]=next; m.review[q.word.german]=Date.now()+[1,2,4,7,14,30][next]*86400000; m.daily=m.daily||{learn:0,battle:0,correct:0}; m.daily.learn=(m.daily.learn||0)+1; if(correct)m.daily.correct=(m.daily.correct||0)+1; try{localStorage.setItem(SAVE_KEY,JSON.stringify(m))}catch(e){}
+    if(!battle.running || !battle.activeQuestion)return; clearInterval(questionTimer); const q=battle.activeQuestion; const correct=german===q.word.german; const m=meta(); m.mastery=m.mastery||{}; m.review=m.review||{}; const old=Number(m.mastery[q.word.german]||0); const next=correct?Math.min(5,old+1):Math.max(0,old-1); m.mastery[q.word.german]=next; m.review[q.word.german]=Date.now()+[1,2,4,7,14,30][next]*86400000; m.daily=m.daily||{learn:0,battle:0,correct:0}; m.daily.learn=(m.daily.learn||0)+1; if(correct)m.daily.correct=(m.daily.correct||0)+1; try{localStorage.setItem(SAVE_KEY,JSON.stringify(m))}catch(e){}
     battle.masteryHits += correct?1:0; battle.power += correct?(next>=4?32:22):0; battle.combo=correct?Math.min(9,battle.combo+1):0;
     const buttons=[...$('dd-answer-grid').children];buttons.forEach(b=>{b.disabled=true;if(b.textContent.includes(q.word.ukrainian))b.classList.add('correct')});
     $('dd-question-result').innerHTML=correct?`<span class="text-emerald-400">⚡ ПРАВИЛЬНО! +${next>=4?32:22} Language Power • Mastery ${next}/5</span>`:`<span class="text-red-400">💥 Ні. Правильно: ${q.word.ukrainian}</span>`;
-    state.heroXp=(state.heroXp||0)+(correct?6:1); if(correct)state.gold=(state.gold||0)+2; if(typeof updateUI==='function')updateUI(); render(); persist(); setTimeout(()=>{battle.activeQuestion=null;startQuestion()},850);
+    grantRpgReward(correct?6:1,correct?2:0); if(typeof updateUI==='function')updateUI(); render(); persist(); setTimeout(()=>{battle.activeQuestion=null;startQuestion()},850);
   }
   function ddStartWave(){
     if(battle.running){showToast('Хвиля вже йде');return}
+    if(battle.completed){showToast('🏆 Забіг завершено — натисни RESET');return}
+    if(battle.gameOver){showToast('☠️ База знищена — натисни RESET');return}
     if(battle.wave>10){ddFinishRun();return}
     if(!battle.board.some(Boolean)){addDie();addDie();}
     buildWave(); battle.running=true; $('dd-wave-btn').textContent='⏳ WAVE RUNNING'; clearInterval(battle.attackTimer); battle.attackTimer=setInterval(attackTick,950); clearTimeout(battle.qTimer); battle.qTimer=setTimeout(startQuestion,700); render(); showToast(`🌊 Хвиля ${battle.wave} почалась`); persist();
   }
   function finishWave(){
-    if(!battle.running)return; clearInterval(battle.attackTimer); battle.running=false; clearInterval(questionTimer); battle.bestWave=Math.max(battle.bestWave,battle.wave); const rewards=20+battle.wave*4; state.heroXp=(state.heroXp||0)+rewards; state.gold=(state.gold||0)+Math.ceil(rewards/4); battle.mana=Math.min(40,battle.mana+8); const m=meta();m.daily=m.daily||{learn:0,battle:0,correct:0};m.daily.battle=(m.daily.battle||0)+1;try{localStorage.setItem(SAVE_KEY,JSON.stringify(m))}catch(e){}; if(battle.wave>=10){ddFinishRun();return}
+    if(!battle.running)return; clearInterval(battle.attackTimer); battle.running=false; clearInterval(questionTimer); battle.bestWave=Math.max(battle.bestWave,battle.wave); const rewards=20+battle.wave*4; grantRpgReward(rewards,Math.ceil(rewards/4)); battle.mana=Math.min(40,battle.mana+8); const m=meta();m.daily=m.daily||{learn:0,battle:0,correct:0};m.daily.battle=(m.daily.battle||0)+1;try{localStorage.setItem(SAVE_KEY,JSON.stringify(m))}catch(e){}; if(battle.wave>=10){ddFinishRun();return}
     $('dd-wave-btn').textContent='⚔️ START WAVE'; showToast(`🏆 Хвиля ${battle.wave} завершена +${rewards} XP`); battle.wave++; battle.base=Math.max(25,battle.base); battle.power=Math.max(0,battle.power-15); render();persist(); if(typeof updateUI==='function')updateUI();
   }
   function ddFinishRun(){
-    battle.running=false; clearInterval(battle.attackTimer); clearInterval(questionTimer); battle.wave=10; battle.wins++; state.heroXp=(state.heroXp||0)+100; state.gold=(state.gold||0)+50; showToast('👑 RUN COMPLETE! +100 XP • +50 🪙'); render();persist();
+    battle.running=false; battle.completed=true; battle.gameOver=false; clearInterval(battle.attackTimer); clearInterval(questionTimer); battle.activeQuestion=null; battle.wave=10; battle.wins++; grantRpgReward(100,50); showToast('👑 RUN COMPLETE! +100 XP • +50 🪙'); render();persist();
   }
   function ddResetBattle(){
-    clearInterval(battle.attackTimer);clearInterval(questionTimer);battle={...defaultBattle,board:Array(15).fill(null),mana:30,wave:1,base:100,running:false,power:0,combo:0,bestWave:battle.bestWave||0,masteryHits:0,rolls:0,wins:battle.wins||0};buildWave();render();persist();showToast('Арена скинута');
+    clearInterval(battle.attackTimer);clearInterval(questionTimer);battle={...defaultBattle,board:Array(15).fill(null),mana:30,wave:1,base:100,running:false,completed:false,gameOver:false,power:0,combo:0,bestWave:battle.bestWave||0,masteryHits:0,rolls:0,wins:battle.wins||0};buildWave();render();persist();showToast('Арена скинута');
   }
   function ddShowHowToPlay(){$('dd-help-modal')?.classList.remove('opacity-0','pointer-events-none')}
   function ddCloseHowToPlay(){$('dd-help-modal')?.classList.add('opacity-0','pointer-events-none')}
@@ -1767,11 +1829,11 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
     try{document.getElementById('g-profile-avatar').innerHTML=getHeroSVG(state.heroClass)}catch(e){}
     syncFeatured();
   }
-  function reviewSet(correct,step){const w=document.getElementById('g-feature-word').dataset.word||featured.german;try{if(typeof dqMasteryValue==='function'&&typeof dqSetMastery==='function'){dqSetMastery(w,correct)} else {const m=getM();m.mastery=m.mastery||{};m.mastery[w]=Math.max(0,Math.min(5,(Number(m.mastery[w]||0)+(correct?1:-1))));localStorage.setItem(typeof DQ_SAVE_KEY!=='undefined'?DQ_SAVE_KEY:'deutsch_quest_v002',JSON.stringify(m));}}catch(e){};try{state.heroXp=(state.heroXp||0)+step;state.gold=(state.gold||0)+(correct?2:0);if(typeof updateUI==='function')updateUI()}catch(e){}; syncStats();gWorldToast(correct?'Правильно! Mastery +1':'Повертаємо слово в цикл повторення');}
+  function reviewSet(correct,step){const w=document.getElementById('g-feature-word').dataset.word||featured.german;try{if(typeof dqMasteryValue==='function'&&typeof dqSetMastery==='function'){dqSetMastery(w,correct)} else {const m=getM();m.mastery=m.mastery||{};m.mastery[w]=Math.max(0,Math.min(5,(Number(m.mastery[w]||0)+(correct?1:-1))));localStorage.setItem(typeof DQ_SAVE_KEY!=='undefined'?DQ_SAVE_KEY:'deutsch_quest_v002',JSON.stringify(m));}}catch(e){};try{grantRpgReward(step,correct?2:0);if(typeof updateUI==='function')updateUI()}catch(e){}; syncStats();gWorldToast(correct?'Правильно! Mastery +1':'Повертаємо слово в цикл повторення');}
   function gReview(c){reviewSet(c,c?8:2)} function gHard(){reviewSet(true,5)} function gEasy(){reviewSet(true,12)}
-  function gUpgradeCard(){const cost=Number(document.getElementById('g-upgrade-cost').textContent||750);if((state.gold||0)>=cost){state.gold-=cost;state.heroXp=(state.heroXp||0)+25;document.getElementById('g-upgrade-cost').textContent=Math.round(cost*1.25);syncStats();gWorldToast('Картку покращено!')}else gWorldToast('Недостатньо монет')}
+  function gUpgradeCard(){const cost=Number(document.getElementById('g-upgrade-cost').textContent||750);if((state.gold||0)>=cost){state.gold-=cost;grantRpgReward(25,0);persistRpgState();document.getElementById('g-upgrade-cost').textContent=Math.round(cost*1.25);syncStats();gWorldToast('Картку покращено!')}else gWorldToast('Недостатньо монет')}
   function gWorldToast(msg){const t=document.getElementById('dd-toast');if(t){t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',1500)}}
-  function gShop(msg){if((state.gold||0)<250){gWorldToast('Потрібно більше монет')}else{state.gold-=250;syncStats();gWorldToast(msg+' відкрито!')}}
+  function gShop(msg){if((state.gold||0)<250){gWorldToast('Потрібно більше монет')}else{state.gold-=250;persistRpgState();syncStats();gWorldToast(msg+' відкрито!')}}
   function gToggleMotion(){document.documentElement.classList.toggle('reduced-motion');gWorldToast('Motion mode змінено')}
   function gToggleTheme(){document.documentElement.classList.toggle('light-theme');gWorldToast('Theme toggled')}
   function syncHeroUI(){
