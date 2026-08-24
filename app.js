@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.7.5";
+const APP_VERSION = "v1.7.6";
 
 const AudioEngine = {
     ctx: null,
@@ -385,7 +385,26 @@ function speakWord(e) {
     if (card && card.german) speakGermanText(getCleanGermanWord(card.german));
 }
 
-// 100% Natural Native Device Neural TTS Engine (Siri / Google Neural Voice)
+// ЗАХИСНИЙ МЕХАНІЗМ ВИБОРУ НІМЕЦЬКОГО ГОЛОСУ
+let cachedDeVoice = null;
+
+function getGermanVoice() {
+    if (cachedDeVoice) return cachedDeVoice;
+    if (!('speechSynthesis' in window)) return null;
+    const voices = window.speechSynthesis.getVoices() || [];
+    // Шукаємо виключно німецький голос
+    cachedDeVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang === 'de-AT' || v.lang.startsWith('de'));
+    return cachedDeVoice;
+}
+
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => {
+        cachedDeVoice = null;
+        getGermanVoice();
+    };
+}
+
 function getCleanGermanWord(raw) {
     if (!raw) return '';
     if (/[.!?]/.test(raw) || (raw.split(' ').length > 4 && !raw.includes('/'))) {
@@ -412,22 +431,20 @@ function speakGermanText(text) {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'de-DE';
-    utterance.rate = 0.88; // оптимальна швидкість для вивчення
+    utterance.rate = 0.86; 
     utterance.pitch = 1.0;
 
-    const voices = window.speechSynthesis.getVoices() || [];
-    const deVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang.startsWith('de'));
-    if (deVoice) {
-        utterance.voice = deVoice;
-    }
-
-    window.speechSynthesis.speak(utterance);
-}
-
-if ('speechSynthesis' in window) {
-    window.speechSynthesis.getVoices();
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    const voice = getGermanVoice();
+    if (voice) {
+        utterance.voice = voice;
+        window.speechSynthesis.speak(utterance);
+    } else {
+        // Якщо голоси ще не ініціалізувалися, даємо крихітну затримку на завантаження
+        setTimeout(() => {
+            const delayedVoice = getGermanVoice();
+            if (delayedVoice) utterance.voice = delayedVoice;
+            window.speechSynthesis.speak(utterance);
+        }, 120);
     }
 }
 
@@ -445,9 +462,10 @@ function speakSentence(sentence) {
     const utterance = new SpeechSynthesisUtterance(clean);
     utterance.lang = 'de-DE';
     utterance.rate = 0.9;
-    const voices = window.speechSynthesis.getVoices() || [];
-    const deVoice = voices.find(v => v.lang === 'de-DE' || v.lang.startsWith('de'));
-    if (deVoice) utterance.voice = deVoice;
+    
+    const voice = getGermanVoice();
+    if (voice) utterance.voice = voice;
+    
     window.speechSynthesis.speak(utterance);
 }
 
