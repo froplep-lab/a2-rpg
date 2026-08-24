@@ -1,86 +1,31 @@
 // ==========================================
-// SPEECH SYNTHESIS MODULE (Німецька озвучка) - Production Ready
+// SPEECH SYNTHESIS HELPER (Web Speech API)
 // ==========================================
 
-let cachedDeVoice = null;
+const SpeechEngine = {
+    isSupported() {
+        return 'speechSynthesis' in window;
+    },
+    speak(text, rate = 0.9) {
+        if (!this.isSupported()) return;
+        window.speechSynthesis.cancel();
 
-function getGermanVoice() {
-    if (cachedDeVoice) return cachedDeVoice;
-    if (!('speechSynthesis' in window)) return null;
-    const voices = window.speechSynthesis.getVoices() || [];
-    cachedDeVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE') ||
-                    voices.find(v => v.lang && v.lang.startsWith('de')) ||
-                    voices[0] || null;
-    return cachedDeVoice;
-}
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'de-DE';
+        utterance.rate = rate;
+
+        const voices = window.speechSynthesis.getVoices();
+        const germanVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang.startsWith('de'));
+        if (germanVoice) {
+            utterance.voice = germanVoice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+    }
+};
 
 if ('speechSynthesis' in window) {
-    window.speechSynthesis.getVoices();
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-        window.speechSynthesis.onvoiceschanged = () => {
-            cachedDeVoice = null;
-            getGermanVoice();
-        };
-    }
-}
-
-function getCleanGermanWord(raw) {
-    if (!raw) return '';
-    if (/[.!?]/.test(raw) || (raw.split(' ').length > 3 && !raw.includes('/'))) {
-        return raw; 
-    }
-    let clean = raw.split('/')[0];
-    clean = clean.split(',')[0];
-    clean = clean.replace(/\(.*?\)/g, '');
-    clean = clean.replace(/[·•]/g, '');
-    return clean.trim();
-}
-
-function speakCompactWord(text) {
-    if (typeof AudioEngine !== 'undefined' && AudioEngine.muted) return;
-    if (!('speechSynthesis' in window)) return;
-
-    const cleanText = getCleanGermanWord(text);
-    if (!cleanText) return;
-
-    window.speechSynthesis.cancel(); 
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'de-DE';
-    utterance.rate = 0.85;
-    utterance.pitch = 1.0;
-
-    const voice = getGermanVoice();
-    if (voice) {
-        utterance.voice = voice;
-    }
-
-    window.speechSynthesis.speak(utterance);
-}
-
-function speakText(text) {
-    speakCompactWord(text);
-}
-
-function speakWord(e) {
-    if (e) e.stopPropagation();
-    if (typeof cards !== 'undefined' && typeof currentIndex !== 'undefined') {
-        const card = cards[currentIndex];
-        if (card && card.german) speakText(card.german);
-    }
-}
-
-function speakMarathonSentence(idx) {
-    if (typeof marathonWords !== 'undefined') {
-        const w = marathonWords[idx];
-        if (w && w.sentence) {
-            speakText(w.sentence);
-        }
-    }
-}
-
-function speakTrialWord() {
-    if (typeof currentTrialTarget !== 'undefined' && currentTrialTarget && currentTrialTarget.german) {
-        speakText(currentTrialTarget.german);
-    }
+    window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+    };
 }

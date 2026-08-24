@@ -1,86 +1,65 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-* {
-    -webkit-tap-highlight-color: transparent;
-    box-sizing: border-box;
+@layer utilities {
+    .glass-panel {
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
 }
 
 body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #030712;
+    background-color: #090d16;
     color: #f8fafc;
-    overflow-x: hidden;
-    background-image: 
-        linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
-    background-size: 30px 30px;
-    background-position: center center;
-}
-
-.gpu-accel {
-    transform: translateZ(0);
-    will-change: transform, opacity;
-}
-
-.interactive-btn { 
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    cursor: pointer; 
-    touch-action: manipulation;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     user-select: none;
-}
-.interactive-btn:active:not(:disabled) { 
-    transform: scale(0.92); 
+    -webkit-user-select: none;
 }
 
-.glass-panel {
-    background: rgba(15, 23, 42, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(6, 182, 212, 0.4);
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(6, 182, 212, 0.8);
 }
 
-.perspective { perspective: 1200px; }
-.transform-style-3d { 
-    transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-}
-.rotate-y-180 { transform: rotateY(180deg); }
-.backface-hidden { 
-    backface-visibility: hidden; 
-    -webkit-backface-visibility: hidden; 
-    background: linear-gradient(145deg, #0f172a, #020617);
-}
-
-@keyframes heroPulse { 
-    0%, 100% { transform: translateY(0); } 
-    50% { transform: translateY(-4px); } 
-}
-.anim-hero { animation: heroPulse 3.5s infinite ease-in-out; will-change: transform; }
-
-.anim-attack { animation: attackAnim 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-@keyframes attackAnim { 
-    0% { transform: translateX(0) scale(1); } 
-    40% { transform: translateX(20px) scale(1.1); } 
-    100% { transform: translateX(0) scale(1); } 
+/* Animations */
+@keyframes float-up {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.9);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50px) scale(1.1);
+    }
 }
 
-.anim-hurt { animation: hurtAnim 0.4s cubic-bezier(0.36, 0, 0.66, -0.56); }
-@keyframes hurtAnim { 
-    0% { transform: scale(1) translateX(0); } 
-    20% { transform: scale(0.85) translateX(-8px) rotate(-3deg); } 
-    40% { transform: scale(0.9) translateX(8px) rotate(3deg); } 
-    60% { transform: scale(0.95) translateX(-4px) rotate(-1deg); } 
-    100% { transform: scale(1) translateX(0) rotate(0); } 
+@keyframes toast-slide {
+    0% { transform: translateY(100px); opacity: 0; }
+    15% { transform: translateY(0); opacity: 1; }
+    85% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
 }
 
-.anim-soul { animation: soulAnim 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-@keyframes soulAnim { 
-    0% { transform: translateY(0) scale(1); opacity: 1; } 
-    40% { transform: translateY(-20px) scale(1.2); opacity: 0.9; } 
-    100% { transform: translateY(-80px) scale(0); opacity: 0; } 
+.cyber-toast {
+    animation: toast-slide 3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.5); }
-::-webkit-scrollbar-thumb { background: #06b6d4; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #ec4899; }
+.interactive-btn {
+    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+.interactive-btn:active {
+    transform: scale(0.96);
+}
