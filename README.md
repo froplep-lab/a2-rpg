@@ -1,75 +1,60 @@
-# GESTALT — Deutsch RPG v0.010
+# GESTALT — Deutsch Learning v0.011
 
-Telegram-first stability build for PC, mobile browsers, PWA and Telegram Mini App.
+Telegram-first, mobile-first застосунок для приємного вивчення німецьких слів.
 
-## Product loop
-**Learn → Recall → Listen → Answer → Master → Reward → Dice → Progress → Return**
+## Основа продукту
+**Картка → Спроба згадати → Переклад → Приклад → Озвучка → SRS → Повторення**
 
-The game is designed around the rule **language = gameplay**. German words drive the SRS loop and also power the Random Dice battle.
+Ця версія навмисно очищена від бойових, Dice, RPG та інших ігрових систем. Фокус — якість навчання.
 
-## Main screens
-- Головна
-- Вивчення слів
-- Картки Anki / SRS
-- Random Dice
-- Профіль / налаштування
+## Основні можливості
+- 287 базових німецьких слів A2/B1.
+- Власні слова користувача.
+- SRS: 1 / 2 / 4 / 7 / 14 / 30 днів.
+- Чотири оцінки: Не знаю / Складно / Добре / Легко.
+- Німецька озвучка слова та прикладу через SpeechSynthesis.
+- Вибір німецького голосу та швидкості.
+- Автоматична озвучка після відкриття картки.
+- Пошук словника.
+- Mastery 0–5.
+- XP, streak, щоденна ціль.
+- Export / Import прогресу.
+- localStorage + Telegram CloudStorage fallback.
+- PWA / offline cache.
+- Telegram Mini App: BackButton, MainButton, safe-area, theme, haptic feedback.
 
-## v0.010 changes
-- Fixed Telegram CloudStorage `getItems` handling: values are read from the returned key/value object.
-- Added guarded CloudStorage sync to avoid overlapping writes.
-- Added automatic Telegram SDK loading with timeout and normal-browser fallback.
-- Added Telegram MainButton integration for Anki and Dice where supported.
-- Added Telegram-native confirmation dialogs with browser fallback.
-- Added Telegram theme parameter mapping into the app theme variables.
-- Added SRS boxes: **1 / 2 / 4 / 7 / 14 / 30 days** with quality-based progression.
-- Added learning-aware word selection so due / low-mastery words are favored.
-- Added German pronunciation button using browser SpeechSynthesis.
-- Hardened service-worker cache/versioning and offline fallback.
-- Added optional Telegram bot backend with polling **or webhook** mode.
-- Added webhook secret validation and `/api/telegram/status`.
-- Added autonomous development context and release checklist.
+## Видалено
+У цій версії більше немає:
+- Random Dice.
+- Battle / waves / enemies / boss.
+- RPG combat / mana / power / board.
+- Ігрових нагород, пов'язаних із боєм.
+- UI-механік, які відволікають від навчання.
 
-## Telegram deployment
-1. Deploy the app on a public **HTTPS** URL.
-2. In @BotFather configure the bot's Main Mini App URL to that HTTPS URL.
-3. Copy `.env.example` to `.env`.
-4. Set `BOT_TOKEN` and `MINI_APP_URL`.
-5. For webhook production mode, set `WEBHOOK_URL=https://your-bot-server.example` and a strong `WEBHOOK_SECRET`.
-6. Run `npm start`.
+## Telegram
+1. Розгорни застосунок на публічному HTTPS.
+2. Вкажи `MINI_APP_URL` у `.env`.
+3. Вкажи `BOT_TOKEN` тільки на сервері.
+4. Для production webhook можна використати `WEBHOOK_URL` та `WEBHOOK_SECRET`.
 
-The bot token is used only by `server/index.mjs` and is never included in frontend assets. Telegram Mini Apps run inside Telegram's WebView and can also use CloudStorage/DeviceStorage where supported.
-
-## Local browser test
+## Локальний запуск
 ```bash
 npm test
 npm run check
 npm start
 ```
 
-Then open `http://127.0.0.1:8080/`.
-
-## Vocabulary
-The current build contains **287** base German words in `data/words.json`. User-created words are stored separately in player progress.
-
-## Storage
-- Browser: localStorage
-- Telegram: CloudStorage when available
-- Telegram fallback: DeviceStorage when available
-- Import/export: JSON backup
-
-The save format is versioned and migrated rather than blindly discarded.
+Відкрити `http://127.0.0.1:8080/`.
 
 ## QA
-Automated checks cover:
-- JS syntax
-- server syntax
-- JSON parse
-- DOM ID/reference audit
-- local asset/path audit
-- service-worker asset audit
-- SRS core logic
-- Telegram CloudStorage object-map parsing
-- HTTP smoke tests
-- ZIP integrity
+Automated checks покривають:
+- JS syntax.
+- server syntax.
+- JSON parse.
+- DOM references.
+- local paths.
+- service-worker assets.
+- SRS / storage sanity.
+- HTTP smoke test.
 
-Real physical iOS/Android and the real Telegram client still require on-device testing after deployment.
+Реальний iPhone/Android та фізичний Telegram-клієнт потребують on-device перевірки після розгортання.

@@ -1,446 +1,98 @@
-const VERSION='0.010';
+const VERSION='0.011';
 const WORDS_URL='./data/words.json';
-const SAVE_BASE='gestalt_v010';
-const INTERVALS=[1,2,4,7,14,30];
-const navItems=[['dashboard','⌂','Головна'],['words','▣','Слова'],['anki','▤','Anki'],['dice','◉','Dice'],['profile','⚙','Профіль']];
-const titles={
-  dashboard:['Головне меню','Центр керування: вчи, повторюй, грай та прокачуйся'],
-  words:['Вивчення слів','Додавай слова та вчи їх'],
-  anki:['Картки Anki','Інтелектуальна система повторення SRS'],
-  dice:['Random Dice','Кинь кубик і отримай випадкову карту'],
-  profile:['Профіль та налаштування','Твій прогрес, резервні копії та налаштування']
-};
+const SAVE_VERSION=5;
+const SAVE_KEY='gestalt_learning_v5';
+const LEGACY_KEYS=['de_b1_rpg_progress_v3','deutsch_quest_v002','gestalt_learning_v4'];
+const TG_CHUNK_PREFIX='gestalt_save_';
+let tg=null, telegramReady=false, words=[];
+let voiceList=[];
+const state={screen:'dashboard',ankiIndex:0,ankiRevealed:false,sessionCards:[],sessionAnswerLock:false,toastTimer:null};
+const navItems=[['dashboard','⌂','Головна'],['words','▣','Слова'],['anki','▤','Картки'],['profile','⚙','Профіль']];
+const titles={dashboard:['Головна','Твій спокійний центр вивчення німецької'],words:['Вивчення слів','Додавай, шукай та переглядай свою колекцію'],anki:['Картки Anki','SRS-повторення та озвучка'],profile:['Профіль','Прогрес, налаштування та синхронізація']};
+
 const $=id=>document.getElementById(id);
-let words=[];
-let save={};
-let state={screen:'dashboard',ankiIndex:0,ankiRevealed:false,selected:-1,battleQuestion:null,battleTimer:null};
-let tg=null;
-let telegramReady=false;
-let syncTimer=null;
-let cloudSyncInFlight=false;
-let lastCloudSaveAt=0;
+const safeGet=k=>{try{return localStorage.getItem(k)}catch{return null}};
+const safeSet=(k,v)=>{try{localStorage.setItem(k,v);return true}catch{return false}};
+const safeRemove=k=>{try{localStorage.removeItem(k)}catch{}};
+const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const wordKey=w=>String(w?.id||w?.german||'').toLowerCase().trim();
+const now=()=>Date.now();
+const todayKey=()=>new Date().toISOString().slice(0,10);
+const uid=()=>`u-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
 
-const defaultSave=()=>({
-  saveVersion:10,savedAt:0,xp:0,level:1,streak:0,lastOpen:null,lastActivity:null,
-  gold:0,gems:0,energy:5,mastery:{},reviews:{},errors:0,answers:0,correct:0,
-  customWords:[],bestWave:0,
-  dice:{wave:1,base:100,mana:30,power:0,combo:0,board:Array(15).fill(null),enemies:[],running:false},
-  settings:{theme:'dark',reducedMotion:false}
-});
+function defaultSave(){return{version:SAVE_VERSION,xp:0,coins:0,streak:0,lastActivity:'',correct:0,errors:0,answers:0,learnedToday:0,dayKey:todayKey(),dailyGoal:20,mastery:{},review:{},customWords:[],settings:{theme:'dark',reducedMotion:false,voiceRate:0.9,voiceName:'auto',autoSpeak:false},playerName:'Wanderer'}}
+let save=defaultSave();
+function isObj(x){return x&&typeof x==='object'&&!Array.isArray(x)}
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function normalizeSave(input){const d=defaultSave();const x=isObj(input)?input:{};const out={...d,...x,settings:{...d.settings,...(isObj(x.settings)?x.settings:{})}};out.version=SAVE_VERSION;out.xp=Math.max(0,Number(out.xp)||0);out.coins=Math.max(0,Number(out.coins)||0);out.streak=Math.max(0,Number(out.streak)||0);out.correct=Math.max(0,Number(out.correct)||0);out.errors=Math.max(0,Number(out.errors)||0);out.answers=Math.max(0,Number(out.answers)||0);out.learnedToday=Math.max(0,Number(out.learnedToday)||0);out.dailyGoal=clamp(Number(out.dailyGoal)||20,5,50);out.mastery=isObj(out.mastery)?out.mastery:{};out.review=isObj(out.review)?out.review:{};out.customWords=Array.isArray(out.customWords)?out.customWords.filter(w=>isObj(w)&&String(w.german||'').trim()&&String(w.ukrainian||'').trim()).slice(0,500):[];out.settings.theme=out.settings.theme==='light'?'light':'dark';out.settings.reducedMotion=Boolean(out.settings.reducedMotion);out.settings.voiceRate=clamp(Number(out.settings.voiceRate)||0.9,0.65,1.15);out.settings.voiceName=String(out.settings.voiceName||'auto');out.settings.autoSpeak=Boolean(out.settings.autoSpeak);if(out.dayKey!==todayKey()){out.dayKey=todayKey();out.learnedToday=0}return out}
 
-function getTg(){return window.Telegram?.WebApp||null}
-function userKey(){const u=tg?.initDataUnsafe?.user;return u?.id?`${SAVE_BASE}_${u.id}`:SAVE_BASE}
-function safeGet(key){try{return localStorage.getItem(key)}catch{return null}}
-function safeSet(key,value){try{localStorage.setItem(key,value);return true}catch{return false}}
-function safeRemove(key){try{localStorage.removeItem(key)}catch{}}
-function isPlainObject(v){return v&&typeof v==='object'&&!Array.isArray(v)}
-function uid(){return 'u-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)}
-function dateKey(d=new Date()){return new Intl.DateTimeFormat('en-CA').format(d)}
-function todayStart(){const d=new Date();d.setHours(0,0,0,0);return d}
-function yesterdayKey(){const d=new Date();d.setDate(d.getDate()-1);return dateKey(d)}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function haptic(type='light'){try{tg?.HapticFeedback?.impactOccurred(type)}catch{}}
-function toast(msg){const t=$('toast');if(!t)return;t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1800)}
+function loadLocal(){let raw=null;try{raw=safeGet(SAVE_KEY);if(raw)save=normalizeSave(JSON.parse(raw));else{for(const k of LEGACY_KEYS){const s=safeGet(k);if(s){try{save=normalizeSave(JSON.parse(s));break}catch{}}}}}catch{save=defaultSave()}}
+function persistLocal(){safeSet(SAVE_KEY,JSON.stringify(save))}
+function dueWords(){const t=now();return mergedWords().filter(w=>(Number(save.review[wordKey(w)]?.dueAt)||0)<=t).sort((a,b)=>(Number(save.review[wordKey(a)]?.dueAt)||0)-(Number(save.review[wordKey(b)]?.dueAt)||0))}
+function mastery(w){return clamp(Number(save.mastery[wordKey(w)]||0),0,5)}
+function mergedWords(){const map=new Map();for(const w of words)map.set(wordKey(w),w);for(const w of save.customWords)map.set(wordKey(w),w);return Array.from(map.values())}
+function recommendedWord(){const due=dueWords();if(due[0])return due[0];return [...mergedWords()].sort((a,b)=>mastery(a)-mastery(b)||Number(a.frequency||9999)-Number(b.frequency||9999))[0]||null}
+function reviewDays(quality,level){const ladder=[1,2,4,7,14,30];if(quality<=0)return 1;if(quality===2)return ladder[Math.max(1,Math.min(5,level+1))];if(quality===4)return ladder[Math.max(2,Math.min(5,level+2))];return 30}
+function setReview(w,quality){const k=wordKey(w);const current=save.review[k]||{box:0};let box=clamp(Number(current.box)||0,0,5);if(quality<=0)box=0;else if(quality===2)box=clamp(box+1,0,5);else if(quality===4)box=clamp(box+2,0,5);else box=5;save.review[k]={box,dueAt:now()+reviewDays(quality,box)*86400000,lastQuality:quality,lastSeen:now()}}
+function levelFromXp(xp){const base=160;let lvl=1,need=base;let x=xp;while(x>=need&&lvl<99){x-=need;lvl++;need=Math.floor(base*(1+(lvl-1)*.18))}return{lvl,x,need,pct:need?Math.round(x/need*100):0}}
+function award(xp,coins=0){const before=levelFromXp(save.xp).lvl;save.xp+=xp;save.coins+=coins;const after=levelFromXp(save.xp).lvl;if(after>before){toast(`Рівень ${after} 🎉`);haptic('success')}persistLocal()}
+function touchActivity(){const t=todayKey();if(save.lastActivity===t)return;if(save.lastActivity){const prev=new Date(save.lastActivity);prev.setDate(prev.getDate()+1);const target=prev.toISOString().slice(0,10);save.streak=target===t?save.streak+1:1}else save.streak=1;save.lastActivity=t}
+function speakText(text,rate=save.settings.voiceRate){if(!text||!('speechSynthesis' in window))return false;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='de-DE';u.rate=clamp(rate,.65,1.15);u.pitch=1;const wanted=save.settings.voiceName;if(wanted!=='auto'){const v=voiceList.find(x=>x.name===wanted);if(v)u.voice=v}else{const v=voiceList.find(x=>/^de(-|_)?/i.test(x.lang))||voiceList.find(x=>/german|deutsch/i.test(x.name));if(v)u.voice=v}u.volume=1;speechSynthesis.speak(u);return true}catch{return false}}
+function speakGerman(text){if(!speakText(text)){toast('Озвучка недоступна у цьому браузері')}}
+function sentenceUa(w){const map={'Das ist ein gutes Beispiel für unsere Arbeit.':'Це хороший приклад для нашої роботи.','Wir entwickeln eine neue Web-App.':'Ми розробляємо новий вебзастосунок.','Das ist eine tolle Gelegenheit.':'Це чудова можливість.','Er ist ein sehr zuverlässiger Partner.':'Він дуже надійний партнер.','Diese Prüfung ist eine große Herausforderung.':'Цей іспит — велике випробування.'};return map[w.sentence]||''}
 
-function normalizeSave(raw){
-  const d=defaultSave();
-  const x=isPlainObject(raw)?raw:{};
-  const out={...d,...x};
-  out.saveVersion=10;
-  out.xp=Math.max(0,Number(out.xp)||0);
-  out.level=Math.max(1,Number(out.level)||1);
-  out.streak=Math.max(0,Number(out.streak)||0);
-  out.gold=Math.max(0,Number(out.gold)||0);
-  out.gems=Math.max(0,Number(out.gems)||0);
-  out.energy=Math.max(0,Number(out.energy)||0);
-  out.answers=Math.max(0,Number(out.answers)||0);
-  out.correct=Math.max(0,Number(out.correct)||0);
-  out.errors=Math.max(0,Number(out.errors)||0);
-  out.bestWave=Math.max(0,Number(out.bestWave)||0);
-  out.mastery=isPlainObject(x.mastery)?x.mastery:{};
-  out.reviews=isPlainObject(x.reviews)?x.reviews:{};
-  out.customWords=Array.isArray(x.customWords)?x.customWords.filter(Boolean):[];
-  out.dice={...d.dice,...(isPlainObject(x.dice)?x.dice:{})};
-  out.dice.wave=Math.max(1,Math.min(10,Number(out.dice.wave)||1));
-  out.dice.base=Math.max(0,Math.min(100,Number(out.dice.base)||0));
-  out.dice.mana=Math.max(0,Math.min(40,Number(out.dice.mana)||0));
-  out.dice.power=Math.max(0,Number(out.dice.power)||0);
-  out.dice.combo=Math.max(0,Math.min(9,Number(out.dice.combo)||0));
-  out.dice.board=Array.isArray(out.dice.board)?out.dice.board.slice(0,15):[];
-  while(out.dice.board.length<15)out.dice.board.push(null);
-  out.dice.running=Boolean(out.dice.running);
-  out.dice.enemies=Array.isArray(out.dice.enemies)?out.dice.enemies:[];
-  out.settings={...d.settings,...(isPlainObject(x.settings)?x.settings:{})};
-  if(!['dark','light'].includes(out.settings.theme))out.settings.theme='dark';
-  out.settings.reducedMotion=Boolean(out.settings.reducedMotion);
-  out.savedAt=Math.max(0,Number(out.savedAt)||0);
-  return out;
-}
+function buildNav(){const html=navItems.map(([id,icon,label])=>`<button data-nav="${id}"><span class="ico">${icon}</span><span>${label}</span></button>`).join('');$('sideNav').innerHTML=html;$('bottomNav').innerHTML=html;document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>nav(b.dataset.nav)))}
+function nav(screen){if(!titles[screen])return;state.screen=screen;$('pageTitle').textContent=titles[screen][0];$('pageSubtitle').textContent=titles[screen][1];document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===`screen-${screen}`));document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===screen));if(screen==='anki')prepareAnkiSession();renderAll();syncTelegramBackButton();if(tg?.MainButton){try{tg.MainButton.hide()}catch{}}if(screen==='anki'&&state.ankiRevealed)syncTelegramMainButton()}
 
-function loadLocal(){
-  let raw=null;
-  try{raw=JSON.parse(safeGet(userKey())||'null')}catch{}
-  if(!raw){
-    try{raw=JSON.parse(safeGet('de_b1_rpg_progress_v3')||'null')}catch{}
-    if(raw){raw={...defaultSave(),xp:raw.xp,level:raw.level,streak:raw.streak,gold:raw.gold}}
-  }
-  if(!raw){
-    try{const old=JSON.parse(safeGet('deutsch_quest_v002')||'null');if(old)raw={...defaultSave(),...old}}catch{}
-  }
-  save=normalizeSave(raw||defaultSave());
-  if(save.dice.running){
-    save.dice.running=false;
-    save.dice.enemies=[];
-    state.battleQuestion=null;
-  }
-  save.lastOpen=Date.now();
-  safeSet(userKey(),JSON.stringify(save));
-}
-function persistLocal(){
-  save.savedAt=Date.now();
-  safeSet(userKey(),JSON.stringify(save));
-}
+function renderHeader(){const l=levelFromXp(save.xp);$('level').textContent=l.lvl;$('resources').innerHTML=`<div class="res">XP <b>${save.xp}</b></div><div class="res">Серія <b>🔥 ${save.streak}</b></div>`;const learned=Math.min(save.learnedToday,save.dailyGoal);const pct=Math.round(learned/save.dailyGoal*100);$('sideProgress').style.width=`${pct}%`;$('sideLearned').textContent=learned;$('sideGoal').textContent=save.dailyGoal}
+function renderDashboard(){const r=recommendedWord();const list=dueWords();$('homeWord').textContent=r?.german||'—';$('homeGrammar').textContent=r?.grammar||'';$('homeMeaning').textContent=r?.ukrainian||'—';$('homeExample').textContent=r?.sentence||'Додай перші слова, щоб почати.';$('todayLabel').textContent=todayKey();$('dDue').textContent=list.length;$('dMastered').textContent=mergedWords().filter(w=>mastery(w)>=5).length;$('dAccuracy').textContent=save.answers?`${Math.round(save.correct/save.answers*100)}%`:'0%';$('homeStreak').textContent=save.streak;const pct=Math.round(Math.min(save.learnedToday,save.dailyGoal)/save.dailyGoal*100);$('dailyProgressBar').style.width=`${pct}%`;$('dailyCount').textContent=`${Math.min(save.learnedToday,save.dailyGoal)} / ${save.dailyGoal}`;$('dailyPercent').textContent=`${pct}%`}
+function renderWords(){const all=mergedWords();const q=String($('search')?.value||'').toLowerCase().trim();const filtered=all.filter(w=>!q||`${w.german} ${w.ukrainian}`.toLowerCase().includes(q));$('wordCountText').textContent=`${all.length} слів`;$('wTotal').textContent=all.length;$('wNew').textContent=all.filter(w=>mastery(w)===0).length;$('wLearning').textContent=all.filter(w=>mastery(w)>0&&mastery(w)<5).length;$('wMastered').textContent=all.filter(w=>mastery(w)>=5).length;$('wordList').innerHTML=filtered.map(w=>{const m=mastery(w);const r=save.review[wordKey(w)]||{};const due=(Number(r.dueAt)||0)<=now();return `<div class="word-item"><div><div class="de">${esc(w.german)}</div><div class="ua">${esc(w.ukrainian)}</div></div><div class="meta"><span class="badge">${esc(w.level||'A2/B1')}</span><span class="badge">${m}/5</span><span class="badge">${due?'До повторення':'Заплановано'}</span><button class="icon-btn mini-speak" data-word="${esc(w.german)}" title="Озвучити">🔊</button></div></div>`}).join('')||'<div class="muted small">Нічого не знайдено.</div>';document.querySelectorAll('.mini-speak').forEach(b=>b.addEventListener('click',()=>speakGerman(b.dataset.word)))}
+function prepareAnkiSession(){const pool=dueWords();const all=mergedWords();state.sessionCards=pool.length?pool.slice(0,Math.min(20,pool.length)):[...all].sort((a,b)=>mastery(a)-mastery(b)).slice(0,Math.min(20,all.length));if(!state.sessionCards.length)state.sessionCards=[{german:'—',ukrainian:'Додай слово',grammar:'',sentence:'',level:'A2/B1'}];state.ankiIndex=0;state.ankiRevealed=false;state.sessionAnswerLock=false;renderAnki()}
+function currentCard(){return state.sessionCards[state.ankiIndex]||state.sessionCards[0]}
+function renderAnki(){const w=currentCard();const r=save.review[wordKey(w)]||{};const m=mastery(w);$('ankiPosition').textContent=`${Math.min(state.ankiIndex+1,state.sessionCards.length)} / ${state.sessionCards.length}`;$('ankiStage').textContent=m===0?'NEW':`MASTERY ${m}/5`;$('ankiLevel').textContent=w.level||'A2/B1';$('ankiWord').textContent=w.german||'—';$('ankiGrammar').textContent=w.grammar||'';$('ankiMeaning').textContent=w.ukrainian||'—';$('ankiSentence').textContent=w.sentence||'—';$('ankiSentenceUa').textContent=sentenceUa(w);$('ankiCard').classList.toggle('revealed',state.ankiRevealed);$('showAnswer').classList.toggle('hide',state.ankiRevealed);$('rateWrap').classList.toggle('hide',!state.ankiRevealed);const box=Number(r.box)||0;$('ankiNext').textContent=state.ankiRevealed?`Поточний рівень памʼяті: ${box}/5`:'Спробуй згадати переклад до відкриття.';$('aToday').textContent=save.learnedToday;$('aDue').textContent=dueWords().length;$('aAccuracy').textContent=save.answers?`${Math.round(save.correct/save.answers*100)}%`:'0%';$('aStreak').textContent=save.streak}
+function rateCard(quality){if(state.sessionAnswerLock||!state.ankiRevealed)return;state.sessionAnswerLock=true;const w=currentCard();const before=mastery(w);const k=wordKey(w);save.answers++;if(quality>=4){save.correct++;save.mastery[k]=clamp(before+1,0,5);setReview(w,quality);award(8,0)}else if(quality===2){save.correct++;save.mastery[k]=clamp(before,0,5);setReview(w,quality);award(5,0)}else{save.errors++;save.mastery[k]=Math.max(0,before-1);setReview(w,quality);award(3,0)}save.learnedToday++;touchActivity();persistLocal();haptic(quality>=4?'success':'light');const done=state.ankiIndex>=state.sessionCards.length-1;toast(quality>=4?'Добре! Слово закріплено.':quality===2?'Добре, ще раз повторимо пізніше.':'Нічого страшного — це слово повернеться швидше.');if(done){setTimeout(()=>{state.sessionAnswerLock=false;prepareAnkiSession();},450)}else{setTimeout(()=>{state.sessionAnswerLock=false;state.ankiIndex++;state.ankiRevealed=false;renderAll();syncTelegramMainButton();if(save.settings.autoSpeak)speakGerman(currentCard().german)},450)}}
+function addWord(){const de=$('addDe').value.trim();const ua=$('addUa').value.trim();const ex=$('addEx').value.trim();if(!de||!ua){toast('Вкажи слово та переклад');return}if(mergedWords().some(w=>w.german.toLowerCase()===de.toLowerCase())){toast('Це слово вже є у колекції');return}save.customWords.unshift({id:uid(),german:de,ukrainian:ua,grammar:'',sentence:ex,level:'A2/B1',category:'Мої слова',rarity:'звичайний'});persistLocal();$('addDe').value='';$('addUa').value='';$('addEx').value='';$('addBox').classList.add('hide');renderAll();toast('Слово додано ✅')}
+function toggleAnswer(){state.ankiRevealed=true;renderAnki();haptic('light');if(save.settings.autoSpeak)speakGerman(currentCard().german);syncTelegramMainButton()}
+function renderProfile(){const l=levelFromXp(save.xp);$('pLevel').textContent=l.lvl;$('pXp').textContent=save.xp;$('pWords').textContent=mergedWords().length;$('pMastered').textContent=mergedWords().filter(w=>mastery(w)>=5).length;$('pStreak').textContent=save.streak;$('pAccuracy').textContent=save.answers?`${Math.round(save.correct/save.answers*100)}%`:'0%';$('themeSwitch').classList.toggle('on',save.settings.theme==='dark');$('motionSwitch').classList.toggle('on',save.settings.reducedMotion);$('voiceRate').value=String(save.settings.voiceRate);$('autoSpeak').checked=save.settings.autoSpeak;setSyncStatus(telegramReady?'Telegram Mini App · синхронізація':'Браузерний режим · localStorage')}
+function renderAll(){renderHeader();renderDashboard();renderWords();renderAnki();renderProfile()}
+function showToast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove('show'),2200)}
+const toast=showToast;
+function haptic(type){try{if(tg?.HapticFeedback){if(type==='success')tg.HapticFeedback.notificationOccurred('success');else if(type==='error')tg.HapticFeedback.notificationOccurred('error');else tg.HapticFeedback.impactOccurred(type==='heavy'?'heavy':'light')}}catch{}}
 
-function tgCloudCall(method,...args){
-  return new Promise(resolve=>{
-    try{
-      const api=tg?.CloudStorage;
-      if(!api||typeof api[method]!=='function')return resolve(null);
-      api[method](...args,(err,value)=>resolve(err?null:value));
-    }catch{resolve(null)}
-  });
-}
-function tgDeviceCall(method,key,value){
-  return new Promise(resolve=>{
-    try{
-      const api=tg?.DeviceStorage;
-      if(!api||typeof api[method]!=='function')return resolve(false);
-      if(method==='setItem')api.setItem(key,value,err=>resolve(!err));
-      else if(method==='getItem')api.getItem(key,(err,v)=>resolve(err?null:v));
-      else if(method==='removeItem')api.removeItem(key,err=>resolve(!err));
-      else resolve(false);
-    }catch{resolve(false)}
-  });
-}
-const CLOUD_PREFIX='gst9_';
-const CLOUD_META=CLOUD_PREFIX+'meta';
-const CLOUD_CHUNK_PREFIX=CLOUD_PREFIX+'c_';
-function chunkString(s,size=3400){const out=[];for(let i=0;i<s.length;i+=size)out.push(s.slice(i,i+size));return out}
-async function cloudLoad(){
-  if(!tg)return null;
-  const metaRaw=await tgCloudCall('getItem',CLOUD_META);
-  if(metaRaw){
-    try{
-      const meta=JSON.parse(metaRaw);const count=Math.max(0,Math.min(32,Number(meta.count)||0));
-      const keys=Array.from({length:count},(_,i)=>CLOUD_CHUNK_PREFIX+i);
-      const vals=await new Promise(resolve=>{try{tg.CloudStorage.getItems(keys,(err,v)=>resolve(err?null:v))}catch{resolve(null)}});
-      if(vals&&typeof vals==='object'&&!Array.isArray(vals)){
-        const joined=keys.map(k=>String(vals[k]??'')).join('');
-        if(joined&&keys.every(k=>Object.prototype.hasOwnProperty.call(vals,k)))return JSON.parse(joined);
-      }
-    }catch{}
-  }
-  const device=await tgDeviceCall('getItem',`${CLOUD_PREFIX}state`);
-  if(device){try{return JSON.parse(device)}catch{}}
-  return null;
-}
-async function cloudSave(){
-  if(!tg)return false;
-  const json=JSON.stringify(save);const chunks=chunkString(json);
-  if(chunks.length<=32){
-    let ok=true;
-    for(let i=0;i<chunks.length;i++){const r=await tgCloudCall('setItem',CLOUD_CHUNK_PREFIX+i,chunks[i]);if(r===null)ok=false}
-    await tgCloudCall('setItem',CLOUD_META,JSON.stringify({count:chunks.length,savedAt:save.savedAt,version:VERSION}));
-    if(ok)return true;
-  }
-  const deviceOk=await tgDeviceCall('setItem',`${CLOUD_PREFIX}state`,json);
-  return Boolean(deviceOk);
-}
-async function hydrateTelegram(){
-  if(!tg)return;
-  const remote=await cloudLoad();
-  if(remote&&typeof remote==='object'){
-    const remoteSave=normalizeSave(remote);
-    if((remoteSave.savedAt||0)>=(save.savedAt||0))save=remoteSave;
-  }
-  persistLocal();
-  queueCloudSave();
-}
-function queueCloudSave(){
-  if(!tg)return;
-  clearTimeout(syncTimer);
-  syncTimer=setTimeout(async()=>{
-    if(cloudSyncInFlight)return;
-    cloudSyncInFlight=true;
-    try{const ok=await cloudSave();lastCloudSaveAt=Date.now();setSyncStatus(ok?'Синхронізовано з Telegram':'Локально · Telegram sync недоступний')}finally{cloudSyncInFlight=false}
-  },450);
-}
+function applyTelegramTheme(){const p=tg?.themeParams||{};const root=document.documentElement;const map={bg_color:'--tg-bg',secondary_bg_color:'--tg-secondary',text_color:'--tg-text',hint_color:'--tg-hint',button_color:'--tg-button',button_text_color:'--tg-button-text'};Object.entries(map).forEach(([k,v])=>{if(p[k])root.style.setProperty(v,p[k])});if(p.bg_color)root.style.setProperty('--bg',p.bg_color);if(p.secondary_bg_color)root.style.setProperty('--panel',p.secondary_bg_color);if(p.text_color)root.style.setProperty('--text',p.text_color);if(p.hint_color)root.style.setProperty('--muted',p.hint_color)}
+function applySafeArea(){const root=document.documentElement;const s=tg?.safeAreaInset||{};const c=tg?.contentSafeAreaInset||{};root.style.setProperty('--tg-safe-top',`${Number(s.top||0)}px`);root.style.setProperty('--tg-safe-right',`${Number(s.right||0)}px`);root.style.setProperty('--tg-safe-bottom',`${Number(s.bottom||0)}px`);root.style.setProperty('--tg-safe-left',`${Number(s.left||0)}px`);root.style.setProperty('--tg-content-top',`${Number(c.top||0)}px`);root.style.setProperty('--tg-content-bottom',`${Number(c.bottom||0)}px`);if(tg?.viewportHeight)root.style.setProperty('--tg-vh',`${tg.viewportHeight}px`)}
+function syncTelegramBackButton(){if(!tg?.BackButton)return;try{state.screen==='dashboard'?tg.BackButton.hide():tg.BackButton.show()}catch{}}
+function syncTelegramMainButton(){if(!tg?.MainButton)return;try{if(state.screen==='anki'&&!state.ankiRevealed){tg.MainButton.setText('ПОКАЗАТИ ПЕРЕКЛАД');tg.MainButton.show()}else if(state.screen==='anki'&&state.ankiRevealed){tg.MainButton.hide()}else{tg.MainButton.hide()}}catch{}}
 function setSyncStatus(text){const el=$('tgSyncStatus');if(el)el.textContent=text}
-function persist(){persistLocal();queueCloudSave()}
+function loadTelegramSdk(timeout=1400){if(window.Telegram?.WebApp)return Promise.resolve(true);return new Promise(resolve=>{let done=false;const finish=v=>{if(done)return;done=true;resolve(v)};const s=document.createElement('script');s.src='https://telegram.org/js/telegram-web-app.js';s.async=true;s.onload=()=>finish(Boolean(window.Telegram?.WebApp));s.onerror=()=>finish(false);document.head.appendChild(s);setTimeout(()=>finish(Boolean(window.Telegram?.WebApp)),timeout)})}
+function getTg(){try{return window.Telegram?.WebApp||null}catch{return null}}
+function telegramConfirm(message){return new Promise(resolve=>{if(tg?.showConfirm){try{return tg.showConfirm(message,ok=>resolve(Boolean(ok)))}catch{}}resolve(window.confirm(message))})}
+function chunkObject(str,size=3000){const out=[];for(let i=0;i<str.length;i+=size)out.push(str.slice(i,i+size));return out}
+async function cloudSave(){if(!tg?.CloudStorage)return false;try{const json=JSON.stringify(save);const chunks=chunkObject(json,2800);const payload={};chunks.forEach((c,i)=>payload[`${TG_CHUNK_PREFIX}${i}`]=c);payload[`${TG_CHUNK_PREFIX}count`]=String(chunks.length);await new Promise((res,rej)=>tg.CloudStorage.setItem(Object.keys(payload)[0],payload[Object.keys(payload)[0]],e=>e?rej(e):res()));for(const k of Object.keys(payload).slice(1)){await new Promise((res,rej)=>tg.CloudStorage.setItem(k,payload[k],e=>e?rej(e):res()))}return true}catch{return false}}
+async function cloudLoad(){if(!tg?.CloudStorage)return null;try{const count=await new Promise((res,rej)=>tg.CloudStorage.getItem(`${TG_CHUNK_PREFIX}count`,(e,v)=>e?rej(e):res(Number(v)||0)));if(!count)return null;const keys=Array.from({length:count},(_,i)=>`${TG_CHUNK_PREFIX}${i}`);const vals=await new Promise((res,rej)=>tg.CloudStorage.getItems(keys,(e,v)=>e?rej(e):res(v||{})));let json='';for(const k of keys)json+=vals[k]||'';return json?normalizeSave(JSON.parse(json)):null}catch{return null}}
+async function hydrateTelegram(){if(!tg?.CloudStorage)return;const remote=await cloudLoad();if(remote){const localScore=save.xp+save.learnedToday*3+save.correct;const remoteScore=remote.xp+remote.learnedToday*3+remote.correct;save=remoteScore>localScore?remote:save;persistLocal()}setSyncStatus('Telegram Mini App · готово')}
+async function syncNow(){if(!tg){toast('Синхронізація доступна у Telegram');return}persistLocal();setSyncStatus('Синхронізація…');const ok=await cloudSave();setSyncStatus(ok?'Синхронізовано ✅':'Синхронізація недоступна');toast(ok?'Прогрес збережено в Telegram ✅':'Не вдалося синхронізувати')}
 
-function touchActivity(){
-  const now=dateKey();
-  if(save.lastActivity===now)return;
-  if(save.lastActivity===yesterdayKey())save.streak=Math.max(1,save.streak+1);else save.streak=1;
-  save.lastActivity=now;
-  persist();
-}
-function levelFromXp(xp){let lvl=1,need=100,x=Math.max(0,xp);while(x>=need){x-=need;lvl++;need=100+lvl*25}return{lvl,xpInLevel:x,need}}
-function award(xp,coins=0){save.xp=Math.max(0,save.xp+Number(xp||0));save.gold=Math.max(0,save.gold+Number(coins||0));const l=levelFromXp(save.xp);if(l.lvl!==save.level){save.level=l.lvl;toast(`Новий рівень: ${l.lvl} 🎉`);haptic('medium')}persist();renderAll()}
-function mergedWords(){return [...words,...save.customWords]}
-function wordKey(w){return String(w?.id||w?.german||'').trim()}
-function mastery(w){return Math.max(0,Math.min(5,Number(save.mastery[wordKey(w)]||0)))}
-function reviewBox(w){const r=save.reviews[wordKey(w)];if(!r)return 0;return Math.max(0,Math.min(INTERVALS.length-1,Number.isFinite(Number(r.box))?Number(r.box):Math.min(INTERVALS.length-1,Math.max(0,mastery(w)-1))))}
-function due(w){const r=save.reviews[wordKey(w)];return !r||!r.next||new Date(r.next)<=new Date()}
-function setReview(w,q,m){
-  const key=wordKey(w);
-  const previous=reviewBox(w);
-  let box=previous;
-  if(q>=5) box=Math.min(INTERVALS.length-1,previous+2);
-  else if(q>=4) box=Math.min(INTERVALS.length-1,previous+1);
-  else if(q<=0) box=Math.max(0,previous-1);
-  const days=INTERVALS[box];
-  const next=new Date();next.setDate(next.getDate()+days);
-  save.reviews[key]={next:next.toISOString(),q,m,box,lastReviewedAt:Date.now()};
-}
-function dueWords(){return mergedWords().filter(due)}
-function pickLearningWord(){
-  const all=mergedWords();if(!all.length)return null;
-  const dueList=all.filter(due);
-  const pool=(dueList.length?dueList:all).slice();
-  pool.sort((a,b)=>{
-    const am=mastery(a),bm=mastery(b),ar=save.reviews[wordKey(a)],br=save.reviews[wordKey(b)];
-    const ad=ar?.next?new Date(ar.next).getTime():0,bd=br?.next?new Date(br.next).getTime():0;
-    return (am-bm)*1000000000+(ad-bd);
-  });
-  return pool[Math.floor(Math.random()*Math.min(6,pool.length))]||pool[0];
-}
+function setupVoices(){if(!('speechSynthesis' in window))return;const refresh=()=>{voiceList=speechSynthesis.getVoices().filter(v=>/de(-|_)/i.test(v.lang)||/german|deutsch/i.test(v.name));const select=$('voiceSelect');if(!select)return;const current=save.settings.voiceName;select.innerHTML='<option value="auto">Автоматично</option>'+voiceList.map(v=>`<option value="${esc(v.name)}">${esc(v.name)} · ${esc(v.lang)}</option>`).join('');select.value=voiceList.some(v=>v.name===current)?current:'auto'};refresh();speechSynthesis.onvoiceschanged=refresh}
 
-function buildNav(){
-  const side=$('sideNav'),bottom=$('bottomNav');
-  side.innerHTML=navItems.map(([id,ico,label])=>`<button data-nav="${id}"><span class="ico">${ico}</span>${label}</button>`).join('');
-  bottom.innerHTML=navItems.map(([id,ico,label])=>`<button data-nav="${id}"><div style="font-size:18px">${ico}</div>${label}</button>`).join('');
-  document.addEventListener('click',e=>{const b=e.target.closest('[data-nav]');if(!b)return;nav(b.dataset.nav)},{passive:true});
-}
-function nav(screen){
-  if(!titles[screen])screen='dashboard';
-  state.screen=screen;state.ankiRevealed=false;state.selected=-1;
-  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id==='screen-'+screen));
-  document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===screen));
-  $('pageTitle').textContent=titles[screen][0];$('pageSubtitle').textContent=titles[screen][1];
-  if(screen==='anki')renderAnki();
-  if(screen==='dice'){renderDice();setDiceSwipeLock(true)}else setDiceSwipeLock(false);
-  if(tg){syncTelegramBackButton();syncTelegramMainButton();}
-  renderAll();
-  haptic('light');
-}
-function renderHeader(){
-  const l=levelFromXp(save.xp);$('level').textContent=l.lvl;$('resources').innerHTML=`<div class="res">🪙 <b>${save.gold}</b></div><div class="res">◈ <b>${save.gems}</b></div><div class="res">⚡ <b>${save.energy}</b></div>`;
-  const u=tg?.initDataUnsafe?.user;const name=u?.first_name?`${u.first_name}${u.last_name?' '+u.last_name:''}`:'Wanderer';
-  $('heroName').textContent=name;$('homeLevel').textContent=l.lvl;$('homeXp').textContent=save.xp;$('homeStreak').textContent=save.streak;$('todayLabel').textContent=new Date().toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric'});
-  const avatar=u?.photo_url?`<img src="${esc(u.photo_url)}" alt="">`:'🧭';$('avatar').innerHTML=avatar;$('profileAvatar').innerHTML=avatar;
-  const foot=document.querySelector('.foot');if(foot)foot.innerHTML=`Offline-ready · PC + phone · Telegram Mini App<br>v${VERSION}`;
-}
-function renderDashboard(){
-  const all=mergedWords(), mastered=all.filter(w=>mastery(w)>=5).length, du=all.filter(due).length, acc=save.answers?Math.round(save.correct/save.answers*100):0;
-  $('dTotal').textContent=all.length;$('dMastered').textContent=mastered;$('dDue').textContent=du;$('dAccuracy').textContent=acc+'%';
-  const rec=all.filter(due).sort((a,b)=>mastery(a)-mastery(b))[0]||all[0];
-  $('recommendation').textContent=rec?.german||'Немає слів';$('recommendationMeaning').textContent=rec?.ukrainian||'Додай перше слово';
-}
-function renderWords(){
-  const all=mergedWords(),q=($('search').value||'').trim().toLowerCase();
-  $('wTotal').textContent=all.length;$('wMastered').textContent=all.filter(w=>mastery(w)>=5).length;$('wLearning').textContent=all.filter(w=>mastery(w)>0&&mastery(w)<5).length;$('wNew').textContent=all.filter(w=>mastery(w)===0).length;$('wordCountText').textContent=all.length+' слів';
-  const list=all.filter(w=>`${w.german} ${w.ukrainian} ${w.sentence||''}`.toLowerCase().includes(q)).slice(0,250);
-  $('wordList').innerHTML=list.map(w=>{const m=mastery(w),r=save.reviews[wordKey(w)];return `<div class="word-item"><div><div class="de">${esc(w.german)}</div><div class="ua">${esc(w.ukrainian)}${w.sentence?' · '+esc(w.sentence):''}</div></div><div style="display:flex;gap:6px;align-items:center"><span class="badge">${m}/5</span><span class="badge">${r?.next?new Date(r.next).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit'}):'нове'}</span></div></div>`}).join('')||'<div class="muted">Нічого не знайдено.</div>';
-}
-function renderAnki(){
-  const list=dueWords().length?dueWords():mergedWords();
-  if(!list.length){$('ankiWord').textContent='Додай слова';$('ankiMeaning').textContent='Колекція порожня';$('aDue').textContent='0';return}
-  state.ankiIndex=Math.max(0,Math.min(state.ankiIndex,list.length-1));const w=list[state.ankiIndex];
-  $('ankiPosition').textContent=`${state.ankiIndex+1} / ${list.length}`;$('ankiWord').textContent=w.german;$('ankiGrammar').textContent=w.grammar||'';$('ankiMeaning').textContent=state.ankiRevealed?w.ukrainian:'Натисни «Показати відповідь»';$('ankiSentence').textContent=state.ankiRevealed?(w.sentence||''):'—';
-  $('rateWrap').classList.toggle('hide',!state.ankiRevealed);$('showAnswer').classList.toggle('hide',state.ankiRevealed);$('aDue').textContent=dueWords().length;$('aLearned').textContent=mergedWords().filter(w=>mastery(w)>=5).length;$('aStreak').textContent=save.streak;$('aErrors').textContent=save.errors;$('ankiNext').textContent=state.ankiRevealed?'Оціни картку, щоб продовжити.':'Почни з показу відповіді.';
-}
-function speakGerman(text){
-  const value=String(text||'').trim();if(!value)return;
-  try{
-    if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){toast('Озвучка недоступна у цьому браузері');return}
-    window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(value);u.lang='de-DE';u.rate=.88;u.pitch=1;
-    window.speechSynthesis.speak(u);haptic('light');
-  }catch{toast('Озвучку не вдалося запустити')}
-}
-function rateCard(q){
-  const list=dueWords().length?dueWords():mergedWords();
-  if(!list.length)return;
-  const w=list[state.ankiIndex];if(!w)return;
-  const key=wordKey(w);let m=mastery(w);save.answers++;
-  if(q>=3){m=Math.min(5,m+1);save.correct++;award(q===5?14:12,q===5?5:4);touchActivity();toast(q===5?`Легко! +1 Mastery · повтор через ${INTERVALS[Math.min(INTERVALS.length-1,reviewBox(w)+2)]} дн.`:`Добре! Mastery ${m}/5`);haptic('medium')}
-  else if(q===2){award(6,1);touchActivity();toast('Складно — залишаємо слово в активному циклі');haptic('light')}
-  else{m=Math.max(0,m-1);save.errors++;award(3,1);touchActivity();toast('Не страшно. Повертаємо слово ближче до повторення');haptic('error')}
-  save.mastery[key]=m;setReview(w,q,m);persist();state.ankiRevealed=false;
-  const nextList=dueWords().length?dueWords():mergedWords();state.ankiIndex=nextList.length?state.ankiIndex%nextList.length:0;renderAll();
-}
-function addWord(){
-  const german=$('addDe').value.trim(),ukrainian=$('addUa').value.trim(),sentence=$('addEx').value.trim();
-  if(german.length<1||ukrainian.length<1){toast('Введи слово та переклад');haptic('error');return}
-  const duplicate=mergedWords().some(w=>String(w.german).trim().toLocaleLowerCase()===german.toLocaleLowerCase());if(duplicate){toast('Таке слово вже є');return}
-  save.customWords.push({id:uid(),german,ukrainian,sentence,grammar:'Власне слово',category:'Custom',rarity:'звичайний',level:'A2/B1',frequency:0});
-  $('addDe').value='';$('addUa').value='';$('addEx').value='';$('addBox').classList.add('hide');award(5,2);touchActivity();toast('Слово додано ✅');nav('words');
-}
-
-const diceTypes=[{id:'scribe',icon:'✒️',base:10,cls:'common'},{id:'sage',icon:'📚',base:13,cls:'rare'},{id:'seer',icon:'🔮',base:17,cls:'epic'},{id:'rune',icon:'✦',base:22,cls:'legend'}];
-function newBattle(){clearBattleTimer();save.dice={wave:1,base:100,mana:30,power:0,combo:0,board:Array(15).fill(null),enemies:[],running:false};state.battleQuestion=null;state.selected=-1;persist();renderDice()}
-function randomWord(){const all=mergedWords();return all.length?all[Math.floor(Math.random()*all.length)]:null}
-function spawnDie(){
-  if(save.dice.running){toast('Під час хвилі дочекайся наступного питання');return}
-  if(save.dice.mana<5){toast('Недостатньо мани');haptic('error');return}
-  const i=save.dice.board.findIndex(x=>!x);if(i<0){toast('Поле заповнене — зроби merge');return}
-  const w=randomWord();if(!w){toast('Додай хоча б одне слово');return}
-  const t=diceTypes[Math.floor(Math.random()*diceTypes.length)];save.dice.mana-=5;save.dice.board[i]={type:t.id,level:1,word:w};save.dice.power+=t.base;persist();renderDice();haptic('light')
-}
-function dieDamage(d){const t=diceTypes.find(x=>x.id===d.type)||diceTypes[0];return Math.round(t.base*d.level*(1+(d.level-1)*.18))}
-function renderBoard(){
-  $('board').innerHTML=save.dice.board.map((d,i)=>!d?`<button class="cell" data-cell="${i}">＋</button>`:`<button class="cell ${state.selected===i?'selected':''}" data-cell="${i}"><div class="die ${(diceTypes.find(x=>x.id===d.type)||diceTypes[0]).cls}"><b>${(diceTypes.find(x=>x.id===d.type)||diceTypes[0]).icon}</b><span>${esc(d.word?.german||'')}</span><span class="lvl">Lv.${d.level}</span></div></button>`).join('')
-}
-function mergeAt(a,b){
-  const A=save.dice.board[a],B=save.dice.board[b];if(!A||!B||A.type!==B.type||A.level!==B.level)return false;
-  const die={...A,level:Math.min(6,A.level+1),word:randomWord()||A.word};save.dice.board[a]=die;save.dice.board[b]=null;save.dice.combo=Math.min(9,save.dice.combo+1);save.dice.power+=dieDamage(die);persist();toast(`MERGE → Lv.${die.level}`);haptic('light');return true;
-}
-function autoMerge(){for(let level=1;level<6;level++){for(const t of diceTypes){let idx=save.dice.board.map((d,i)=>d&&d.type===t.id&&d.level===level?i:-1).filter(i=>i>=0);while(idx.length>=2){mergeAt(idx[0],idx[1]);idx=save.dice.board.map((d,i)=>d&&d.type===t.id&&d.level===level?i:-1).filter(i=>i>=0)}}}renderDice()}
-function selectCell(i){if(save.dice.running)return;if(!save.dice.board[i]){spawnDie();return}if(state.selected<0){state.selected=i;renderDice();return}if(state.selected===i){state.selected=-1;renderDice();return}if(mergeAt(state.selected,i)){state.selected=-1;renderDice()}else{toast('Обʼєднати можна лише однакові кубики');state.selected=-1;renderDice()}}
-function startWave(){
-  if(save.dice.running){toast('Хвиля вже триває');return}
-  if(!save.dice.board.some(Boolean)){toast('Спочатку створи хоча б один кубик');return}
-  if(save.dice.base<=0){newBattle();return}
-  save.dice.running=true;save.dice.enemies=Array.from({length:Math.min(5,Math.max(2,save.dice.wave+1))},(_,i)=>{const base=35+save.dice.wave*18+i*8;return{id:uid(),hp:base,max:base,boss:save.dice.wave%5===0&&i===0,emoji:i===0?'👹':'👾'}});persist();renderDice();askBattleQuestion();
-}
-function askBattleQuestion(){
-  if(!save.dice.running)return;const w=pickLearningWord();if(!w)return;
-  const all=mergedWords();const wrong=all.filter(x=>wordKey(x)!==wordKey(w)).sort(()=>Math.random()-.5).slice(0,3);const opts=[w,...wrong].sort(()=>Math.random()-.5);
-  state.battleQuestion={key:wordKey(w),answered:false};$('qWord').textContent=w.german;$('qPrompt').textContent='Обери правильний переклад';$('answers').innerHTML=opts.map(x=>`<button class="answer" data-answer="${esc(wordKey(x))}">${esc(x.ukrainian)}</button>`).join('');
-  $('answers').querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>answerBattle(w,btn.dataset.answer),{once:true}));$('qTimer').textContent='LIVE';
-}
-function answerBattle(w,id){
-  if(!save.dice.running||!state.battleQuestion||state.battleQuestion.answered)return;state.battleQuestion.answered=true;
-  document.querySelectorAll('#answers .answer').forEach(b=>b.disabled=true);
-  const ok=id===wordKey(w);save.answers++;
-  if(ok){save.correct++;save.dice.combo=Math.min(9,save.dice.combo+1);save.dice.power+=12;save.mastery[wordKey(w)]=Math.min(5,mastery(w)+1);setReview(w,5,mastery(w));save.dice.base=Math.min(100,save.dice.base+2);$('qResult').textContent='✓ Правильно — Language Power +12';$('qResult').style.color='#78dd9c';award(10,3);touchActivity();haptic('medium')}
-  else{save.errors++;save.dice.combo=0;save.mastery[wordKey(w)]=Math.max(0,mastery(w)-1);setReview(w,0,mastery(w));save.dice.base=Math.max(0,save.dice.base-10);$('qResult').textContent=`✕ Правильна відповідь: ${w.ukrainian}`;$('qResult').style.color='#ef8a84';award(4,1);haptic('error')}
-  const damage=Math.max(8,Math.floor(save.dice.power*(ok?1+.08*save.dice.combo:.35)));let remaining=damage;
-  for(const e of save.dice.enemies){if(remaining<=0)break;const dealt=Math.min(e.hp,remaining);e.hp-=dealt;remaining-=dealt}
-  save.dice.enemies=save.dice.enemies.filter(e=>e.hp>0);persist();renderDice();
-  if(!save.dice.enemies.length){finishWave();return}
-  if(save.dice.base<=0){save.dice.running=false;state.battleQuestion=null;persist();renderDice();toast('База знищена — бій завершено');return}
-  clearBattleTimer();state.battleTimer=setTimeout(()=>askBattleQuestion(),650);
-}
-function clearBattleTimer(){if(state.battleTimer){clearTimeout(state.battleTimer);state.battleTimer=null}}
-function finishWave(){
-  clearBattleTimer();const wasBoss=save.dice.wave%5===0;save.dice.running=false;state.battleQuestion=null;save.bestWave=Math.max(save.bestWave,save.dice.wave);touchActivity();award(25+(wasBoss?50:0),10+(wasBoss?20:0));
-  if(save.dice.wave>=10){toast('Перемога! 10 хвиль завершено 🏆');haptic('heavy');newBattle();return}
-  save.dice.wave++;save.dice.enemies=[];save.dice.mana=Math.min(40,save.dice.mana+10);save.dice.power=Math.max(0,Math.floor(save.dice.power*.92));persist();toast(wasBoss?'Boss переможено!':'Хвилю переможено!');renderDice();
-}
-function renderDice(){
-  renderBoard();$('wave').textContent=`${save.dice.wave}/10`;$('base').textContent=save.dice.base;$('mana').textContent=save.dice.mana;$('power').textContent=save.dice.power;$('combo').textContent='x'+save.dice.combo;
-  $('enemies').innerHTML=save.dice.enemies.length?save.dice.enemies.map(e=>`<div class="enemy"><div style="font-size:22px">${e.emoji}</div><small>${e.boss?'BOSS':'Ворог'}</small><div class="hp"><i style="width:${Math.max(0,e.hp/e.max*100)}%"></i></div></div>`).join(''):'<div class="muted">Запусти хвилю</div>';
-  if(!save.dice.running){$('qWord').textContent='Запусти хвилю';$('qPrompt').textContent='Правильна відповідь посилює атаку';$('answers').innerHTML='';$('qTimer').textContent='READY'}
-}
-
-function renderProfile(){
-  const l=levelFromXp(save.xp);$('pLevel').textContent=l.lvl;$('pXp').textContent=save.xp;$('pWords').textContent=mergedWords().length;$('pMastered').textContent=mergedWords().filter(w=>mastery(w)>=5).length;$('pStreak').textContent=save.streak;$('pBestWave').textContent=save.bestWave;
-  $('themeSwitch').classList.toggle('on',save.settings.theme==='dark');$('motionSwitch').classList.toggle('on',!!save.settings.reducedMotion);document.documentElement.dataset.motion=save.settings.reducedMotion?'reduced':'normal';
-  setSyncStatus(telegramReady?'Telegram Mini App · синхронізація увімкнена':'Браузерний режим · localStorage');
-}
-function renderAll(){renderHeader();renderDashboard();renderWords();renderAnki();renderProfile();if(state.screen==='dice')renderDice();if(tg)syncTelegramMainButton()}
-
-function applyTelegramTheme(){
-  const p=tg?.themeParams||{};
-  const root=document.documentElement;
-  const map={bg_color:'--tg-bg',secondary_bg_color:'--tg-secondary',text_color:'--tg-text',hint_color:'--tg-hint',button_color:'--tg-button',button_text_color:'--tg-button-text'};
-  Object.entries(map).forEach(([k,v])=>{if(p[k])root.style.setProperty(v,p[k])});
-  if(p.bg_color)root.style.setProperty('--bg',p.bg_color);
-  if(p.secondary_bg_color)root.style.setProperty('--panel',p.secondary_bg_color);
-  if(p.text_color)root.style.setProperty('--text',p.text_color);
-  if(p.hint_color)root.style.setProperty('--muted',p.hint_color);
-  if(p.section_bg_color)root.style.setProperty('--panel2',p.section_bg_color);
-}
-function applySafeArea(){
-  const root=document.documentElement;const s=tg?.safeAreaInset||{};const c=tg?.contentSafeAreaInset||{};
-  root.style.setProperty('--tg-safe-top',`${Number(s.top||0)}px`);root.style.setProperty('--tg-safe-right',`${Number(s.right||0)}px`);root.style.setProperty('--tg-safe-bottom',`${Number(s.bottom||0)}px`);root.style.setProperty('--tg-safe-left',`${Number(s.left||0)}px`);
-  root.style.setProperty('--tg-content-top',`${Number(c.top||0)}px`);root.style.setProperty('--tg-content-bottom',`${Number(c.bottom||0)}px`);
-  if(tg?.viewportHeight)root.style.setProperty('--tg-vh',`${tg.viewportHeight}px`);
-}
-function setDiceSwipeLock(lock){try{if(!tg)return;if(lock&&tg.disableVerticalSwipes)tg.disableVerticalSwipes();if(!lock&&tg.enableVerticalSwipes)tg.enableVerticalSwipes()}catch{}}
-function syncTelegramMainButton(){
-  if(!tg?.MainButton)return;
-  try{
-    if(state.screen==='anki' && state.ankiRevealed){tg.MainButton.setText('ОЦІНИТИ КАРТКУ');tg.MainButton.show()}
-    else if(state.screen==='dice' && !save.dice.running && save.dice.board.some(Boolean)){tg.MainButton.setText('ПОЧАТИ ХВИЛЮ');tg.MainButton.show()}
-    else{tg.MainButton.hide()}
-  }catch{}
-}
-function syncTelegramBackButton(){if(!tg?.BackButton)return;try{if(state.screen==='dashboard')tg.BackButton.hide();else tg.BackButton.show()}catch{}}
-function loadTelegramSdk(timeout=1400){
-  if(window.Telegram?.WebApp)return Promise.resolve(true);
-  return new Promise(resolve=>{
-    let done=false;
-    const finish=v=>{if(done)return;done=true;resolve(v)};
-    const s=document.createElement('script');s.src='https://telegram.org/js/telegram-web-app.js';s.async=true;
-    s.onload=()=>finish(Boolean(window.Telegram?.WebApp));s.onerror=()=>finish(false);
-    document.head.appendChild(s);setTimeout(()=>finish(Boolean(window.Telegram?.WebApp)),timeout);
-  });
-}
-function telegramConfirm(message){
-  return new Promise(resolve=>{
-    if(tg?.showConfirm){try{return tg.showConfirm(message,ok=>resolve(Boolean(ok)))}catch{}}
-    resolve(window.confirm(message));
-  });
-}
-function initTelegram(){
-  tg=getTg();if(!tg)return;
-  try{
-    telegramReady=true;tg.ready();tg.expand();
-    if(tg.setHeaderColor)tg.setHeaderColor('#061015');if(tg.setBackgroundColor)tg.setBackgroundColor('#030708');if(tg.setBottomBarColor)tg.setBottomBarColor('#030708');
-    applyTelegramTheme();applySafeArea();
-    if(tg.onEvent){tg.onEvent('themeChanged',()=>{applyTelegramTheme();applySafeArea()});tg.onEvent('viewportChanged',applySafeArea);tg.onEvent('safeAreaChanged',applySafeArea);tg.onEvent('contentSafeAreaChanged',applySafeArea)}
-    if(tg.BackButton){tg.BackButton.onClick(()=>nav('dashboard'));syncTelegramBackButton()}
-    if(tg.MainButton){tg.MainButton.onClick(()=>{if(state.screen==='anki'&&state.ankiRevealed){rateCard(4)}else if(state.screen==='dice'&&!save.dice.running){startWave()}});syncTelegramMainButton()}
-    if(tg.enableClosingConfirmation)tg.enableClosingConfirmation(false);
-    setSyncStatus('Telegram Mini App · підключено');
-  }catch{telegramReady=false}
-}
-function syncTheme(){
-  document.documentElement.style.colorScheme=save.settings.theme;
-  document.documentElement.dataset.theme=save.settings.theme;
-  document.documentElement.classList.toggle('reduced-motion',!!save.settings.reducedMotion);
-}
-
-function exportProgress(){
-  const blob=new Blob([JSON.stringify(save,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`gestalt-progress-v${VERSION}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('Прогрес експортовано');
-}
-function importProgress(file){
-  const rd=new FileReader();rd.onload=()=>{try{const incoming=normalizeSave(JSON.parse(rd.result));save=incoming;persist();renderAll();toast('Прогрес імпортовано ✅')}catch{toast('Помилка імпорту')}};rd.readAsText(file)
-}
-async function syncNow(){if(!tg){toast('Ця функція працює у Telegram');return}setSyncStatus('Синхронізація…');persistLocal();const ok=await cloudSave();setSyncStatus(ok?'Синхронізовано з Telegram':'Не вдалося синхронізувати');toast(ok?'Прогрес синхронізовано ✅':'Синхронізація недоступна');}
+function exportProgress(){const blob=new Blob([JSON.stringify(save,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`gestalt-progress-v${VERSION}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('Прогрес експортовано')}
+function importProgress(file){const rd=new FileReader();rd.onload=()=>{try{save=normalizeSave(JSON.parse(rd.result));persistLocal();renderAll();nav('dashboard');toast('Прогрес імпортовано ✅')}catch{toast('Помилка імпорту')}};rd.readAsText(file)}
 function bind(){
-  $('showAdd').addEventListener('click',()=>$('addBox').classList.toggle('hide'));$('addBtn').addEventListener('click',addWord);$('search').addEventListener('input',renderWords);
-  $('showAnswer').addEventListener('click',()=>{state.ankiRevealed=true;haptic('light');renderAnki();syncTelegramMainButton()});$('speakWord').addEventListener('click',()=>{const list=dueWords().length?dueWords():mergedWords();const w=list[state.ankiIndex];if(w)speakGerman(w.german)});
-  document.querySelectorAll('[data-rate]').forEach(b=>b.addEventListener('click',()=>rateCard(Number(b.dataset.rate))));
-  $('roll').addEventListener('click',spawnDie);$('startWave').addEventListener('click',startWave);$('autoMerge').addEventListener('click',autoMerge);
-  $('resetDice').addEventListener('click',async()=>{if(await telegramConfirm('Скинути поточний бій?'))newBattle()});$('howDice').addEventListener('click',()=>toast('ROLL → MERGE → START WAVE → відповідай правильно → знищуй ворогів'));
-  $('board').addEventListener('click',e=>{const c=e.target.closest('[data-cell]');if(c)selectCell(Number(c.dataset.cell))});
-  $('themeSwitch').addEventListener('click',()=>{save.settings.theme=save.settings.theme==='dark'?'light':'dark';syncTheme();persist();renderProfile();toast(save.settings.theme==='dark'?'Темна тема':'Світла тема')});
-  $('motionSwitch').addEventListener('click',()=>{save.settings.reducedMotion=!save.settings.reducedMotion;syncTheme();persist();renderProfile()});
-  $('exportBtn').addEventListener('click',exportProgress);$('importFile').addEventListener('change',e=>{if(e.target.files?.[0])importProgress(e.target.files[0]);e.target.value=''});
-  $('resetAll').addEventListener('click',async()=>{if(!await telegramConfirm('Видалити локальний прогрес? Це очищає локальне збереження.'))return;safeRemove(userKey());location.reload()});
-  $('tgSyncBtn')?.addEventListener('click',syncNow);
+  $('showAdd').addEventListener('click',()=>$('addBox').classList.toggle('hide'));$('addBtn').addEventListener('click',addWord);$('search').addEventListener('input',renderWords);$('homeSpeak').addEventListener('click',()=>{const w=recommendedWord();if(w)speakGerman(w.german)});
+  $('showAnswer').addEventListener('click',toggleAnswer);$('speakWord').addEventListener('click',()=>speakGerman(currentCard().german));$('speakSentence').addEventListener('click',()=>speakGerman(currentCard().sentence));document.querySelectorAll('[data-rate]').forEach(b=>b.addEventListener('click',()=>rateCard(Number(b.dataset.rate))));
+  $('themeSwitch').addEventListener('click',()=>{save.settings.theme=save.settings.theme==='dark'?'light':'dark';syncTheme();persistLocal();renderProfile()});$('motionSwitch').addEventListener('click',()=>{save.settings.reducedMotion=!save.settings.reducedMotion;syncTheme();persistLocal();renderProfile()});
+  $('voiceRate').addEventListener('change',e=>{save.settings.voiceRate=clamp(Number(e.target.value)||.9,.65,1.15);persistLocal()});$('voiceSelect').addEventListener('change',e=>{save.settings.voiceName=e.target.value;persistLocal()});$('autoSpeak').addEventListener('change',e=>{save.settings.autoSpeak=e.target.checked;persistLocal()});
+  $('tgSyncBtn')?.addEventListener('click',syncNow);$('exportBtn').addEventListener('click',exportProgress);$('importFile').addEventListener('change',e=>{if(e.target.files?.[0])importProgress(e.target.files[0]);e.target.value=''});$('resetAll').addEventListener('click',async()=>{if(!await telegramConfirm('Видалити локальний прогрес?'))return;safeRemove(SAVE_KEY);location.reload()});
 }
+function syncTheme(){document.documentElement.style.colorScheme=save.settings.theme;document.documentElement.dataset.theme=save.settings.theme;document.documentElement.classList.toggle('reduced-motion',save.settings.reducedMotion)}
+async function initTelegram(){await loadTelegramSdk();tg=getTg();if(!tg)return;try{telegramReady=true;tg.ready();tg.expand();if(tg.disableVerticalSwipes)tg.disableVerticalSwipes();applyTelegramTheme();applySafeArea();tg.onEvent?.('themeChanged',()=>{applyTelegramTheme();applySafeArea()});tg.onEvent?.('viewportChanged',applySafeArea);tg.onEvent?.('safeAreaChanged',applySafeArea);tg.onEvent?.('contentSafeAreaChanged',applySafeArea);tg.BackButton?.onClick(()=>nav('dashboard'));tg.MainButton?.onClick(()=>{if(state.screen==='anki'&&!state.ankiRevealed)toggleAnswer()});setSyncStatus('Telegram Mini App · підключено')}catch{telegramReady=false}}
 
 async function boot(){
-  await loadTelegramSdk();
-  initTelegram();loadLocal();
+  loadLocal();
+  await initTelegram();
+  try{const r=await fetch(WORDS_URL,{cache:'default'});if(!r.ok)throw new Error('words');const data=await r.json();if(!Array.isArray(data))throw new Error('format');words=data}catch{words=[];toast('Не вдалося завантажити словник. Спробуй оновити сторінку.')} 
   await hydrateTelegram();
-  try{const r=await fetch(WORDS_URL,{cache:'default'});if(!r.ok)throw new Error('words');const data=await r.json();if(!Array.isArray(data))throw new Error('format');words=data}catch{words=[];toast('Не вдалося завантажити словник — спробуй оновити сторінку');}
-  buildNav();bind();syncTheme();nav('dashboard');
+  buildNav();bind();setupVoices();syncTheme();renderAll();nav('dashboard');
   if('serviceWorker' in navigator){try{await navigator.serviceWorker.register('./sw.js',{scope:'./'});await navigator.serviceWorker.ready}catch{}}
 }
 boot().catch(()=>toast('GESTALT не зміг запустити модулі. Онови сторінку.'));

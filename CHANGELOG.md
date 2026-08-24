@@ -1,16 +1,28 @@
-# GESTALT Changelog
+# Changelog
 
-## v0.010 — Telegram-first stability + learning quality
-- Fixed Telegram CloudStorage `getItems` handling (Telegram returns a key/value object).
-- Added Telegram SDK dynamic loading with browser fallback and timeout.
-- Added Telegram MainButton integration for Anki and Dice.
-- Added Telegram confirmation dialogs with browser fallback.
-- Improved theme mapping to Telegram theme parameters.
-- Added safer CloudStorage synchronization lock.
-- Reworked SRS review boxes using 1/2/4/7/14/30 day intervals.
-- Added learning-aware word selection for Anki and battle questions.
-- Added German speech button using browser SpeechSynthesis.
-- Hardened service-worker cache and offline behavior.
-- Upgraded bot server to support polling or webhook mode.
-- Added webhook secret validation and Telegram status endpoint.
-- Added autonomous development context.
+## v0.011 — Learning Foundation
+
+### Removed
+- Random Dice.
+- Battle systems.
+- RPG combat/progression.
+- Enemy/wave/boss logic.
+- Game-oriented UI and rewards.
+
+### Added
+- Clean learning-first navigation.
+- Refined Anki/SRS card experience.
+- Card reveal animation.
+- German word pronunciation.
+- German example-sentence pronunciation.
+- Voice selection and speech speed.
+- Optional auto-speak.
+- More pleasant learning guidance and session feedback.
+
+### Improved
+- Mobile-first card layout.
+- Telegram Mini App navigation.
+- Safe-area handling.
+- Offline behavior.
+- Progress/session clarity.
+- Codebase focus and maintainability.
