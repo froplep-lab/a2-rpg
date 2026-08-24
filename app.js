@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.7.3";
+const APP_VERSION = "v1.7.4";
 
 const AudioEngine = {
     ctx: null,
@@ -167,7 +167,7 @@ let cards = [
     { german: "die Wiedereröffnung, -en", grammar: "Nomen", ukrainian: "повторне відкриття", hint: "Знову відчинено", emoji: "🎉", sentence: "Wir feiern heute die Wiedereröffnung des Museums." },
     { german: "an·nehmen", grammar: "Verb", ukrainian: "приймати", hint: "Погодитися на щось", emoji: "🤲", sentence: "Ich werde dieses tolle Jobangebot gerne annehmen." },
     { german: "ab·lehnen", grammar: "Verb", ukrainian: "відхиляти, відмовляти", hint: "Сказати «ні»", emoji: "🙅", sentence: "Leider musste er das Angebot aus persönlichen Gründen ablehnen." },
-    { german: "das Bedauern (Sg.)", grammar: "Nomen", ukrainian: "жаль, шкодування", hint: "Коли про شيء шкодуєш", emoji: "😔", sentence: "Er äußerte großes Bedauern über diesen Fehler." },
+    { german: "das Bedauern (Sg.)", grammar: "Nomen", ukrainian: "жаль, шкодування", hint: "Коли про щось шкодуєш", emoji: "😔", sentence: "Er äußerte großes Bedauern über diesen Fehler." },
     { german: "der Gegensatz, ̈-er", grammar: "Nomen", ukrainian: "протилежність", hint: "Повна протилежність", emoji: "↔️", sentence: "Groß und klein sind ein klarer Gegensatz." },
     { german: "die Wirklichkeit (Sg.)", grammar: "Nomen", ukrainian: "дійсність, реальність", hint: "Те, що є насправді", emoji: "🌍", sentence: "Manchmal ist die Wirklichkeit spannender als ein Traum." },
     { german: "der Keller, -", grammar: "Nomen", ukrainian: "підвал", hint: "Нижній поверх будинку", emoji: "🏚️", sentence: "Wir lagern alte Fahrräder unten im Keller." },
@@ -385,14 +385,26 @@ function speakWord(e) {
     if (card && card.german) speakGermanText(getCleanGermanWord(card.german));
 }
 
-// StreamElements Reliable German Audio TTS Engine
+// Robust German TTS Engine with precise word cleaning
 let currentTtsAudio = null;
 
-function normalizeGermanText(text) {
-    return String(text ?? '')
-        .replace(/[·•]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
+function getCleanGermanWord(raw) {
+    if (!raw) return '';
+    // If it's a full sentence, return as is
+    if (/[.!?]/.test(raw) || (raw.split(' ').length > 4 && !raw.includes('/'))) {
+        return raw;
+    }
+    // Take the first part before any slash or comma (e.g. "das Stadtzentrum, -zentren" -> "das Stadtzentrum")
+    let clean = raw.split('/')[0];
+    clean = clean.split(',')[0];
+    // Remove parentheses, syllable dots, reflexive pronoun 'sich' and articles (der, die, das)
+    clean = clean.replace(/\(.*?\)/g, '');
+    clean = clean.replace(/[·•]/g, '');
+    clean = clean.replace(/\bsich\b/gi, '');
+    clean = clean.replace(/\b(der|die|das)\b/gi, '');
+    // Clean remaining unwanted symbols, leaving only valid German characters and spaces
+    clean = clean.replace(/[^a-zA-ZäöüßÄÖÜ\s-]/g, '');
+    return clean.trim();
 }
 
 function getGermanTtsUrl(text) {
@@ -401,7 +413,7 @@ function getGermanTtsUrl(text) {
 
 function speakGermanText(text) {
     if (AudioEngine.muted) return;
-    const cleanText = normalizeGermanText(text);
+    const cleanText = getCleanGermanWord(text);
     if (!cleanText) return;
 
     try {
@@ -417,7 +429,6 @@ function speakGermanText(text) {
         audio.onended = () => { if (currentTtsAudio === audio) currentTtsAudio = null; };
         audio.onerror = () => {
             if (currentTtsAudio === audio) currentTtsAudio = null;
-            // Fallback to browser SpeechSynthesis if API fails
             if ('speechSynthesis' in window) {
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.lang = 'de-DE';
@@ -428,7 +439,7 @@ function speakGermanText(text) {
         const playPromise = audio.play();
         if (playPromise && typeof playPromise.catch === 'function') {
             playPromise.catch(err => {
-                console.warn('StreamElements audio play blocked/failed:', err);
+                console.warn('TTS play failed:', err);
                 if ('speechSynthesis' in window) {
                     const utterance = new SpeechSynthesisUtterance(cleanText);
                     utterance.lang = 'de-DE';
@@ -443,15 +454,20 @@ function speakGermanText(text) {
 }
 
 function speakCompactWord(text) {
-    const raw = normalizeGermanText(text);
-    if (!raw) return;
-    const looksLikeSentence = /[.!?]/.test(raw) || /\s/.test(raw) && raw.length > 35;
-    const clean = looksLikeSentence ? raw : getCleanGermanWord(raw);
-    speakGermanText(clean);
+    speakGermanText(text);
 }
 
 function speakSentence(sentence) {
-    speakGermanText(sentence);
+    // For full sentences, pass directly without stripping words
+    if (AudioEngine.muted) return;
+    const clean = String(sentence ?? '').replace(/[·•]/g, '').trim();
+    if (!clean) return;
+    try {
+        if (currentTtsAudio) { currentTtsAudio.pause(); currentTtsAudio.currentTime = 0; }
+        const audio = new Audio(`https://api.streamelements.com/kappa/v2/speech?voice=Vicki&text=${encodeURIComponent(clean)}`);
+        currentTtsAudio = audio;
+        audio.play().catch(() => {});
+    } catch (e) {}
 }
 
 function speakMarathonSentence(idx) {
@@ -641,7 +657,7 @@ function renderCompactBlock() {
                     </div>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
-                    <button onclick="speakCompactWord('${w.german}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400 hover:text-pink-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
+                    <button onclick="speakCompactWord('${w.german.replace(/'/g, "\\'")}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400 hover:text-pink-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
                     <button onclick="jumpToCardIndex(${idx})" class="interactive-btn p-2 rounded-xl bg-slate-900 text-pink-400 hover:text-cyan-400"><i class="fa-solid fa-arrow-right text-xs"></i></button>
                 </div>
             </div>
@@ -787,14 +803,6 @@ let currentTrialTarget = null;
 let currentTrialCleanWord = "";
 let trialAssembled = [];
 let trialAvailableModules = [];
-
-function getCleanGermanWord(raw) {
-    let w = raw.split('/')[0];
-    w = w.split(',')[0];
-    w = w.replace(/\(.*?\)/g, '');
-    w = w.replace(/·/g, '');
-    return w.trim();
-}
 
 function getWordModules(cleanWord) {
     let parts = cleanWord.split(' ');
@@ -1117,7 +1125,7 @@ function renderBrowserList(list) {
     container.innerHTML = list.map(w => `
         <div class="bg-slate-950 p-3 rounded-2xl border border-cyan-500/20 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2.5"><span class="text-xl">${w.emoji}</span><div><div class="font-bold text-white">${w.german}</div><div class="text-emerald-400 text-[10px] mt-0.5">${w.ukrainian}</div></div></div>
-            <button onclick="speakCompactWord('${w.german}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
+            <button onclick="speakCompactWord('${w.german.replace(/'/g, "\\'")}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
         </div>
     `).join('');
 }
