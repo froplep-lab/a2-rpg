@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.7.4";
+const APP_VERSION = "v1.7.5";
 
 const AudioEngine = {
     ctx: null,
@@ -385,71 +385,49 @@ function speakWord(e) {
     if (card && card.german) speakGermanText(getCleanGermanWord(card.german));
 }
 
-// Robust German TTS Engine with precise word cleaning
-let currentTtsAudio = null;
-
+// 100% Natural Native Device Neural TTS Engine (Siri / Google Neural Voice)
 function getCleanGermanWord(raw) {
     if (!raw) return '';
-    // If it's a full sentence, return as is
     if (/[.!?]/.test(raw) || (raw.split(' ').length > 4 && !raw.includes('/'))) {
         return raw;
     }
-    // Take the first part before any slash or comma (e.g. "das Stadtzentrum, -zentren" -> "das Stadtzentrum")
     let clean = raw.split('/')[0];
     clean = clean.split(',')[0];
-    // Remove parentheses, syllable dots, reflexive pronoun 'sich' and articles (der, die, das)
     clean = clean.replace(/\(.*?\)/g, '');
     clean = clean.replace(/[·•]/g, '');
     clean = clean.replace(/\bsich\b/gi, '');
     clean = clean.replace(/\b(der|die|das)\b/gi, '');
-    // Clean remaining unwanted symbols, leaving only valid German characters and spaces
     clean = clean.replace(/[^a-zA-ZäöüßÄÖÜ\s-]/g, '');
     return clean.trim();
 }
 
-function getGermanTtsUrl(text) {
-    return `https://api.streamelements.com/kappa/v2/speech?voice=Vicki&text=${encodeURIComponent(text)}`;
-}
-
 function speakGermanText(text) {
     if (AudioEngine.muted) return;
+    if (!('speechSynthesis' in window)) return;
+
     const cleanText = getCleanGermanWord(text);
     if (!cleanText) return;
 
-    try {
-        if (currentTtsAudio) {
-            currentTtsAudio.pause();
-            currentTtsAudio.currentTime = 0;
-        }
-        const audio = new Audio();
-        currentTtsAudio = audio;
-        audio.preload = 'auto';
-        audio.volume = 1;
-        audio.src = getGermanTtsUrl(cleanText);
-        audio.onended = () => { if (currentTtsAudio === audio) currentTtsAudio = null; };
-        audio.onerror = () => {
-            if (currentTtsAudio === audio) currentTtsAudio = null;
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(cleanText);
-                utterance.lang = 'de-DE';
-                utterance.rate = 0.9;
-                window.speechSynthesis.speak(utterance);
-            }
-        };
-        const playPromise = audio.play();
-        if (playPromise && typeof playPromise.catch === 'function') {
-            playPromise.catch(err => {
-                console.warn('TTS play failed:', err);
-                if ('speechSynthesis' in window) {
-                    const utterance = new SpeechSynthesisUtterance(cleanText);
-                    utterance.lang = 'de-DE';
-                    utterance.rate = 0.9;
-                    window.speechSynthesis.speak(utterance);
-                }
-            });
-        }
-    } catch (err) {
-        console.warn('TTS Error:', err);
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.88; // оптимальна швидкість для вивчення
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices() || [];
+    const deVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang.startsWith('de'));
+    if (deVoice) {
+        utterance.voice = deVoice;
+    }
+
+    window.speechSynthesis.speak(utterance);
+}
+
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.getVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
     }
 }
 
@@ -458,16 +436,19 @@ function speakCompactWord(text) {
 }
 
 function speakSentence(sentence) {
-    // For full sentences, pass directly without stripping words
     if (AudioEngine.muted) return;
+    if (!('speechSynthesis' in window)) return;
     const clean = String(sentence ?? '').replace(/[·•]/g, '').trim();
     if (!clean) return;
-    try {
-        if (currentTtsAudio) { currentTtsAudio.pause(); currentTtsAudio.currentTime = 0; }
-        const audio = new Audio(`https://api.streamelements.com/kappa/v2/speech?voice=Vicki&text=${encodeURIComponent(clean)}`);
-        currentTtsAudio = audio;
-        audio.play().catch(() => {});
-    } catch (e) {}
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.9;
+    const voices = window.speechSynthesis.getVoices() || [];
+    const deVoice = voices.find(v => v.lang === 'de-DE' || v.lang.startsWith('de'));
+    if (deVoice) utterance.voice = deVoice;
+    window.speechSynthesis.speak(utterance);
 }
 
 function speakMarathonSentence(idx) {
