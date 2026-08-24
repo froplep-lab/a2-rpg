@@ -38,6 +38,12 @@
             <button onclick="openQuizModal()" aria-label="Бліц-тест" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
                 <i class="fa-solid fa-bolt"></i>
             </button>
+            <button onclick="openArticleTrainerModal()" aria-label="Артиклі" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Тренажер артиклів">
+                <i class="fa-solid fa-book-bookmark"></i>
+            </button>
+            <button onclick="openMatchModal()" aria-label="Меморі" class="interactive-btn glass-panel text-purple-400 px-3 py-2.5 rounded-xl border border-purple-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Меморі дуель слів">
+                <i class="fa-solid fa-puzzle-piece"></i>
+            </button>
             <button onclick="openExamSimulator()" aria-label="Екзамен B1" class="interactive-btn glass-panel text-pink-400 px-3 py-2.5 rounded-xl border border-pink-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
                 <i class="fa-solid fa-graduation-cap"></i>
             </button>
@@ -102,7 +108,7 @@
                     </div>
 
                     <!-- BACK FACE -->
-                    <div class="absolute inset-0 w-full h-full glass-panel border border-emerald-500/40 rounded-3xl p-6 flex flex-col justify-between backface-hidden rotate-y-180">
+                    <div class="absolute inset-0 w-full h-full glass-panel border border-emerald-500/40 rounded-3xl p-6 flex flex-col justify-between backface-hidden [transform:rotateY(180deg)]">
                         <div class="flex justify-between items-center">
                             <span class="text-[10px] font-black px-3 py-1.5 rounded-xl border border-emerald-500/30 text-emerald-300 uppercase tracking-widest bg-slate-900/40">ÜBERSETZUNG UA</span>
                             <span id="card-back-grammar" class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Nomen</span>
@@ -288,6 +294,40 @@
             </div>
             <div id="heroes-modal-content" class="space-y-3"></div>
             <button onclick="closeHeroesModal()" class="interactive-btn w-full bg-amber-500 text-slate-950 py-3.5 rounded-xl font-black text-xs shadow-md mt-4">ЗАКРИТИ ТАВЕРНУ</button>
+        </div>
+    </div>
+
+    <!-- ARTICLE TRAINER MODAL -->
+    <div id="article-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-amber-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(245,158,11,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="article-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-amber-500/20">
+                <h3 class="font-black text-sm text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-book-bookmark mr-2"></i> Тренажер артиклів</h3>
+                <button onclick="closeArticleTrainerModal()" aria-label="Закрити" class="interactive-btn text-amber-400 hover:text-white p-2 bg-amber-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="article-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">der · die · das</div>
+                    <div class="text-sm font-bold text-slate-300">Тренажер рід іменників (Der / Die / Das).</div>
+                    <button onclick="startArticleSession()" class="interactive-btn w-full max-w-xs mx-auto bg-amber-400 text-slate-950 py-3.5 rounded-2xl font-black text-xs shadow-md">ПОЧАТИ ТРЕНУВАННЯ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MATCH MEMORY MODAL -->
+    <div id="match-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-purple-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(168,85,247,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="match-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-purple-500/20">
+                <h3 class="font-black text-sm text-purple-400 uppercase tracking-widest"><i class="fa-solid fa-puzzle-piece mr-2"></i> Меморі-дуель слів</h3>
+                <button onclick="closeMatchModal()" aria-label="Закрити" class="interactive-btn text-purple-400 hover:text-white p-2 bg-purple-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="match-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">🧩</div>
+                    <div class="text-sm font-bold text-slate-300">Меморі-дуель слів!</div>
+                    <button onclick="startMatchSession()" class="interactive-btn w-full max-w-xs mx-auto bg-purple-500 text-white py-3.5 rounded-2xl font-black text-xs shadow-md">ПОЧАТИ ДУЕЛЬ</button>
+                </div>
+            </div>
         </div>
     </div>
 
