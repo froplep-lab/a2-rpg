@@ -1,3 +1,5 @@
+import { checkAchievement } from './achievements.js';
+import { getXpMultiplier } from './heroes.js';
 import { hero } from './state.js';
 import { StorageEngine } from './storage.js';
 import { AudioEngine } from './audio.js';
@@ -11,8 +13,11 @@ export function updateHeroUI() {
     if (streakEl) streakEl.innerText = `${hero.streak}x`;
 }
 
-export function addXp(amount) {
-    hero.xp += amount;
+export function addXp(amount, actionType = 'default') {
+    const multiplier = getXpMultiplier(actionType);
+    const finalAmount = Math.round(amount * multiplier);
+
+    hero.xp += finalAmount;
     const requiredXp = hero.level * 150;
     if (hero.xp >= requiredXp) {
         hero.level++;
@@ -24,7 +29,8 @@ export function addXp(amount) {
         }
         showToast(`🎉 РІВЕНЬ ПІДНЯТО! Новий рівень: ${hero.level}`, 'success');
     } else {
-        showToast(`+${amount} XP отримано`, 'info');
+        const bonusStr = multiplier > 1.0 ? ` (з бонусом героя!)` : '';
+        showToast(`+${finalAmount} XP отримано${bonusStr}`, 'info');
     }
     StorageEngine.set('a2_hero', hero);
     updateHeroUI();
@@ -36,7 +42,8 @@ export function checkDailyLoginBonus() {
     if (lastLogin !== today) {
         StorageEngine.set('a2_last_login', today);
         hero.streak++;
-        addXp(50);
+        addXp(50, 'default');
+        checkAchievement('streak_3', hero.streak, true);
         showToast(`🔥 ЩОДЕННИЙ ВХІД! Стрік: ${hero.streak}x | +50 XP`, 'success');
         StorageEngine.set('a2_hero', hero);
         updateHeroUI();

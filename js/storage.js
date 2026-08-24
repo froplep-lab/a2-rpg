@@ -1,30 +1,38 @@
-export const StorageEngine = {
-    _memoryCache: {},
-    get(key, fallback) {
-        try {
-            const item = localStorage.getItem(key);
-            return item !== null ? JSON.parse(item) : fallback;
-        } catch (e) {
-            return this._memoryCache[key] !== undefined ? this._memoryCache[key] : fallback;
-        }
-    },
-    set(key, value) {
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-            this._memoryCache[key] = value;
-        } catch (e) {
-            this._memoryCache[key] = value;
-        }
-    },
-    clearPrefix(prefix) {
-        try {
-            const keys = Object.keys(localStorage).filter(k => k.startsWith(prefix));
-            keys.forEach(k => localStorage.removeItem(k));
-            Object.keys(this._memoryCache).forEach(k => {
-                if (k.startsWith(prefix)) delete this._memoryCache[k];
-            });
-        } catch (e) {
-            this._memoryCache = {};
-        }
-    }
+const STORAGE_KEY = 'de_b1_rpg_progress_v3';
+
+const DEFAULT_PROGRESS = {
+    xp: 0,
+    level: 1,
+    streak: 1,
+    lastLoginDate: new Date().toDateString(),
+    masteredWords: [],
+    bookmarkedWords: [],
+    completedQuests: {},
+    claimedQuests: {},
+    achievements: {},
+    heroId: 'knight',
+    unlockedHeroes: ['knight'],
+    skills: {},
+    leitnerBoxes: {},
+    settings: { sound: true, volume: 50, speechRate: 0.9, autoSpeak: false }
 };
+
+export function getProgress() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { ...DEFAULT_PROGRESS };
+        const parsed = JSON.parse(raw);
+        return { ...DEFAULT_PROGRESS, ...parsed };
+    } catch (e) {
+        console.warn("[Storage] Error reading progress, fallback to default:", e);
+        return { ...DEFAULT_PROGRESS };
+    }
+}
+
+export function setProgress(data) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+        console.error("[Storage] Failed to save progress (QuotaExceeded or private mode):", e);
+    }
+}

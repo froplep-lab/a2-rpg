@@ -1,3 +1,5 @@
+import { checkAchievement } from './achievements.js';
+import { progressQuest } from './quests.js';
 import { cards, currentIndex, isFlipped, masteredWords, bookmarkedWords, setCurrentIndex, setIsFlipped } from './state.js';
 import { StorageEngine } from './storage.js';
 import { AudioEngine, autoSpeakOnFlip } from './audio.js';
@@ -12,11 +14,11 @@ export function updateCard() {
 
     document.getElementById("card-german").innerText = card.german;
     document.getElementById("card-grammar").innerText = card.grammar;
+    const backGrammar = document.getElementById("card-back-grammar");
+    if (backGrammar) backGrammar.innerText = card.grammar;
     document.getElementById("card-ukrainian").innerText = card.ukrainian;
     document.getElementById("card-hint").innerText = card.hint;
-    document.getElementById("card-sentence").innerText = card.sentence;
     document.getElementById("card-emoji").innerText = card.emoji || '📌';
-    document.getElementById("card-index-indicator").innerText = `${currentIndex + 1} / ${cards.length}`;
 
     const rObj = [{ name: 'звичайний', color: 'border-cyan-500/30 text-cyan-300' }, { name: 'рідкісний', color: 'border-cyan-400 text-cyan-300' }, { name: 'епічний', color: 'border-purple-400 text-purple-300' }, { name: 'легендарний', color: 'border-yellow-400 text-yellow-300' }].find(r => r.name === card.rarity) || { name: 'звичайний', color: 'border-cyan-500/30 text-cyan-300' };
     const badge = document.getElementById("card-rarity-badge");
@@ -47,6 +49,10 @@ export function flipCard(forceReset = false) {
     setIsFlipped(!isFlipped);
     inner.style.transform = isFlipped ? "rotateY(180deg)" : "rotateY(0deg)";
 
+    if (isFlipped) {
+        progressQuest('review_cards', 1);
+    }
+
     if (isFlipped && autoSpeakOnFlip) {
         speakWord();
     }
@@ -56,6 +62,7 @@ export function nextCard() {
     AudioEngine.play('click');
     Haptics.trigger('light');
     setCurrentIndex((currentIndex + 1) % cards.length);
+    progressQuest('review_cards', 1);
     updateCard();
 }
 
@@ -63,6 +70,7 @@ export function prevCard() {
     AudioEngine.play('click');
     Haptics.trigger('light');
     setCurrentIndex((currentIndex - 1 + cards.length) % cards.length);
+    progressQuest('review_cards', 1);
     updateCard();
 }
 
@@ -102,7 +110,10 @@ export function attackEnemyClick() {
     
     AudioEngine.play('success');
     Haptics.trigger('success');
-    addXp(25);
+    addXp(25, 'master');
+    progressQuest('learn_words', 1);
+    checkAchievement('first_hack', 1);
+    checkAchievement('vocab_master', 1);
     updateMasteredUI();
     window._isCompactDirty = true;
     showToast(`⚡ Душу слова "${card.german}" успішно зламано!`, 'success');
@@ -117,6 +128,8 @@ export function toggleBookmark() {
         showToast('Видалено з обраного', 'info');
     } else {
         bookmarkedWords.add(card.german);
+        progressQuest('bookmark_words', 1);
+        checkAchievement('collector', 1);
         showToast('Додано в обране ⭐️', 'success');
     }
     StorageEngine.set('a2_bookmarks', Array.from(bookmarkedWords));
@@ -137,3 +150,18 @@ export function updateCardBookmarkUI() {
         : "interactive-btn glass-panel text-slate-400 hover:text-yellow-400 py-3 px-1 rounded-2xl border border-slate-700 flex flex-col items-center shadow-md";
     btn.innerHTML = `<i class="${isBookmarked ? 'fa-solid' : 'fa-regular'} fa-star text-sm mb-1"></i> <span class="truncate">ЗІРКА</span>`;
 }
+document.addEventListener('keydown', (e) => {
+    // Do not trigger if typing in an input
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+    
+    if (e.key === 'ArrowRight' || e.key === 'd') {
+        nextCard();
+    } else if (e.key === 'ArrowLeft' || e.key === 'a') {
+        prevCard();
+    } else if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        flipCard();
+    } else if (e.key === 's' || e.key === 'S') {
+        speakWord();
+    }
+});
