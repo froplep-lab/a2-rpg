@@ -382,10 +382,13 @@ function startMarathon(type) {
 function speakWord(e) {
     if (e) e.stopPropagation();
     const card = cards[currentIndex];
-    if (card && card.german) speakGermanText(getCleanGermanWord(card.german));
+    if (card && card.german) speakText(card.german);
 }
 
-// ЗАХИСНИЙ МЕХАНІЗМ ВИБОРУ НІМЕЦЬКОГО ГОЛОСУ
+// ---------------------------------------------------------
+// --- НАДІЙНИЙ БЛОК ГЕНЕРАЦІЇ ГОЛОСУ З КЕШУВАННЯМ ТА ОЧИЩЕННЯМ ---
+// ---------------------------------------------------------
+
 let cachedDeVoice = null;
 
 function getGermanVoice() {
@@ -399,16 +402,18 @@ function getGermanVoice() {
 
 if ('speechSynthesis' in window) {
     window.speechSynthesis.getVoices();
-    window.speechSynthesis.onvoiceschanged = () => {
-        cachedDeVoice = null;
-        getGermanVoice();
-    };
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            cachedDeVoice = null;
+            getGermanVoice();
+        };
+    }
 }
 
 function getCleanGermanWord(raw) {
     if (!raw) return '';
     if (/[.!?]/.test(raw) || (raw.split(' ').length > 4 && !raw.includes('/'))) {
-        return raw;
+        return raw; // Залишаємо речення як є
     }
     let clean = raw.split('/')[0];
     clean = clean.split(',')[0];
@@ -420,18 +425,18 @@ function getCleanGermanWord(raw) {
     return clean.trim();
 }
 
-function speakGermanText(text) {
-    if (AudioEngine.muted) return;
+function speakCompactWord(text) {
+    if (AudioEngine && AudioEngine.muted) return;
     if (!('speechSynthesis' in window)) return;
 
     const cleanText = getCleanGermanWord(text);
     if (!cleanText) return;
 
-    window.speechSynthesis.cancel();
+    window.speechSynthesis.cancel(); // Зупиняємо попередні аудіо потоки
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'de-DE';
-    utterance.rate = 0.86; 
+    utterance.rate = 0.86; // Оптимальна швидкість для розбору
     utterance.pitch = 1.0;
 
     const voice = getGermanVoice();
@@ -439,7 +444,7 @@ function speakGermanText(text) {
         utterance.voice = voice;
         window.speechSynthesis.speak(utterance);
     } else {
-        // Якщо голоси ще не ініціалізувалися, даємо крихітну затримку на завантаження
+        // Якщо голоси ще не ініціалізувалися, даємо крихітну затримку
         setTimeout(() => {
             const delayedVoice = getGermanVoice();
             if (delayedVoice) utterance.voice = delayedVoice;
@@ -448,40 +453,26 @@ function speakGermanText(text) {
     }
 }
 
-function speakCompactWord(text) {
-    speakGermanText(text);
+// Замінюємо стару не надійну функцію speakText на виклик нової
+function speakText(text) {
+    speakCompactWord(text);
 }
 
-function speakSentence(sentence) {
-    if (AudioEngine.muted) return;
-    if (!('speechSynthesis' in window)) return;
-    const clean = String(sentence ?? '').replace(/[·•]/g, '').trim();
-    if (!clean) return;
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(clean);
-    utterance.lang = 'de-DE';
-    utterance.rate = 0.9;
-    
-    const voice = getGermanVoice();
-    if (voice) utterance.voice = voice;
-    
-    window.speechSynthesis.speak(utterance);
-}
-
+// Сумісність для інших кнопок
 function speakMarathonSentence(idx) {
     const w = marathonWords[idx];
     if (w && w.sentence) {
-        speakSentence(w.sentence);
+        speakText(w.sentence);
     }
 }
 
 function speakTrialWord() {
     const card = currentTrialTarget;
     if (card && card.german) {
-        speakCompactWord(card.german);
+        speakText(card.german);
     }
 }
+// ---------------------------------------------------------
 
 function renderMarathonQuestion() {
     const content = document.getElementById("marathon-content");
@@ -511,7 +502,7 @@ function renderMarathonQuestion() {
         <div class="bg-slate-950 p-5 rounded-2xl border border-cyan-500/30 mb-5 relative shadow-inner">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs uppercase tracking-wider text-cyan-400 font-bold">Приклад у реченні:</span>
-                <button onclick="speakMarathonSentence(${marathonIndex})" class="interactive-btn bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 px-3 py-1.5 rounded-xl border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5">
+                <button onclick="speakText('${w.sentence.replace(/'/g, "\\'")}')" class="interactive-btn bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 px-3 py-1.5 rounded-xl border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5">
                     <i class="fa-solid fa-volume-high text-pink-400"></i> Речення
                 </button>
             </div>
@@ -522,7 +513,7 @@ function renderMarathonQuestion() {
             <div class="flex items-center gap-2 bg-slate-950 px-4 py-2 rounded-xl border border-pink-500/40 shadow-sm">
                 <span class="text-base font-black text-pink-400">${w.german}</span>
                 <span class="text-xl">${w.emoji}</span>
-                <button onclick="speakCompactWord('${w.german}')" class="interactive-btn text-cyan-400 hover:text-white p-1.5 rounded-lg bg-slate-900 ml-1"><i class="fa-solid fa-volume-high text-sm"></i></button>
+                <button onclick="speakText('${w.german.replace(/'/g, "\\'")}')" class="interactive-btn text-cyan-400 hover:text-white p-1.5 rounded-lg bg-slate-900 ml-1"><i class="fa-solid fa-volume-high text-sm"></i></button>
             </div>
         </div>
         <div class="space-y-3">
@@ -579,7 +570,7 @@ function renderBossQuestion() {
         <div class="text-sm text-pink-400 font-bold mb-3">⚡ Атака БОСА: Хвиля ${bossStep} / 3</div>
         <div class="bg-slate-950 p-4 rounded-2xl border border-pink-500/30 mb-4 flex items-center justify-between">
             <span class="text-base font-black text-white">Вірусне слово: <span class="text-cyan-400">${w.german}</span> ${w.emoji}</span>
-            <button onclick="speakCompactWord('${w.german}')" class="interactive-btn bg-pink-500/20 text-pink-300 px-3 py-1 rounded-xl text-xs font-bold"><i class="fa-solid fa-volume-high"></i></button>
+            <button onclick="speakText('${w.german.replace(/'/g, "\\'")}')" class="interactive-btn bg-pink-500/20 text-pink-300 px-3 py-1 rounded-xl text-xs font-bold"><i class="fa-solid fa-volume-high"></i></button>
         </div>
         <div class="space-y-3">
             ${opts.map((opt, i) => `
@@ -656,7 +647,7 @@ function renderCompactBlock() {
                     </div>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
-                    <button onclick="speakCompactWord('${w.german.replace(/'/g, "\\'")}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400 hover:text-pink-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
+                    <button onclick="speakText('${w.german.replace(/'/g, "\\'")}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400 hover:text-pink-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
                     <button onclick="jumpToCardIndex(${idx})" class="interactive-btn p-2 rounded-xl bg-slate-900 text-pink-400 hover:text-cyan-400"><i class="fa-solid fa-arrow-right text-xs"></i></button>
                 </div>
             </div>
@@ -1124,7 +1115,7 @@ function renderBrowserList(list) {
     container.innerHTML = list.map(w => `
         <div class="bg-slate-950 p-3 rounded-2xl border border-cyan-500/20 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2.5"><span class="text-xl">${w.emoji}</span><div><div class="font-bold text-white">${w.german}</div><div class="text-emerald-400 text-[10px] mt-0.5">${w.ukrainian}</div></div></div>
-            <button onclick="speakCompactWord('${w.german.replace(/'/g, "\\'")}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
+            <button onclick="speakText('${w.german.replace(/'/g, "\\'")}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
         </div>
     `).join('');
 }
