@@ -1,220 +1,9 @@
-const APP_VERSION = "v1.7.0";
-
-// ---------- Safe storage helpers ----------
-function readStorage(key, fallback) {
-    try {
-        const value = localStorage.getItem(key);
-        return value === null ? fallback : value;
-    } catch (error) {
-        console.warn(`localStorage read failed for ${key}:`, error);
-        return fallback;
-    }
-}
-
-function readJsonStorage(key, fallback) {
-    try {
-        const raw = localStorage.getItem(key);
-        if (raw === null) return fallback;
-        const parsed = JSON.parse(raw);
-        return parsed ?? fallback;
-    } catch (error) {
-        console.warn(`Invalid localStorage JSON for ${key}; using default.`, error);
-        return fallback;
-    }
-}
-
-function writeStorage(key, value) {
-    try {
-        localStorage.setItem(key, value);
-        return true;
-    } catch (error) {
-        console.warn(`localStorage write failed for ${key}:`, error);
-        return false;
-    }
-}
-
-function escapeHtml(value) {
-    return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-function escapeSingleQuotedJs(value) {
-    return String(value ?? '')
-        .replace(/\\/g, '\\\\')
-        .replace(/'/g, "\\'")
-        .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '\\r');
-}
-
-// ---------- German speech engine ----------
-const GermanSpeech = {
-    currentAudio: null,
-    voices: [],
-    voiceLoadPromise: null,
-
-    refreshVoices() {
-        if (!('speechSynthesis' in window)) return [];
-        try {
-            this.voices = window.speechSynthesis.getVoices() || [];
-        } catch (error) {
-            this.voices = [];
-            console.warn('Could not read speech voices:', error);
-        }
-        return this.voices;
-    },
-
-    waitForVoices(timeoutMs = 1200) {
-        this.refreshVoices();
-        if (this.voices.length > 0) return Promise.resolve(this.voices);
-        if (!('speechSynthesis' in window)) return Promise.resolve([]);
-
-        if (!this.voiceLoadPromise) {
-            this.voiceLoadPromise = new Promise(resolve => {
-                let done = false;
-                const finish = () => {
-                    if (done) return;
-                    done = true;
-                    clearTimeout(timer);
-                    window.speechSynthesis.removeEventListener('voiceschanged', finish);
-                    this.refreshVoices();
-                    this.voiceLoadPromise = null;
-                    resolve(this.voices);
-                };
-                const timer = setTimeout(finish, timeoutMs);
-                window.speechSynthesis.addEventListener('voiceschanged', finish, { once: true });
-            });
-        }
-        return this.voiceLoadPromise;
-    },
-
-    getGermanVoice() {
-        const voices = this.refreshVoices();
-        if (!voices.length) return null;
-
-        const german = voices.filter(voice => /^de(?:-|$)/i.test(voice.lang || ''));
-        if (!german.length) return null;
-
-        // Prefer a German (Germany) voice. Never intentionally use a Russian/Ukrainian voice.
-        const preferredPatterns = [
-            v => /^de-DE$/i.test(v.lang || ''),
-            v => /^de-DE-/i.test(v.lang || ''),
-            v => /german.*germany|deutsch.*deutschland/i.test(v.name || ''),
-            v => /^de-AT$/i.test(v.lang || ''),
-            v => /^de-CH$/i.test(v.lang || ''),
-            v => /^de$/i.test(v.lang || '')
-        ];
-
-        for (const matcher of preferredPatterns) {
-            const found = german.find(matcher);
-            if (found) return found;
-        }
-        return german[0];
-    },
-
-    stop() {
-        try {
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-        } catch (error) {
-            console.warn('Could not stop speech synthesis:', error);
-        }
-        if (this.currentAudio) {
-            try {
-                this.currentAudio.pause();
-                this.currentAudio.currentTime = 0;
-            } catch (_) {}
-            this.currentAudio = null;
-        }
-    },
-
-    speakWithBrowser(text, voice) {
-        if (!('speechSynthesis' in window) || !voice) return false;
-        try {
-            this.stop();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = voice.lang || 'de-DE';
-            utterance.voice = voice;
-            utterance.rate = 0.92;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            utterance.onerror = event => {
-                console.warn('German speech synthesis error:', event?.error || event);
-            };
-            window.speechSynthesis.speak(utterance);
-            return true;
-        } catch (error) {
-            console.warn('Browser speech synthesis failed:', error);
-            return false;
-        }
-    },
-
-    async speakRemote(text) {
-        const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q=${encodeURIComponent(text)}`;
-        try {
-            this.stop();
-            const audio = new Audio(url);
-            audio.preload = 'auto';
-            audio.volume = 1;
-            this.currentAudio = audio;
-            audio.onended = () => {
-                if (this.currentAudio === audio) this.currentAudio = null;
-            };
-            audio.onerror = () => {
-                console.warn('Remote German TTS audio failed.');
-                if (this.currentAudio === audio) this.currentAudio = null;
-            };
-            try {
-                await audio.play();
-                return true;
-            } catch (error) {
-                console.warn('Remote German TTS playback failed:', error);
-                if (this.currentAudio === audio) this.currentAudio = null;
-                return false;
-            }
-        } catch (error) {
-            console.warn('Could not create remote TTS audio:', error);
-            return false;
-        }
-    },
-
-    async speak(text) {
-        const clean = String(text ?? '').trim();
-        if (!clean) return false;
-        if (typeof AudioEngine !== 'undefined' && AudioEngine.muted) return false;
-
-        this.stop();
-        const voice = this.getGermanVoice();
-        if (voice) return this.speakWithBrowser(clean, voice);
-
-        // Try remote German TTS immediately so a click can authorize playback.
-        if (await this.speakRemote(clean)) return true;
-
-        // If remote playback is blocked/unavailable, wait for browser voices.
-        await this.waitForVoices();
-        const delayedVoice = this.getGermanVoice();
-        if (delayedVoice && this.speakWithBrowser(clean, delayedVoice)) return true;
-
-        return false;
-    }
-};
-
-if ('speechSynthesis' in window) {
-    try {
-        GermanSpeech.refreshVoices();
-        window.speechSynthesis.addEventListener('voiceschanged', () => GermanSpeech.refreshVoices());
-    } catch (error) {
-        console.warn('Could not initialize speech voices:', error);
-    }
-}
+const APP_VERSION = "v1.7.1";
 
 const AudioEngine = {
     ctx: null,
-    muted: readStorage('a2_muted', 'false') === 'true',
-    volumes: readJsonStorage('a2_volumes', { click: 0.5, hit: 0.5, success: 0.5, error: 0.5 }),
+    muted: localStorage.getItem('a2_muted') === 'true',
+    volumes: JSON.parse(localStorage.getItem('a2_volumes') || '{"click":0.5,"hit":0.5,"success":0.5,"error":0.5}'),
     init() {
         if (!this.ctx) {
             const AC = window.AudioContext || window.webkitAudioContext;
@@ -289,18 +78,18 @@ if (tg) {
 let hero = {
     telegramId: tgUser ? tgUser.id : 'local_pc_user',
     name: tgUser ? (tgUser.first_name || 'Cyber-Runner') : 'Микола',
-    level: Math.max(1, parseInt(readStorage('a2_hero_level', '1'), 10) || 1),
-    xp: Math.max(0, parseInt(readStorage('a2_hero_xp', '0'), 10) || 0),
-    maxXp: Math.max(100, parseInt(readStorage('a2_hero_max_xp', '100'), 10) || 100),
-    cls: readStorage('a2_hero_class', 'Cyber-Runner'),
-    weapon: readStorage('a2_weapon', 'neural_blade'),
-    visor: readStorage('a2_visor', 'false') === 'true',
-    pet: readStorage('a2_pet', '🐲'),
+    level: parseInt(localStorage.getItem('a2_hero_level') || '1'),
+    xp: parseInt(localStorage.getItem('a2_hero_xp') || '0'),
+    maxXp: 100,
+    cls: localStorage.getItem('a2_hero_class') || 'Cyber-Runner',
+    weapon: localStorage.getItem('a2_weapon') || 'neural_blade',
+    visor: localStorage.getItem('a2_visor') === 'true',
+    pet: localStorage.getItem('a2_pet') || '🐲',
     streak: 0
 };
 
-const storedTrophies = readJsonStorage('a2_trophies', []);
-let trophies = Array.isArray(storedTrophies) ? storedTrophies : [];
+hero.maxXp = 100 + Math.max(0, hero.level - 1) * 50;
+let trophies = JSON.parse(localStorage.getItem('a2_trophies') || '[]');
 let envIndex = 0;
 const environments = [
     { name: "🌆 Cyber Berlin", class: "bg-slate-900", border: "border-cyan-500/30" },
@@ -317,7 +106,7 @@ const rarities = [
 
 const slangPhrases = ["Bock drauf!", "Digga, läuft!", "Sheesh!", "Ehrenmann!", "Voll cringe!"];
 
-const ORIGINAL_CARDS = [
+let cards = [
     { german: "der Witwer, - / die Witwe, -n", grammar: "Nomen", ukrainian: "вдівець / вдова", hint: "Людина, яка втратила чоловіка/дружину", emoji: "🥀", sentence: "Nach dem Tod seiner Frau wurde er zum Witwer." },
     { german: "das Stadtzentrum, -zentren", grammar: "Nomen", ukrainian: "центр міста", hint: "Серце міста", emoji: "🏙️", sentence: "Wir treffen uns heute Nachmittag direkt im Stadtzentrum." },
     { german: "der Stadtrand, ̈-er", grammar: "Nomen", ukrainian: "околиця міста", hint: "Периферія, ближче до природи", emoji: "🏡", sentence: "Sie wohnen ruhig am Stadtrand von Berlin." },
@@ -404,15 +193,13 @@ const ORIGINAL_CARDS = [
     { german: "geheim", grammar: "Adjektiv", ukrainian: "секретний, таємний", hint: "Нікому не відомий", emoji: "🔒", sentence: "Diese Information muss unbedingt geheim bleiben." }
 ];
 
-let cards = [...ORIGINAL_CARDS];
-
 let currentIndex = 0;
 let isFlipped = false;
 let isShuffled = false;
 let maxBossHp = 3000;
-let wordHpMap = (readJsonStorage('a2_word_hp_map', {}) && typeof readJsonStorage('a2_word_hp_map', {}) === 'object') ? readJsonStorage('a2_word_hp_map', {}) : {};
-let masteredWords = new Set(Array.isArray(readJsonStorage('a2_mastered_thema8', [])) ? readJsonStorage('a2_mastered_thema8', []) : []);
-let claimedAchievements = Array.isArray(readJsonStorage('a2_achievements', [])) ? readJsonStorage('a2_achievements', []) : [];
+let wordHpMap = JSON.parse(localStorage.getItem('a2_word_hp_map') || '{}');
+let masteredWords = new Set(JSON.parse(localStorage.getItem('a2_mastered_thema8') || '[]'));
+let claimedAchievements = JSON.parse(localStorage.getItem('a2_achievements') || '[]');
 
 function getCurrentWordHp() {
     const card = cards[currentIndex];
@@ -426,7 +213,7 @@ function setCurrentWordHp(val) {
     const card = cards[currentIndex];
     if (!card) return;
     wordHpMap[card.german] = Math.max(0, val);
-    writeStorage('a2_word_hp_map', JSON.stringify(wordHpMap));
+    localStorage.setItem('a2_word_hp_map', JSON.stringify(wordHpMap));
 }
 
 function updateHeroUI() {
@@ -477,58 +264,44 @@ function updateHeroUI() {
     updateAchievementsCount();
     renderInlineTrophies();
 
-    writeStorage('a2_hero_level', String(hero.level));
-    writeStorage('a2_hero_xp', String(hero.xp));
-    writeStorage('a2_hero_class', hero.cls);
-    writeStorage('a2_weapon', hero.weapon);
-    writeStorage('a2_visor', String(hero.visor));
-    writeStorage('a2_pet', hero.pet);
-    writeStorage('a2_hero_max_xp', String(hero.maxXp));
+    localStorage.setItem('a2_hero_level', hero.level);
+    localStorage.setItem('a2_hero_xp', hero.xp);
+    localStorage.setItem('a2_hero_class', hero.cls);
+    localStorage.setItem('a2_weapon', hero.weapon);
+    localStorage.setItem('a2_visor', hero.visor);
+    localStorage.setItem('a2_pet', hero.pet);
 }
 
 function addXp(amount, emoji, word) {
-    const safeAmount = Math.max(0, Number(amount) || 0);
-    hero.streak = Math.max(0, hero.streak) + 1;
+    hero.streak++;
     if (hero.streak > 1 && hero.streak % 3 === 0) AudioEngine.play('success');
-
     const mult = Math.min(5, 1 + Math.floor(hero.streak / 3));
-    hero.xp += safeAmount * mult;
+    hero.xp += amount * mult;
 
     if (emoji) {
         const rand = Math.random();
-        let acc = 0;
-        let chosen = rarities[0];
-        for (const rarity of rarities) {
-            acc += rarity.chance;
-            if (rand <= acc) {
-                chosen = rarity;
-                break;
-            }
-        }
-        if (!trophies.some(t => t.emoji === emoji && t.german === word)) {
+        let acc = 0, chosen = rarities[0];
+        for (let r of rarities) { acc += r.chance; if (rand <= acc) { chosen = r; break; } }
+        if (!trophies.find(t => t.emoji === emoji && t.german === word)) {
             trophies.push({ emoji, rarity: chosen.name, german: word });
-            writeStorage('a2_trophies', JSON.stringify(trophies));
+            localStorage.setItem('a2_trophies', JSON.stringify(trophies));
         }
     }
 
-    // Handle large XP rewards correctly — potentially multiple levels at once.
     let leveledUp = false;
     while (hero.xp >= hero.maxXp) {
         hero.xp -= hero.maxXp;
-        hero.level += 1;
+        hero.level++;
         hero.maxXp += 50;
         leveledUp = true;
     }
-
     if (leveledUp) {
         AudioEngine.play('levelup');
-        if (typeof confetti === 'function') {
-            confetti({ particleCount: 120, spread: 130, origin: { y: 0.5 } });
-        }
+        if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 130, origin: { y: 0.5 } });
     }
-
     updateHeroUI();
 }
+
 function cycleEnvironment() {
     AudioEngine.play('click');
     envIndex = (envIndex + 1) % environments.length;
@@ -558,7 +331,7 @@ function attackEnemyClick() {
 
     if (hp === 0) {
         masteredWords.add(card.german);
-        writeStorage('a2_mastered_thema8', JSON.stringify([...masteredWords]));
+        localStorage.setItem('a2_mastered_thema8', JSON.stringify([...masteredWords]));
         if (enemyBox) enemyBox.classList.add("anim-soul");
         addXp(35, card.emoji, card.german);
         if (typeof confetti === 'function') confetti({ particleCount: 80, spread: 100, origin: { y: 0.5 } });
@@ -609,30 +382,164 @@ function startMarathon(type) {
 function speakWord(e) {
     if (e) e.stopPropagation();
     const card = cards[currentIndex];
-    if (card?.german) speakCompactWord(card.german);
+    if (card && card.german) speakGermanText(getCleanGermanWord(card.german));
 }
 
-function getCleanGermanWord(raw) {
-    let word = String(raw ?? '').trim();
-    word = word.split('/')[0];
-    word = word.split(',')[0];
-    word = word.replace(/\(.*?\)/g, '').replace(/·/g, '');
-    return word.replace(/\s+/g, ' ').trim();
+// Robust German speech engine.
+// 1) Tries browser TTS with an explicitly selected German voice.
+// 2) If no German voice is available or browser TTS fails, falls back to remote German TTS audio.
+// 3) Never passes Ukrainian/Russian UI text to the voice engine.
+let germanVoices = [];
+let currentTtsAudio = null;
+
+function refreshGermanVoices() {
+    if (!('speechSynthesis' in window)) return [];
+    const voices = window.speechSynthesis.getVoices() || [];
+    germanVoices = voices.filter(v => /^de(?:-|$)/i.test(v.lang || ''));
+    return germanVoices;
 }
 
-function isKnownGermanEntry(text) {
-    return cards.some(card => card.german === text);
+function getBestGermanVoice() {
+    const voices = refreshGermanVoices();
+    if (!voices.length) return null;
+    const preferred = voices.find(v => /^de-DE$/i.test(v.lang))
+        || voices.find(v => /Google.*Deutsch|Google.*German/i.test(v.name))
+        || voices.find(v => /Microsoft.*German|Microsoft.*Deutsch/i.test(v.name))
+        || voices[0];
+    return preferred || null;
 }
 
-async function speakCompactWord(wordStr) {
-    if (!wordStr) return false;
-    const raw = String(wordStr).trim();
-    // Dictionary entries need cleanup (article + word, plural notation, variants).
-    // Sentences must be spoken in full, including commas and punctuation.
-    const cleanText = isKnownGermanEntry(raw) ? getCleanGermanWord(raw) : raw.replace(/·/g, '').trim();
-    if (!cleanText) return false;
-    return GermanSpeech.speak(cleanText);
+if ('speechSynthesis' in window) {
+    refreshGermanVoices();
+    window.speechSynthesis.addEventListener?.('voiceschanged', refreshGermanVoices);
 }
+
+function normalizeGermanText(text) {
+    return String(text ?? '')
+        .replace(/[·•]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function getGermanTtsUrl(text) {
+    return `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=de&client=tw-ob`;
+}
+
+function playRemoteGermanAudio(text) {
+    return new Promise((resolve, reject) => {
+        try {
+            if (currentTtsAudio) {
+                currentTtsAudio.pause();
+                currentTtsAudio.currentTime = 0;
+            }
+            const audio = new Audio();
+            currentTtsAudio = audio;
+            audio.preload = 'auto';
+            audio.volume = 1;
+            audio.src = getGermanTtsUrl(text);
+            audio.onended = () => { if (currentTtsAudio === audio) currentTtsAudio = null; };
+            audio.onerror = () => { if (currentTtsAudio === audio) currentTtsAudio = null; reject(new Error('Remote German TTS failed')); };
+            const playPromise = audio.play();
+            if (playPromise && typeof playPromise.then === 'function') {
+                playPromise.then(() => resolve(true)).catch(reject);
+            } else {
+                resolve(true);
+            }
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
+
+function speakWithBrowserGermanVoice(text) {
+    return new Promise((resolve, reject) => {
+        if (!('speechSynthesis' in window)) {
+            reject(new Error('speechSynthesis unavailable'));
+            return;
+        }
+        try {
+            const synth = window.speechSynthesis;
+            synth.cancel();
+            const voice = getBestGermanVoice();
+            // Do not use a non-German system voice as a fallback.
+            if (!voice) {
+                reject(new Error('No German voice installed'));
+                return;
+            }
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = voice.lang || 'de-DE';
+            utterance.voice = voice;
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            utterance.onend = () => resolve(true);
+            utterance.onerror = (event) => reject(new Error(event?.error || 'German TTS error'));
+            // Some mobile browsers populate voices asynchronously. Retry once after a short delay.
+            synth.speak(utterance);
+            setTimeout(() => {
+                if (synth.speaking || synth.pending) resolve(true);
+            }, 120);
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
+
+async function speakGermanText(text) {
+    if (AudioEngine.muted) return;
+    const cleanText = normalizeGermanText(text);
+    if (!cleanText) return;
+
+    // Prefer the local German voice because it works better inside Telegram's WebView.
+    try {
+        await speakWithBrowserGermanVoice(cleanText);
+        return;
+    } catch (localErr) {
+        console.warn('German browser voice unavailable:', localErr);
+    }
+
+    // Remote German TTS fallback.
+    try {
+        await playRemoteGermanAudio(cleanText);
+        return;
+    } catch (remoteErr) {
+        console.warn('German remote TTS unavailable:', remoteErr);
+    }
+
+    // Last attempt: ask the browser again after voices have had time to load.
+    if ('speechSynthesis' in window) {
+        setTimeout(() => {
+            try {
+                const voice = getBestGermanVoice();
+                if (!voice) return;
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = voice.lang || 'de-DE';
+                utterance.voice = voice;
+                utterance.rate = 0.9;
+                utterance.volume = 1;
+                window.speechSynthesis.speak(utterance);
+            } catch (err) {
+                console.warn('Final German TTS attempt failed:', err);
+            }
+        }, 150);
+    }
+}
+
+// Backwards-compatible public name used by the existing HTML/JS buttons.
+function speakCompactWord(text) {
+    const raw = normalizeGermanText(text);
+    if (!raw) return;
+    // If a full sentence is passed, keep the whole sentence. For dictionary entries, strip article/variants.
+    const looksLikeSentence = /[.!?]/.test(raw) || /\s/.test(raw) && raw.length > 35;
+    const clean = looksLikeSentence ? raw : getCleanGermanWord(raw);
+    speakGermanText(clean);
+}
+
+function speakSentence(sentence) {
+    speakGermanText(sentence);
+}
+
 function speakTrialWord() {
     const card = currentTrialTarget;
     if (card && card.german) {
@@ -649,24 +556,16 @@ function renderMarathonQuestion() {
             <div class="text-center py-6 space-y-4">
                 <div class="text-6xl animate-bounce">👑</div>
                 <div class="text-lg font-bold text-pink-400">РЕЙД-БОСС: BUG-LORD 9000</div>
-                <div class="text-sm text-slate-300 max-w-md mx-auto">Ти пройшов усі слова! Знищ фінальний вірус системи, щоб завершити місію.</div>
+                <div class="text-sm text-slate-300 max-w-md mx-auto">Ти пройшов усі 84 слова! Знищ фінальний вірус системи, щоб завершити місію.</div>
                 <button onclick="startRaidBossFinal()" class="interactive-btn w-full max-w-sm mx-auto bg-pink-500 hover:bg-pink-400 text-slate-950 py-3.5 rounded-2xl font-bold text-sm shadow-lg block">АТАКУВАТИ БОСА</button>
             </div>
         `;
         return;
     }
-
     const w = marathonWords[marathonIndex];
     const others = cards.filter(c => c.german !== w.german).sort(() => Math.random() - 0.5);
-    const opts = shuffleInPlace([
-        w.ukrainian,
-        others[0]?.ukrainian || "Помилка 1",
-        others[1]?.ukrainian || "Помилка 2",
-        others[2]?.ukrainian || "Помилка 3"
-    ]);
+    const opts = [w.ukrainian, others[0]?.ukrainian || "Falsch 1", others[1]?.ukrainian || "Falsch 2", others[2]?.ukrainian || "Falsch 3"].sort(() => Math.random() - 0.5);
     const correctIdx = opts.indexOf(w.ukrainian);
-    const germanArg = escapeSingleQuotedJs(w.german);
-    const sentenceArg = escapeSingleQuotedJs(w.sentence);
 
     content.innerHTML = `
         <div class="flex justify-between items-center text-xs sm:text-sm text-slate-400 mb-4 px-1">
@@ -676,30 +575,31 @@ function renderMarathonQuestion() {
         <div class="bg-slate-950 p-5 rounded-2xl border border-cyan-500/30 mb-5 relative shadow-inner">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs uppercase tracking-wider text-cyan-400 font-bold">Приклад у реченні:</span>
-                <button onclick='speakCompactWord("${sentenceArg}")' class="interactive-btn bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 px-3 py-1.5 rounded-xl border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5">
+                <button onclick="speakSentence(${JSON.stringify(w.sentence)})" class="interactive-btn bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 px-3 py-1.5 rounded-xl border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5">
                     <i class="fa-solid fa-volume-high text-pink-400"></i> Речення
                 </button>
             </div>
-            <div class="text-lg sm:text-xl font-bold text-white italic leading-relaxed py-1">"${escapeHtml(w.sentence)}"</div>
+            <div class="text-lg sm:text-xl font-bold text-white italic leading-relaxed py-1">"${w.sentence}"</div>
         </div>
         <div class="flex items-center justify-center gap-3 mb-5 flex-wrap">
             <span class="text-base font-bold text-slate-300">Визнач значення слова:</span>
             <div class="flex items-center gap-2 bg-slate-950 px-4 py-2 rounded-xl border border-pink-500/40 shadow-sm">
-                <span class="text-base font-black text-pink-400">${escapeHtml(w.german)}</span>
-                <span class="text-xl">${escapeHtml(w.emoji)}</span>
-                <button onclick='speakCompactWord("${germanArg}")' class="interactive-btn text-cyan-400 hover:text-white p-1.5 rounded-lg bg-slate-900 ml-1"><i class="fa-solid fa-volume-high text-sm"></i></button>
+                <span class="text-base font-black text-pink-400">${w.german}</span>
+                <span class="text-xl">${w.emoji}</span>
+                <button onclick="speakCompactWord('${w.german}')" class="interactive-btn text-cyan-400 hover:text-white p-1.5 rounded-lg bg-slate-900 ml-1"><i class="fa-solid fa-volume-high text-sm"></i></button>
             </div>
         </div>
         <div class="space-y-3">
             ${opts.map((opt, i) => `
                 <button onclick="checkMarathonAnswer(${i}, ${correctIdx})" class="marathon-btn interactive-btn w-full bg-slate-950 hover:bg-slate-900 text-slate-200 p-4 rounded-2xl border border-cyan-500/20 text-left text-sm font-semibold shadow-sm flex items-center justify-between group">
-                    <span><span class="text-cyan-400 font-bold mr-2">${String.fromCharCode(65+i)})</span> ${escapeHtml(opt)}</span>
+                    <span><span class="text-cyan-400 font-bold mr-2">${String.fromCharCode(65+i)})</span> ${opt}</span>
                     <i class="fa-solid fa-chevron-right text-xs text-slate-600 group-hover:text-cyan-400"></i>
                 </button>
             `).join('')}
         </div>
     `;
 }
+
 function checkMarathonAnswer(selected, correct) {
     const btns = document.querySelectorAll(".marathon-btn");
     btns.forEach((btn, idx) => {
@@ -734,31 +634,25 @@ function renderBossQuestion() {
         `;
         return;
     }
-
     const w = cards[Math.floor(Math.random() * cards.length)];
     const others = cards.filter(c => c.german !== w.german).sort(() => Math.random() - 0.5);
-    const opts = shuffleInPlace([
-        w.ukrainian,
-        others[0]?.ukrainian || "Помилка 1",
-        others[1]?.ukrainian || "Помилка 2",
-        others[2]?.ukrainian || "Помилка 3"
-    ]);
+    const opts = [w.ukrainian, others[0]?.ukrainian || "Falsch 1", others[1]?.ukrainian || "Falsch 2", others[2]?.ukrainian || "Falsch 3"].sort(() => Math.random() - 0.5);
     const correctIdx = opts.indexOf(w.ukrainian);
-    const germanArg = escapeSingleQuotedJs(w.german);
 
     content.innerHTML = `
         <div class="text-sm text-pink-400 font-bold mb-3">⚡ Атака БОСА: Хвиля ${bossStep} / 3</div>
         <div class="bg-slate-950 p-4 rounded-2xl border border-pink-500/30 mb-4 flex items-center justify-between">
-            <span class="text-base font-black text-white">Вірусне слово: <span class="text-cyan-400">${escapeHtml(w.german)}</span> ${escapeHtml(w.emoji)}</span>
-            <button onclick='speakCompactWord("${germanArg}")' class="interactive-btn bg-pink-500/20 text-pink-300 px-3 py-1 rounded-xl text-xs font-bold"><i class="fa-solid fa-volume-high"></i></button>
+            <span class="text-base font-black text-white">Вірусне слово: <span class="text-cyan-400">${w.german}</span> ${w.emoji}</span>
+            <button onclick="speakCompactWord('${w.german}')" class="interactive-btn bg-pink-500/20 text-pink-300 px-3 py-1 rounded-xl text-xs font-bold"><i class="fa-solid fa-volume-high"></i></button>
         </div>
         <div class="space-y-3">
             ${opts.map((opt, i) => `
-                <button onclick="checkBossAnswer(${i}, ${correctIdx})" class="boss-btn interactive-btn w-full bg-slate-950 hover:bg-slate-800 text-slate-200 p-4 rounded-2xl border border-pink-500/30 text-left text-sm font-semibold">${String.fromCharCode(65+i)}) ${escapeHtml(opt)}</button>
+                <button onclick="checkBossAnswer(${i}, ${correctIdx})" class="boss-btn interactive-btn w-full bg-slate-950 hover:bg-slate-800 text-slate-200 p-4 rounded-2xl border border-pink-500/30 text-left text-sm font-semibold">${String.fromCharCode(65+i)}) ${opt}</button>
             `).join('')}
         </div>
     `;
 }
+
 function checkBossAnswer(selected, correct) {
     const btns = document.querySelectorAll(".boss-btn");
     btns.forEach((btn, idx) => {
@@ -813,31 +707,30 @@ function renderCompactBlock() {
     if (countEl) countEl.innerText = `${cards.length} слів`;
     const grid = document.getElementById("compact-words-grid");
     if (!grid) return;
-
+    
     grid.innerHTML = cards.map((w, idx) => {
         const isM = masteredWords.has(w.german);
-        const germanArg = escapeSingleQuotedJs(w.german);
         return `
             <div class="bg-slate-950 p-3 rounded-2xl border ${isM ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-cyan-500/20'} flex items-center justify-between gap-3 text-xs">
                 <div class="flex items-center gap-2.5 truncate">
-                    <span class="text-xl">${escapeHtml(w.emoji)}</span>
+                    <span class="text-xl">${w.emoji}</span>
                     <div class="truncate">
-                        <div class="font-bold text-white truncate">${escapeHtml(w.german)} ${isM ? '✓' : ''}</div>
-                        <div class="text-[10px] text-emerald-400 truncate mt-0.5">${escapeHtml(w.ukrainian)}</div>
+                        <div class="font-bold text-white truncate">${w.german} ${isM ? '✓' : ''}</div>
+                        <div class="text-[10px] text-emerald-400 truncate mt-0.5">${w.ukrainian}</div>
                     </div>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
-                    <button onclick='speakCompactWord("${germanArg}")' class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400 hover:text-pink-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
+                    <button onclick="speakCompactWord('${w.german}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400 hover:text-pink-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
                     <button onclick="jumpToCardIndex(${idx})" class="interactive-btn p-2 rounded-xl bg-slate-900 text-pink-400 hover:text-cyan-400"><i class="fa-solid fa-arrow-right text-xs"></i></button>
                 </div>
             </div>
         `;
     }).join('');
 }
+
 function jumpToCardIndex(idx) { currentIndex = idx; switchDisplayMode('game'); updateCard(); }
 
 function updateCard() {
-    if (!cards.length) return;
     if (!cards[currentIndex]) currentIndex = 0;
     const card = cards[currentIndex];
     const cardInner = document.getElementById("card-inner");
@@ -868,6 +761,13 @@ function flipCard() {
 function nextCard() { AudioEngine.play('click'); currentIndex = (currentIndex + 1) % cards.length; updateCard(); }
 function prevCard() { AudioEngine.play('click'); currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCard(); }
 
+window.addEventListener('error', (event) => {
+    console.error('[A2 RPG] Runtime error:', event.error || event.message);
+});
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('[A2 RPG] Promise error:', event.reason);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', () => {
         AudioEngine.init();
@@ -882,38 +782,22 @@ document.addEventListener('DOMContentLoaded', () => {
             masterBtn.innerText = "ВИМКНЕНО";
         }
     }
+    syncSoundUI();
+    refreshGermanVoices();
     updateHeroUI();
     updateCard();
     renderCompactBlock();
 });
 
-function shuffleInPlace(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
 function toggleShuffle() {
     AudioEngine.play('click');
     isShuffled = !isShuffled;
-
     if (isShuffled) {
-        shuffleInPlace(cards);
-    } else {
-        cards = [...ORIGINAL_CARDS];
-    }
-
-    const btn = document.getElementById('shuffle-btn');
-    if (btn) {
-        btn.classList.toggle('text-cyan-400', isShuffled);
-        btn.classList.toggle('border-cyan-400/50', isShuffled);
-    }
-
-    currentIndex = 0;
-    updateCard();
-    renderCompactBlock();
+        cards.sort(() => Math.random() - 0.5);
+        const btn = document.getElementById("shuffle-btn");
+        if (btn) btn.classList.add("text-cyan-400", "border-cyan-400/50");
+    } else { window.location.reload(); }
+    currentIndex = 0; updateCard(); renderCompactBlock();
 }
 
 const achievementsList = [
@@ -944,7 +828,7 @@ function openAchievementsModal() {
                         <div class="text-[10px] text-slate-400 mt-0.5">${ach.desc} (+${ach.reward} XP)</div>
                     </div>
                     <div>
-                        ${isClaimed ? '<span class="text-[10px] text-slate-500 font-bold">Отримано</span>' : (isDone ? `<button onclick="claimAchievement('${ach.id}')" class="interactive-btn bg-yellow-500 text-slate-950 px-3 py-1.5 rounded-xl font-bold text-[10px]">Забрати</button>` : '<span class="text-[10px] text-slate-500">В процесі</span>')}
+                        ${isClaimed ? '<span class="text-[10px] text-slate-500 font-bold">Отримано</span>' : (isDone ? `<button onclick="claimAchievement('${ach.id}', ${ach.reward})" class="interactive-btn bg-yellow-500 text-slate-950 px-3 py-1.5 rounded-xl font-bold text-[10px]">Забрати</button>` : '<span class="text-[10px] text-slate-500">В процесі</span>')}
                     </div>
                 </div>
             `;
@@ -964,23 +848,32 @@ function closeAchievementsModal() {
     if (box) box.classList.add("scale-95");
 }
 
-function claimAchievement(id) {
-    const achievement = achievementsList.find(a => a.id === id);
-    if (!achievement) return;
-    if (claimedAchievements.includes(id)) return;
-    if (!achievement.check()) return;
-
+function claimAchievement(id, reward) {
     AudioEngine.play('success');
     claimedAchievements.push(id);
-    writeStorage('a2_achievements', JSON.stringify(claimedAchievements));
-    addXp(achievement.reward, null, null);
-    openAchievementsModal();
+    localStorage.setItem('a2_achievements', JSON.stringify(claimedAchievements));
+    hero.xp += reward;
+    while (hero.xp >= hero.maxXp) {
+        hero.xp -= hero.maxXp;
+        hero.level++;
+        hero.maxXp += 50;
+    }
+    updateHeroUI(); openAchievementsModal();
     if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 80, origin: { y: 0.5 } });
 }
+
 let currentTrialTarget = null;
 let currentTrialCleanWord = "";
 let trialAssembled = [];
 let trialAvailableModules = [];
+
+function getCleanGermanWord(raw) {
+    let w = raw.split('/')[0];
+    w = w.split(',')[0];
+    w = w.replace(/\(.*?\)/g, '');
+    w = w.replace(/·/g, '');
+    return w.trim();
+}
 
 function getWordModules(cleanWord) {
     let parts = cleanWord.split(' ');
@@ -1046,20 +939,8 @@ function renderTrialUI() {
     `).join('');
 }
 
-function appendToAssembly(index) {
-    if (!Number.isInteger(index) || index < 0 || index >= trialAvailableModules.length) return;
-    AudioEngine.play('click');
-    const [module] = trialAvailableModules.splice(index, 1);
-    if (module !== undefined) trialAssembled.push(module);
-    renderTrialUI();
-}
-function removeFromAssembly(index) {
-    if (!Number.isInteger(index) || index < 0 || index >= trialAssembled.length) return;
-    AudioEngine.play('click');
-    const [module] = trialAssembled.splice(index, 1);
-    if (module !== undefined) trialAvailableModules.push(module);
-    renderTrialUI();
-}
+function appendToAssembly(index) { AudioEngine.play('click'); trialAssembled.push(trialAvailableModules.splice(index, 1)[0]); renderTrialUI(); }
+function removeFromAssembly(index) { AudioEngine.play('click'); trialAvailableModules.push(trialAssembled.splice(index, 1)[0]); renderTrialUI(); }
 
 function resetTrialAssembly() {
     AudioEngine.play('click');
@@ -1081,7 +962,7 @@ function verifyTrialAssembly() {
     if (assembledStr === targetStr) {
         AudioEngine.play('success');
         masteredWords.add(currentTrialTarget.german);
-        writeStorage('a2_mastered_thema8', JSON.stringify([...masteredWords]));
+        localStorage.setItem('a2_mastered_thema8', JSON.stringify([...masteredWords]));
         setCurrentWordHp(0);
         updateEnemyHpUI();
         addXp(50, currentTrialTarget.emoji, currentTrialTarget.german);
@@ -1131,19 +1012,13 @@ function renderInlineTrophies() {
         grid.innerHTML = `<div class="col-span-full text-slate-400 text-[10px] text-center py-0.5">Сховище порожнє. Зламуй душі!</div>`;
         return;
     }
-
     grid.innerHTML = trophies.map(t => {
-        const found = cards.find(w => w.emoji === t.emoji && w.german === t.german) || {
-            german: t.german,
-            ukrainian: "Невідомо",
-            grammar: "Nomen"
-        };
+        const found = cards.find(w => w.emoji === t.emoji && w.german === t.german) || { german: t.german, ukrainian: "Невідомо", grammar: "Nomen" };
         const rObj = rarities.find(r => r.name === t.rarity) || rarities[0];
-        const args = [found.german, found.ukrainian, found.grammar, t.emoji, t.rarity]
-            .map(escapeSingleQuotedJs);
-        return `<div onclick='inspectSoul("${args.join('", "')}")' class="interactive-btn bg-slate-900 p-1.5 rounded-lg border ${rObj.color.split(' ')[1]} text-xl flex items-center justify-center cursor-pointer">${escapeHtml(t.emoji)}</div>`;
+        return `<div onclick="inspectSoul('${found.german}', '${found.ukrainian}', '${found.grammar}', '${t.emoji}', '${t.rarity}')" class="interactive-btn bg-slate-900 p-1.5 rounded-lg border ${rObj.color.split(' ')[1]} text-xl flex items-center justify-center cursor-pointer">${t.emoji}</div>`;
     }).join('');
 }
+
 function inspectSoul(ger, ukr, gram, emoji, rarity) {
     AudioEngine.play('click');
     const el1 = document.getElementById("inspect-emoji"); if (el1) el1.innerText = emoji;
@@ -1184,6 +1059,46 @@ function closeInventoryModal() {
     if (modal) modal.classList.add("opacity-0", "pointer-events-none");
     const box = document.getElementById("inventory-box");
     if (box) box.classList.add("scale-95");
+}
+
+function openSoundSettingsModal() {
+    AudioEngine.play('click');
+    syncSoundUI();
+    const modal = document.getElementById('sound-settings-modal');
+    const box = document.getElementById('sound-box');
+    if (modal) modal.classList.remove('opacity-0', 'pointer-events-none');
+    if (box) box.classList.remove('scale-95');
+}
+
+function closeSoundSettingsModal() {
+    const modal = document.getElementById('sound-settings-modal');
+    const box = document.getElementById('sound-box');
+    if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+    if (box) box.classList.add('scale-95');
+}
+
+function syncSoundUI() {
+    const icon = document.getElementById('sound-icon');
+    const masterBtn = document.getElementById('sound-master-btn');
+    const muted = AudioEngine.muted;
+    if (icon) icon.className = muted ? 'fa-solid fa-volume-xmark text-pink-500' : 'fa-solid fa-volume-high text-cyan-400';
+    if (masterBtn) {
+        masterBtn.textContent = muted ? 'ВИМКНЕНО' : 'УВІМКНЕНО';
+        masterBtn.className = muted
+            ? 'interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-slate-800 text-slate-400'
+            : 'interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-cyan-500 text-slate-950';
+    }
+}
+
+function toggleAudioMute() {
+    AudioEngine.muted = !AudioEngine.muted;
+    localStorage.setItem('a2_muted', String(AudioEngine.muted));
+    if (!AudioEngine.muted) AudioEngine.init();
+    syncSoundUI();
+}
+
+function resetAllProgress() {
+    resetProgress();
 }
 
 function resetProgress() {
@@ -1278,37 +1193,10 @@ function filterWords() {
 function renderBrowserList(list) {
     const container = document.getElementById("browser-list");
     if (!container) return;
-    const safeList = Array.isArray(list) ? list : [];
-    container.innerHTML = safeList.map(w => {
-        const germanArg = escapeSingleQuotedJs(w.german);
-        return `
-            <div class="bg-slate-950 p-3 rounded-2xl border border-cyan-500/20 flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2.5"><span class="text-xl">${escapeHtml(w.emoji)}</span><div><div class="font-bold text-white">${escapeHtml(w.german)}</div><div class="text-emerald-400 text-[10px] mt-0.5">${escapeHtml(w.ukrainian)}</div></div></div>
-                <button onclick='speakCompactWord("${germanArg}")' class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
-            </div>
-        `;
-    }).join('');
-}
-
-// ---------- Public sound controls (safe for inline HTML handlers) ----------
-function toggleSound() {
-    AudioEngine.muted = !AudioEngine.muted;
-    writeStorage('a2_muted', String(AudioEngine.muted));
-    const icon = document.getElementById('sound-icon');
-    const masterBtn = document.getElementById('sound-master-btn');
-    if (icon) icon.className = AudioEngine.muted ? 'fa-solid fa-volume-xmark text-pink-500' : 'fa-solid fa-volume-high text-cyan-400';
-    if (masterBtn) {
-        masterBtn.className = AudioEngine.muted
-            ? 'interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-slate-800 text-slate-400'
-            : 'interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30';
-        masterBtn.innerText = AudioEngine.muted ? 'ВИМКНЕНО' : 'ЗВУК';
-    }
-    if (!AudioEngine.muted) {
-        AudioEngine.init();
-        AudioEngine.play('click');
-    }
-}
-
-function stopGermanSpeech() {
-    GermanSpeech.stop();
+    container.innerHTML = list.map(w => `
+        <div class="bg-slate-950 p-3 rounded-2xl border border-cyan-500/20 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2.5"><span class="text-xl">${w.emoji}</span><div><div class="font-bold text-white">${w.german}</div><div class="text-emerald-400 text-[10px] mt-0.5">${w.ukrainian}</div></div></div>
+            <button onclick="speakCompactWord('${w.german}')" class="interactive-btn p-2 rounded-xl bg-slate-900 text-cyan-400"><i class="fa-solid fa-volume-high text-xs"></i></button>
+        </div>
+    `).join('');
 }
