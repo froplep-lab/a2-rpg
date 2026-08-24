@@ -1,6 +1,6 @@
 [
   {
-    "german": "der Witwer, - / die Witwe, -n",
+    "german": "der Witwer / die Witwe",
     "grammar": "Nomen",
     "ukrainian": "вдівець / вдова",
     "hint": "Людина, яка втратила дружину/чоловіка",
@@ -9,7 +9,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "das Stadtzentrum, -zentren",
+    "german": "das Stadtzentrum",
     "grammar": "Nomen, n.",
     "ukrainian": "центр міста",
     "hint": "Головна частина міста",
@@ -18,7 +18,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Stadtrand, ̈-er",
+    "german": "der Stadtrand",
     "grammar": "Nomen, m.",
     "ukrainian": "околиця міста",
     "hint": "Периферія міста",
@@ -27,7 +27,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "sich wohl·fühlen",
+    "german": "sich wohlfühlen",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "почуватися добре",
     "hint": "Бути в гарному затишному стані",
@@ -36,7 +36,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "aus·schlafen",
+    "german": "ausschlafen",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "виспатися",
     "hint": "Добре відпочити уві сні",
@@ -45,7 +45,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Disko, -s / die Disko(thek), -en",
+    "german": "die Disko / die Diskothek",
     "grammar": "Nomen",
     "ukrainian": "дискотека",
     "hint": "Місце для танців і музики",
@@ -54,7 +54,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "aus·gehen",
+    "german": "ausgehen",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "виходити (у світ, на прогулянку)",
     "hint": "Проводити вечір поза домом",
@@ -72,7 +72,7 @@
     "rarity": "епічний"
   },
   {
-    "german": "die Wäsche (Sg.)",
+    "german": "die Wäsche",
     "grammar": "Nomen, Sg.",
     "ukrainian": "білизна, прання",
     "hint": "Одяг для прання",
@@ -90,7 +90,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "das Ding, -e",
+    "german": "das Ding",
     "grammar": "Nomen, n.",
     "ukrainian": "річ, штука",
     "hint": "Будь-який предмет",
@@ -99,7 +99,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der See, -n",
+    "german": "der See",
     "grammar": "Nomen, m.",
     "ukrainian": "озеро",
     "hint": "Велика водойма суші",
@@ -117,7 +117,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Radtour, -en",
+    "german": "die Radtour",
     "grammar": "Nomen, f.",
     "ukrainian": "велосипедний тур",
     "hint": "Поїздка на велосипедах",
@@ -126,7 +126,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Flohmarkt, ̈-e",
+    "german": "der Flohmarkt",
     "grammar": "Nomen, m.",
     "ukrainian": "блошиний ринок",
     "hint": "Ярмарок вживаних речей",
@@ -153,7 +153,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "weg·legen",
+    "german": "weglegen",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "відкласти",
     "hint": "Покласти кудись осторонь",
@@ -162,7 +162,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Vorschlag, ̈-e",
+    "german": "der Vorschlag",
     "grammar": "Nomen, m.",
     "ukrainian": "пропозиція",
     "hint": "Ідея для обговорення",
@@ -171,7 +171,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Rundfahrt, -en",
+    "german": "die Rundfahrt",
     "grammar": "Nomen, f.",
     "ukrainian": "поїдкa, тур, екскурсія",
     "hint": "Оглядова поїздка",
@@ -216,7 +216,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Bar, -s",
+    "german": "die Bar",
     "grammar": "Nomen, f.",
     "ukrainian": "бар",
     "hint": "Заклад з напоями",
@@ -225,7 +225,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Kultur (Sg.)",
+    "german": "die Kultur",
     "grammar": "Nomen, Sg.",
     "ukrainian": "культура",
     "hint": "Сукупність духовних цінностей",
@@ -234,7 +234,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Natur (Sg.)",
+    "german": "die Natur",
     "grammar": "Nomen, Sg.",
     "ukrainian": "природа",
     "hint": "Провідний природний світ",
@@ -243,7 +243,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Oper, -n",
+    "german": "die Oper",
     "grammar": "Nomen, f.",
     "ukrainian": "опера",
     "hint": "Музично-театральний жанр",
@@ -270,7 +270,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Eintrittskarte, -n",
+    "german": "die Eintrittskarte",
     "grammar": "Nomen, f.",
     "ukrainian": "квиток",
     "hint": "Пропуск на захід",
@@ -279,7 +279,7 @@
     "rarity": "легендарний"
   },
   {
-    "german": "der Sender, -",
+    "german": "der Sender",
     "grammar": "Nomen, m.",
     "ukrainian": "канал (ТБ / радіо)",
     "hint": "Телерадіокомпанія",
@@ -288,7 +288,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "mit·spielen",
+    "german": "mitspielen",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "грати разом",
     "hint": "Брати участь у грі",
@@ -297,7 +297,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "das Fremdwort, ̈-er",
+    "german": "das Fremdwort",
     "grammar": "Nomen, n.",
     "ukrainian": "запозичене / іноземне слово",
     "hint": "Слово з іншої мови",
@@ -306,7 +306,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Veranstaltungskalender, -",
+    "german": "der Veranstaltungskalender",
     "grammar": "Nomen, m.",
     "ukrainian": "календар подій",
     "hint": "Розклад заходів",
@@ -315,7 +315,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Treffpunkt, -e",
+    "german": "der Treffpunkt",
     "grammar": "Nomen, m.",
     "ukrainian": "місце зустрічі",
     "hint": "Пункт збору",
@@ -324,7 +324,7 @@
     "rarity": "епічний"
   },
   {
-    "german": "das Rathaus, ̈-er",
+    "german": "das Rathaus",
     "grammar": "Nomen, n.",
     "ukrainian": "ратуша",
     "hint": "Будівля міської влади",
@@ -333,7 +333,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Teilnahme, -n",
+    "german": "die Teilnahme",
     "grammar": "Nomen, f.",
     "ukrainian": "участь",
     "hint": "Долучення до чогось",
@@ -351,7 +351,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "auf·treten",
+    "german": "auftreten",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "виступати",
     "hint": "Давати концерт чи промову",
@@ -360,7 +360,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Bahn, -en",
+    "german": "die Bahn",
     "grammar": "Nomen, f.",
     "ukrainian": "потяг, залізниця",
     "hint": "Залізничний транспорт",
@@ -378,7 +378,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Volkshochschule, -n",
+    "german": "die Volkshochschule",
     "grammar": "Nomen, f.",
     "ukrainian": "народна школа (VHS)",
     "hint": "Заклад для дорослої освіти",
@@ -387,7 +387,7 @@
     "rarity": "епічний"
   },
   {
-    "german": "die Politik (Sg.)",
+    "german": "die Politik",
     "grammar": "Nomen, Sg.",
     "ukrainian": "політика",
     "hint": "Державна діяльність",
@@ -396,7 +396,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Fotografie, -n",
+    "german": "die Fotografie",
     "grammar": "Nomen, f.",
     "ukrainian": "фотографія",
     "hint": "Мистецтво знімків",
@@ -405,7 +405,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Literatur (Sg.)",
+    "german": "die Literatur",
     "grammar": "Nomen, Sg.",
     "ukrainian": "література",
     "hint": "Письмовство",
@@ -423,7 +423,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "sich ein·schreiben",
+    "german": "sich einschreiben",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "записуватися (на курс)",
     "hint": "Реєструватися",
@@ -432,7 +432,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "das Semester, -",
+    "german": "das Semester",
     "grammar": "Nomen, n.",
     "ukrainian": "семестр",
     "hint": "Навчальний період у виші",
@@ -441,7 +441,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Wanderung, -en",
+    "german": "die Wanderung",
     "grammar": "Nomen, f.",
     "ukrainian": "похід, піша прогулянка",
     "hint": "Прогулянка природою",
@@ -450,7 +450,7 @@
     "rarity": "епічний"
   },
   {
-    "german": "das Programm, -e",
+    "german": "das Programm",
     "grammar": "Nomen, n.",
     "ukrainian": "програма",
     "hint": "План дій",
@@ -459,7 +459,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Fan, -s",
+    "german": "der Fan",
     "grammar": "Nomen, m.",
     "ukrainian": "фанат",
     "hint": "Прихильник чогось",
@@ -468,7 +468,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Künstler, - / die Künstlerin, -nen",
+    "german": "der Künstler / die Künstlerin",
     "grammar": "Nomen",
     "ukrainian": "артист / митець",
     "hint": "Творча людина",
@@ -477,7 +477,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "Europa (Sg.)",
+    "german": "Europa",
     "grammar": "Adjektiv / Adverb",
     "ukrainian": "Європа",
     "hint": "Континент",
@@ -486,7 +486,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "das Spielzeug, -e",
+    "german": "das Spielzeug",
     "grammar": "Nomen, n.",
     "ukrainian": "іграшка",
     "hint": "Предмет для гри",
@@ -495,7 +495,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die CD, -s",
+    "german": "die CD",
     "grammar": "Nomen, f.",
     "ukrainian": "диск",
     "hint": "Носій аудіозапису",
@@ -504,7 +504,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Renovierung, -en",
+    "german": "die Renovierung",
     "grammar": "Nomen, f.",
     "ukrainian": "косметичний ремонт",
     "hint": "Оновлення приміщення",
@@ -513,7 +513,7 @@
     "rarity": "епічний"
   },
   {
-    "german": "die Wiedereröffnung, -en",
+    "german": "die Wiedereröffnung",
     "grammar": "Nomen, f.",
     "ukrainian": "повторне відкриття",
     "hint": "Відкриття після перерви",
@@ -522,7 +522,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "an·nehmen",
+    "german": "annehmen",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "приймати",
     "hint": "Погоджуватися або брати",
@@ -531,7 +531,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "ab·lehnen",
+    "german": "ablehnen",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "відхиляти, відмовляти",
     "hint": "Не погоджуватися",
@@ -540,7 +540,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "das Bedauern (Sg.)",
+    "german": "das Bedauern",
     "grammar": "Nomen, Sg.",
     "ukrainian": "жаль, шкодування",
     "hint": "Висловлення жалю",
@@ -549,7 +549,7 @@
     "rarity": "легендарний"
   },
   {
-    "german": "der Gegensatz, ̈-e",
+    "german": "der Gegensatz",
     "grammar": "Nomen, m.",
     "ukrainian": "протилежність",
     "hint": "Протилежне поняття",
@@ -558,7 +558,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Wirklichkeit (Sg.)",
+    "german": "die Wirklichkeit",
     "grammar": "Nomen, Sg.",
     "ukrainian": "дійсність, реальність",
     "hint": "Справжній стан речей",
@@ -567,7 +567,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Keller, -",
+    "german": "der Keller",
     "grammar": "Nomen, m.",
     "ukrainian": "підвал",
     "hint": "Нижній поверх будинку",
@@ -594,7 +594,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Ärger (Sg.)",
+    "german": "der Ärger",
     "grammar": "Nomen, Sg.",
     "ukrainian": "злість, неприємності",
     "hint": "Роздратування чи проблеми",
@@ -603,7 +603,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Polizei (Sg.)",
+    "german": "die Polizei",
     "grammar": "Nomen, Sg.",
     "ukrainian": "поліція",
     "hint": "Охоронці правопорядку",
@@ -621,7 +621,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Region, -en",
+    "german": "die Region",
     "grammar": "Nomen, f.",
     "ukrainian": "регіон",
     "hint": "Певна територія",
@@ -630,7 +630,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "der Kanal, ̈-e",
+    "german": "der Kanal",
     "grammar": "Nomen, m.",
     "ukrainian": "канал",
     "hint": "Штучна чи природна протока / ТБ",
@@ -639,7 +639,7 @@
     "rarity": "епічний"
   },
   {
-    "german": "die Werbung (Sg.)",
+    "german": "die Werbung",
     "grammar": "Nomen, Sg.",
     "ukrainian": "реклама",
     "hint": "Комерційні оголошення",
@@ -648,7 +648,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "die Presse (Sg.)",
+    "german": "die Presse",
     "grammar": "Nomen, Sg.",
     "ukrainian": "преса",
     "hint": "ЗМІ, газети та журнали",
@@ -657,7 +657,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Bestellung, -en",
+    "german": "die Bestellung",
     "grammar": "Nomen, f.",
     "ukrainian": "замовлення",
     "hint": "Замовлення товарів",
@@ -684,7 +684,7 @@
     "rarity": "легендарний"
   },
   {
-    "german": "der Anhang, ̈-e",
+    "german": "der Anhang",
     "grammar": "Nomen, m.",
     "ukrainian": "додаток, вкладення (у листі)",
     "hint": "Файл у листі",
@@ -693,7 +693,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Quelle, -n",
+    "german": "die Quelle",
     "grammar": "Nomen, f.",
     "ukrainian": "джерело",
     "hint": "Початок води або інформації",
@@ -702,7 +702,7 @@
     "rarity": "епічний"
   },
   {
-    "german": "herunter·laden",
+    "german": "herunterladen",
     "grammar": "Verb (reflexiv / trennbar)",
     "ukrainian": "завантажувати (з інтернету)",
     "hint": "Зберігати файл з мережі",
@@ -711,7 +711,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "das Passwort, ̈-er",
+    "german": "das Passwort",
     "grammar": "Nomen, n.",
     "ukrainian": "пароль",
     "hint": "Кодове слово для доступу",
@@ -729,7 +729,7 @@
     "rarity": "рідкісний"
   },
   {
-    "german": "die Bankverbindung, -en",
+    "german": "die Bankverbindung",
     "grammar": "Nomen, f.",
     "ukrainian": "банківські реквізити",
     "hint": "Дані банківського рахунку",
@@ -738,7 +738,7 @@
     "rarity": "звичайний"
   },
   {
-    "german": "das Girokonto, -konten",
+    "german": "das Girokonto",
     "grammar": "Nomen, n.",
     "ukrainian": "поточний рахунок",
     "hint": "Ранку в банку для розрахунків",
