@@ -380,7 +380,7 @@ function speakWord(e) {
     }
 }
 
-// УНІВЕРСАЛЬНИЙ ТА НАДІЙНИЙ РУШІЙ ОЗВУЧКИ (робить на iOS, Android та ПК)
+// ВИПРАВЛЕНИЙ ТА ПОКРАЩЕНИЙ РУШІЙ ОЗВУЧКИ (гарантовано знаходить німецьку мову в Telegram / Webview)
 function speakCompactWord(wordStr) {
     if (!wordStr) return;
     let cleanText = wordStr.split('/')[0];
@@ -396,7 +396,13 @@ function speakCompactWord(wordStr) {
             utterance.rate = 0.95;
             
             const voices = window.speechSynthesis.getVoices();
-            const germanVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang.startsWith('de'));
+            // Гнучкий пошук німецького голосу за кодом або назвою
+            const germanVoice = voices.find(v => 
+                v.lang.toLowerCase().includes('de') || 
+                v.name.toLowerCase().includes('german') || 
+                v.name.toLowerCase().includes('deutsch')
+            );
+            
             if (germanVoice) {
                 utterance.voice = germanVoice;
             }
@@ -649,7 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const icon = document.getElementById("sound-icon");
         if (icon) icon.className = "fa-solid fa-volume-xmark text-pink-500";
         const masterBtn = document.getElementById("sound-master-btn");
-        if (masterbtn) {
+        if (masterBtn) {
             masterBtn.className = "interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-slate-800 text-slate-400";
             masterBtn.innerText = "ВИМКНЕНО";
         }
