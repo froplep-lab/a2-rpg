@@ -1,3 +1,10 @@
+import './speedrush.js';
+import './profile.js';
+import './leitner.js';
+import './sentence.js';
+import './boss.js';
+import './skills.js';
+import './dictation.js';
 import './match.js';
 import './articles.js';
 import { initHeroes } from './heroes.js';

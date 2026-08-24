@@ -26,6 +26,9 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
+            <button onclick="openProfileModal()" aria-label="Профіль" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Профіль та звання агента">
+                <i class="fa-solid fa-id-badge"></i>
+            </button>
             <button onclick="openStatsModal()" aria-label="Статистика" class="interactive-btn glass-panel text-cyan-300 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
                 <i class="fa-solid fa-chart-pie text-cyan-400"></i>
             </button>
@@ -35,6 +38,9 @@
             <button onclick="openHeroesModal()" aria-label="Таверна" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
                 <i class="fa-solid fa-beer-mug-empty"></i>
             </button>
+            <button onclick="openSkillTreeModal()" aria-label="Навички" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Дерево навичок">
+                <i class="fa-solid fa-brain"></i>
+            </button>
             <button onclick="openQuizModal()" aria-label="Бліц-тест" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
                 <i class="fa-solid fa-bolt"></i>
             </button>
@@ -43,6 +49,21 @@
             </button>
             <button onclick="openMatchModal()" aria-label="Меморі" class="interactive-btn glass-panel text-purple-400 px-3 py-2.5 rounded-xl border border-purple-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Меморі дуель слів">
                 <i class="fa-solid fa-puzzle-piece"></i>
+            </button>
+            <button onclick="openDictationModal()" aria-label="Диктант" class="interactive-btn glass-panel text-emerald-400 px-3 py-2.5 rounded-xl border border-emerald-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Аудіо-диктант">
+                <i class="fa-solid fa-headphones"></i>
+            </button>
+            <button onclick="openBossRaidModal()" aria-label="Бос-рейд" class="interactive-btn glass-panel text-pink-400 px-3 py-2.5 rounded-xl border border-pink-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Битва з Кібер-Босом">
+                <i class="fa-solid fa-dragon"></i>
+            </button>
+            <button onclick="openSentenceModal()" aria-label="Конструктор" class="interactive-btn glass-panel text-purple-400 px-3 py-2.5 rounded-xl border border-purple-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Конструктор речень B1">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </button>
+            <button onclick="openLeitnerModal()" aria-label="Лейтнер" class="interactive-btn glass-panel text-cyan-400 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Інтервальне повторення (Лейтнер)">
+                <i class="fa-solid fa-layer-group"></i>
+            </button>
+            <button onclick="openSpeedRushModal()" aria-label="Раш" class="interactive-btn glass-panel text-amber-400 px-3 py-2.5 rounded-xl border border-amber-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800" title="Артикль-Раш (Speed Rush)">
+                <i class="fa-solid fa-bolt-lightning"></i>
             </button>
             <button onclick="openExamSimulator()" aria-label="Екзамен B1" class="interactive-btn glass-panel text-pink-400 px-3 py-2.5 rounded-xl border border-pink-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
                 <i class="fa-solid fa-graduation-cap"></i>
@@ -326,6 +347,119 @@
                     <div class="text-4xl">🧩</div>
                     <div class="text-sm font-bold text-slate-300">Меморі-дуель слів!</div>
                     <button onclick="startMatchSession()" class="interactive-btn w-full max-w-xs mx-auto bg-purple-500 text-white py-3.5 rounded-2xl font-black text-xs shadow-md">ПОЧАТИ ДУЕЛЬ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO DICTATION MODAL -->
+    <div id="dictation-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-emerald-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(16,185,129,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="dictation-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-emerald-500/20">
+                <h3 class="font-black text-sm text-emerald-400 uppercase tracking-widest"><i class="fa-solid fa-headphones mr-2"></i> Аудіо-диктант</h3>
+                <button onclick="closeDictationModal()" aria-label="Закрити" class="interactive-btn text-emerald-400 hover:text-white p-2 bg-emerald-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="dictation-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">🎧</div>
+                    <div class="text-sm font-bold text-slate-300">Аудіо-диктант!</div>
+                    <button onclick="startDictationSession()" class="interactive-btn w-full max-w-xs mx-auto bg-emerald-500 text-slate-950 py-3.5 rounded-2xl font-black text-xs shadow-md">ПОЧАТИ ДИКТАНТ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AGENT SKILL TREE MODAL -->
+    <div id="skills-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="skills-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
+                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-brain mr-2"></i> Дерево навичок агента</h3>
+                <button onclick="closeSkillTreeModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="skills-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">🧠</div>
+                    <div class="text-sm font-bold text-slate-300">Дерево навичок агента</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CYBER BOSS RAID MODAL -->
+    <div id="boss-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-pink-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(236,72,153,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="boss-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-pink-500/20">
+                <h3 class="font-black text-sm text-pink-400 uppercase tracking-widest"><i class="fa-solid fa-dragon mr-2"></i> Кібер-Бос Рейд</h3>
+                <button onclick="closeBossRaidModal()" aria-label="Закрити" class="interactive-btn text-pink-400 hover:text-white p-2 bg-pink-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="boss-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">👾</div>
+                    <div class="text-sm font-bold text-slate-300">Кібер-Бос рейд!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SENTENCE BUILDER MODAL -->
+    <div id="sentence-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-purple-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(168,85,247,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="sentence-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-purple-500/20">
+                <h3 class="font-black text-sm text-purple-400 uppercase tracking-widest"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Конструктор речень B1</h3>
+                <button onclick="closeSentenceModal()" aria-label="Закрити" class="interactive-btn text-purple-400 hover:text-white p-2 bg-purple-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="sentence-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">🧩</div>
+                    <div class="text-sm font-bold text-slate-300">Конструктор речень B1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEITNER BOX MODAL -->
+    <div id="leitner-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="leitner-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
+                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-layer-group mr-2"></i> Інтервальне повторення (Лейтнер)</h3>
+                <button onclick="closeLeitnerModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="leitner-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">📦</div>
+                    <div class="text-sm font-bold text-slate-300">Метод Лейтнера</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE & TITLES MODAL -->
+    <div id="profile-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-cyan-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(6,182,212,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="profile-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-cyan-500/20">
+                <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest"><i class="fa-solid fa-id-badge mr-2"></i> Профіль та звання агента</h3>
+                <button onclick="closeProfileModal()" aria-label="Закрити" class="interactive-btn text-cyan-400 hover:text-white p-2 bg-cyan-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="profile-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">🛡️</div>
+                    <div class="text-sm font-bold text-slate-300">Профіль агента</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPEED RUSH MODAL -->
+    <div id="speedrush-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel border border-amber-500/40 rounded-3xl w-full max-w-md p-6 shadow-[0_20px_50px_rgba(245,158,11,0.15)] transform scale-90 translate-y-4 transition-all duration-400 max-h-[85vh] overflow-y-auto" id="speedrush-box">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-amber-500/20">
+                <h3 class="font-black text-sm text-amber-400 uppercase tracking-widest"><i class="fa-solid fa-bolt-lightning mr-2"></i> Артикль-Раш (Speed Rush)</h3>
+                <button onclick="closeSpeedRushModal()" aria-label="Закрити" class="interactive-btn text-amber-400 hover:text-white p-2 bg-amber-900/20 rounded-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="speedrush-content" class="space-y-4">
+                <div class="text-center py-6 space-y-4">
+                    <div class="text-4xl">⚡</div>
+                    <div class="text-sm font-bold text-slate-300">Артикль-Раш</div>
                 </div>
             </div>
         </div>
