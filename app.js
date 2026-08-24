@@ -1,4 +1,4 @@
-const APP_VERSION = "v1.6.4";
+const APP_VERSION = "v1.6.5";
 
 const AudioEngine = {
     ctx: null,
@@ -110,7 +110,7 @@ let cards = [
     { german: "das Stadtzentrum, -zentren", grammar: "Nomen", ukrainian: "центр міста", hint: "Серце міста", emoji: "🏙️", sentence: "Wir treffen uns heute Nachmittag direkt im Stadtzentrum." },
     { german: "der Stadtrand, ̈-er", grammar: "Nomen", ukrainian: "околиця міста", hint: "Периферія, ближче до природи", emoji: "🏡", sentence: "Sie wohnen ruhig am Stadtrand von Berlin." },
     { german: "sich wohl·fühlen", grammar: "Verb", ukrainian: "почуватися добре", hint: "Мати затишок і комфорт", emoji: "😌", sentence: "In dieser gemütlichen Wohnung kann man sich sofort wohlfühlen." },
-    { german: "aus·schlafen", grammar: "Verb", ukrainian: "виспатися", hint: "Спати стільки, скільки хочеться", emoji: "🛌", sentence: "Am Sonntag möchte ich endlich einmal richtig ausschlafen." },
+    { german: "aus·schlafen", grammar: "Verb", ukrainian: "виспатися", hint: "Спати стільки, стільки хочеться", emoji: "🛌", sentence: "Am Sonntag möchte ich endlich einmal richtig ausschlafen." },
     { german: "die Disko, -s / die Disko(thek), -en", grammar: "Nomen", ukrainian: "дискотека", hint: "Місце для танців", emoji: "🪩", sentence: "Die Jugendlichen gehen am Wochenende gerne in die Disko." },
     { german: "aus·gehen", grammar: "Verb", ukrainian: "виходити (у світ, на прогулянку)", hint: "Проводити вечір поза домом", emoji: "🎉", sentence: "Lass uns heute Abend zusammen ausgehen!" },
     { german: "verbringen", grammar: "Verb", ukrainian: "проводити (час)", hint: "Витрачати час на щось", emoji: "⏳", sentence: "Wie hast du deine Sommerferien verbracht?" },
@@ -223,7 +223,6 @@ function updateHeroUI() {
     const petEl = document.getElementById("pet-display");
     if (petEl) petEl.innerText = hero.pet;
     
-    // Автоматично оновлюємо версію в інтерфейсі, якщо такий елемент є
     const verEl = document.getElementById("app-version-badge");
     if (verEl) verEl.innerText = APP_VERSION;
     
@@ -381,41 +380,43 @@ function speakWord(e) {
     }
 }
 
-// 100% НАДІЙНИЙ ГІБРИДНИЙ РУШІЙ ОЗВУЧКИ З ПРИМУСОВИМ НІМЕЦЬКИМ ГОЛОСОМ
+// УНІВЕРСАЛЬНИЙ ТА НАДІЙНИЙ РУШІЙ ОЗВУЧКИ (робить на iOS, Android та ПК)
 function speakCompactWord(wordStr) {
+    if (!wordStr) return;
     let cleanText = wordStr.split('/')[0];
     cleanText = cleanText.split(',')[0];
     cleanText = cleanText.replace(/\(.*?\)/g, '').replace(/·/g, '').trim();
     
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = 'de-DE';
         
-        const voices = window.speechSynthesis.getVoices();
-        const germanVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang.startsWith('de'));
-        if (germanVoice) {
-            utterance.voice = germanVoice;
-        }
-        
-        utterance.onerror = () => {
-            playGoogleTts(cleanText);
+        const executeSpeech = () => {
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'de-DE';
+            utterance.rate = 0.95;
+            
+            const voices = window.speechSynthesis.getVoices();
+            const germanVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang.startsWith('de'));
+            if (germanVoice) {
+                utterance.voice = germanVoice;
+            }
+            
+            window.speechSynthesis.speak(utterance);
         };
-        
-        window.speechSynthesis.speak(utterance);
-        
-        if (!germanVoice && voices.length === 0) {
-            playGoogleTts(cleanText);
+
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length > 0) {
+            executeSpeech();
+        } else {
+            window.speechSynthesis.onvoiceschanged = () => {
+                executeSpeech();
+                window.speechSynthesis.onvoiceschanged = null;
+            };
+            setTimeout(executeSpeech, 100);
         }
     } else {
-        playGoogleTts(cleanText);
+        console.warn("Speech synthesis is not supported on this device.");
     }
-}
-
-function playGoogleTts(text) {
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=de&client=tw-ob`;
-    const audio = new Audio(audioUrl);
-    audio.play().catch(e => console.log("TTS fallback error:", e));
 }
 
 function speakTrialWord() {
@@ -648,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const icon = document.getElementById("sound-icon");
         if (icon) icon.className = "fa-solid fa-volume-xmark text-pink-500";
         const masterBtn = document.getElementById("sound-master-btn");
-        if (masterBtn) {
+        if (masterbtn) {
             masterBtn.className = "interactive-btn px-3 py-1.5 rounded-xl font-bold text-[10px] bg-slate-800 text-slate-400";
             masterBtn.innerText = "ВИМКНЕНО";
         }
