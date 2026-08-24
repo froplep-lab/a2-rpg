@@ -17,7 +17,6 @@ body {
     background-position: center center;
 }
 
-/* Оптимізація для 60 FPS */
 .gpu-accel {
     transform: translateZ(0);
     will-change: transform, opacity;
@@ -33,30 +32,25 @@ body {
     transform: scale(0.92); 
 }
 
-/* Glassmorphism тільки для статичних панелей */
 .glass-panel {
     background: rgba(15, 23, 42, 0.75);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
 
-/* ІДЕАЛЬНА 3D КАРТКА (Без багів прозорості) */
 .perspective { perspective: 1200px; }
 .transform-style-3d { 
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
-    /* Плавний оберт без відскоку для уникнення багів iOS */
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
 }
 .rotate-y-180 { transform: rotateY(180deg); }
 .backface-hidden { 
     backface-visibility: hidden; 
     -webkit-backface-visibility: hidden; 
-    /* Solid background is required for stable 3D rotation */
     background: linear-gradient(145deg, #0f172a, #020617);
 }
 
-/* Анімації героя та ворогів */
 @keyframes heroPulse { 
     0%, 100% { transform: translateY(0); } 
     50% { transform: translateY(-4px); } 

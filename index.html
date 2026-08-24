@@ -24,14 +24,14 @@
                 </span>
             </div>
             <div class="flex items-center gap-1.5 flex-wrap justify-end">
-                <button onclick="openAchievementsModal()" class="interactive-btn glass-panel text-yellow-400 px-3 py-2.5 rounded-xl border border-yellow-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
+                <button onclick="openAchievementsModal()" aria-label="Місії та досягнення" class="interactive-btn glass-panel text-yellow-400 px-3 py-2.5 rounded-xl border border-yellow-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
                     <i class="fa-solid fa-trophy"></i> <span id="ach-count-badge" class="bg-yellow-500/20 text-yellow-300 text-[10px] px-1.5 py-0.5 rounded font-black">0/5</span>
                 </button>
-                <button onclick="openInventoryModal()" class="interactive-btn glass-panel text-cyan-300 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
+                <button onclick="openInventoryModal()" aria-label="Сховище та інвентар" class="interactive-btn glass-panel text-cyan-300 px-3 py-2.5 rounded-xl border border-cyan-500/30 text-xs font-bold flex items-center gap-2 hover:bg-slate-800">
                     <i class="fa-solid fa-microchip text-pink-500"></i> <span id="inv-count-badge" class="bg-pink-500/20 text-cyan-300 text-[10px] px-1.5 py-0.5 rounded font-black">0</span>
                 </button>
-                <button onclick="openWordBrowser()" class="interactive-btn glass-panel text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs hover:bg-slate-800"><i class="fa-solid fa-terminal text-cyan-400"></i></button>
-                <button onclick="openSoundSettingsModal()" class="interactive-btn glass-panel text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs hover:bg-slate-800"><i id="sound-icon" class="fa-solid fa-volume-high text-cyan-400"></i></button>
+                <button onclick="openWordBrowser()" aria-label="База даних слів" class="interactive-btn glass-panel text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs hover:bg-slate-800"><i class="fa-solid fa-terminal text-cyan-400"></i></button>
+                <button onclick="openSoundSettingsModal()" aria-label="Налаштування звуку" class="interactive-btn glass-panel text-cyan-300 p-2.5 rounded-xl border border-cyan-500/30 text-xs hover:bg-slate-800"><i id="sound-icon" class="fa-solid fa-volume-high text-cyan-400"></i></button>
             </div>
         </div>
 
@@ -39,13 +39,15 @@
         <div class="flex items-center justify-between glass-panel p-3 rounded-2xl border border-cyan-500/30 flex-wrap gap-2 shadow-lg">
             <div class="flex items-center gap-2">
                 <div class="bg-cyan-900/30 text-cyan-300 px-4 py-2 rounded-xl border border-cyan-500/50 text-xs font-black flex items-center gap-2">
-                    <i class="fa-solid fa-book-open text-pink-400"></i> Тема 8 <span id="total-vocab-badge" class="text-pink-400 ml-1">84</span>
+                    <i class="fa-solid fa-book-open text-pink-400"></i> Тема 8 
+                    <span id="total-vocab-badge" class="text-pink-400 ml-1">84</span>
+                    <span id="theme-progress-text" class="text-[10px] text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-500/30 ml-2">0%</span>
                 </div>
             </div>
             <div class="flex items-center gap-2 bg-slate-900/50 p-1 rounded-xl border border-slate-700">
                 <button onclick="switchDisplayMode('game')" id="mode-game-btn" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-black bg-cyan-400 text-slate-950 shadow-md shadow-cyan-400/20">Картки</button>
                 <button onclick="switchDisplayMode('compact')" id="mode-compact-btn" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white">Блок</button>
-                <button onclick="openMarathonModal()" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/20 ml-1">🚀 БОС</button>
+                <button onclick="openMarathonModal()" id="marathon-launch-btn" class="interactive-btn px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/20 ml-1">🚀 БОС</button>
             </div>
         </div>
     </header>
@@ -129,7 +131,7 @@
                 </div>
             </div>
 
-            <!-- FLASHCARD VIEW (Оптимізовано під 3D, Solid Background) -->
+            <!-- FLASHCARD VIEW -->
             <div id="view-cards" class="w-full">
                 <div class="w-full h-72 sm:h-96 perspective cursor-pointer group" onclick="flipCard()">
                     <div id="card-inner" class="w-full h-full relative transform-style-3d cyber-card rounded-3xl">

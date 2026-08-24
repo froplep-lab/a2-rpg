@@ -1,5 +1,24 @@
 const APP_VERSION = "v2.1.0 (Polished)";
 
+const StorageEngine = {
+    get(key, fallback) {
+        try {
+            const item = localStorage.getItem(key);
+            return item !== null ? JSON.parse(item) : fallback;
+        } catch (e) {
+            console.warn(`[Storage] Read error for key "${key}":`, e);
+            return fallback;
+        }
+    },
+    set(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {
+            console.warn(`[Storage] Write error for key "${key}":`, e);
+        }
+    }
+};
+
 const Haptics = {
     trigger(type = 'light') {
         try {
@@ -17,8 +36,8 @@ const Haptics = {
 
 const AudioEngine = {
     ctx: null,
-    muted: localStorage.getItem('a2_muted') === 'true',
-    volumes: JSON.parse(localStorage.getItem('a2_volumes') || '{"click":0.5,"hit":0.5,"success":0.5,"error":0.5}'),
+    muted: StorageEngine.get('a2_muted', false),
+    volumes: StorageEngine.get('a2_volumes', {"click":0.5,"hit":0.5,"success":0.5,"error":0.5}),
     init() {
         if (!this.ctx) {
             const AC = window.AudioContext || window.webkitAudioContext;
@@ -93,18 +112,18 @@ if (tg) {
 let hero = {
     telegramId: tgUser ? tgUser.id : 'local_pc_user',
     name: tgUser ? (tgUser.first_name || 'Cyber-Runner') : 'Микола',
-    level: parseInt(localStorage.getItem('a2_hero_level') || '1'),
-    xp: parseInt(localStorage.getItem('a2_hero_xp') || '0'),
+    level: parseInt(StorageEngine.get('a2_hero_level', 1)),
+    xp: parseInt(StorageEngine.get('a2_hero_xp', 0)),
     maxXp: 100,
-    cls: localStorage.getItem('a2_hero_class') || 'Cyber-Runner',
-    weapon: localStorage.getItem('a2_weapon') || 'neural_blade',
-    visor: localStorage.getItem('a2_visor') === 'true',
-    pet: localStorage.getItem('a2_pet') || '🐲',
+    cls: StorageEngine.get('a2_hero_class', 'Cyber-Runner'),
+    weapon: StorageEngine.get('a2_weapon', 'neural_blade'),
+    visor: StorageEngine.get('a2_visor', false),
+    pet: StorageEngine.get('a2_pet', '🐲'),
     streak: 0
 };
 
 hero.maxXp = 100 + Math.max(0, hero.level - 1) * 50;
-let trophies = JSON.parse(localStorage.getItem('a2_trophies') || '[]');
+let trophies = StorageEngine.get('a2_trophies', []);
 let envIndex = 0;
 const environments = [
     { name: "🌆 Cyber Berlin", class: "glass-panel", border: "border-cyan-500/30" },
@@ -124,10 +143,11 @@ const slangPhrases = ["Bock drauf!", "Digga, läuft!", "Sheesh!", "Ehrenmann!", 
 let cards = [];
 let currentIndex = 0;
 let isFlipped = false;
+let isFlipLocked = false;
 let maxBossHp = 3000;
-let wordHpMap = JSON.parse(localStorage.getItem('a2_word_hp_map') || '{}');
-let masteredWords = new Set(JSON.parse(localStorage.getItem('a2_mastered_thema8') || '[]'));
-let claimedAchievements = JSON.parse(localStorage.getItem('a2_achievements') || '[]');
+let wordHpMap = StorageEngine.get('a2_word_hp_map', {});
+let masteredWords = new Set(StorageEngine.get('a2_mastered_thema8', []));
+let claimedAchievements = StorageEngine.get('a2_achievements', []);
 
 function getCurrentWordHp() {
     const card = cards[currentIndex];
@@ -141,7 +161,7 @@ function setCurrentWordHp(val) {
     const card = cards[currentIndex];
     if (!card) return;
     wordHpMap[card.german] = Math.max(0, val);
-    localStorage.setItem('a2_word_hp_map', JSON.stringify(wordHpMap));
+    StorageEngine.set('a2_word_hp_map', wordHpMap);
 }
 
 function updateHeroUI() {
@@ -192,15 +212,14 @@ function updateHeroUI() {
     updateAchievementsCount();
     renderInlineTrophies();
 
-    localStorage.setItem('a2_hero_level', hero.level);
-    localStorage.setItem('a2_hero_xp', hero.xp);
-    localStorage.setItem('a2_hero_class', hero.cls);
-    localStorage.setItem('a2_weapon', hero.weapon);
-    localStorage.setItem('a2_visor', hero.visor);
-    localStorage.setItem('a2_pet', hero.pet);
+    StorageEngine.set('a2_hero_level', hero.level);
+    StorageEngine.set('a2_hero_xp', hero.xp);
+    StorageEngine.set('a2_hero_class', hero.cls);
+    StorageEngine.set('a2_weapon', hero.weapon);
+    StorageEngine.set('a2_visor', hero.visor);
+    StorageEngine.set('a2_pet', hero.pet);
 }
 
-// Додано параметр isSystemReward для уникнення накрутки комбо місіями
 function addXp(amount, emoji, word, isSystemReward = false) {
     if (!isSystemReward) {
         hero.streak++;
@@ -211,7 +230,7 @@ function addXp(amount, emoji, word, isSystemReward = false) {
         const mult = Math.min(5, 1 + Math.floor(hero.streak / 3));
         hero.xp += amount * mult;
     } else {
-        hero.xp += amount; // Фіксований досвід без комбо
+        hero.xp += amount;
     }
 
     if (emoji && word) {
@@ -220,7 +239,7 @@ function addXp(amount, emoji, word, isSystemReward = false) {
         for (let r of rarities) { acc += r.chance; if (rand <= acc) { chosen = r; break; } }
         if (!trophies.find(t => t.emoji === emoji && t.german === word)) {
             trophies.push({ emoji, rarity: chosen.name, german: word });
-            localStorage.setItem('a2_trophies', JSON.stringify(trophies));
+            StorageEngine.set('a2_trophies', trophies);
         }
     }
 
@@ -277,7 +296,7 @@ function attackEnemyClick() {
 
     if (hp === 0) {
         masteredWords.add(card.german);
-        localStorage.setItem('a2_mastered_thema8', JSON.stringify([...masteredWords]));
+        StorageEngine.set('a2_mastered_thema8', [...masteredWords]);
         if (enemyBox) enemyBox.classList.add("anim-soul");
         addXp(35, card.emoji, card.german, false);
         Haptics.trigger('heavy'); 
@@ -301,17 +320,14 @@ function updateEnemyHpUI() {
     if (hpText) hpText.innerText = `${hp} / ${maxBossHp}`;
 }
 
-// ----------------- MARATHON -----------------
-let marathonWords = [];
-let marathonIndex = 0;
-let marathonScore = 0;
-
+// ----------------- MODALS & SCROLL LOCKING -----------------
 function toggleModal(modalId, boxId, show) {
     const modal = document.getElementById(modalId);
     const box = document.getElementById(boxId);
     if (!modal || !box) return;
     
     if (show) {
+        document.body.style.overflow = 'hidden';
         modal.classList.remove("opacity-0", "pointer-events-none");
         box.classList.remove("scale-90", "opacity-0", "translate-y-4");
         box.classList.add("scale-100", "opacity-100", "translate-y-0");
@@ -319,8 +335,18 @@ function toggleModal(modalId, boxId, show) {
         modal.classList.add("opacity-0", "pointer-events-none");
         box.classList.add("scale-90", "opacity-0", "translate-y-4");
         box.classList.remove("scale-100", "opacity-100", "translate-y-0");
+        
+        const openModals = document.querySelectorAll('.fixed.inset-0:not(.pointer-events-none)');
+        if (openModals.length <= 1) {
+            document.body.style.overflow = '';
+        }
     }
 }
+
+// ----------------- MARATHON -----------------
+let marathonWords = [];
+let marathonIndex = 0;
+let marathonScore = 0;
 
 function openMarathonModal() { AudioEngine.play('click'); Haptics.trigger('light'); toggleModal("marathon-modal", "marathon-box", true); }
 function closeMarathonModal() { AudioEngine.play('click'); Haptics.trigger('light'); toggleModal("marathon-modal", "marathon-box", false); }
@@ -388,7 +414,7 @@ function renderMarathonQuestion() {
 function checkMarathonAnswer(selected, correct) {
     const btns = document.querySelectorAll(".marathon-btn");
     btns.forEach((btn, idx) => {
-        btn.disabled = true; // Захист від подвійних кліків
+        btn.disabled = true;
         btn.classList.remove("glass-panel", "hover:bg-slate-800", "border-cyan-500/20");
         if (idx === correct) {
             btn.classList.add("border-emerald-500", "bg-emerald-500/20", "text-emerald-300");
@@ -408,7 +434,6 @@ function checkMarathonAnswer(selected, correct) {
     }
     marathonIndex++;
     setTimeout(() => {
-        // Перевіряємо чи модалка ще відкрита перед рендером
         if(!document.getElementById("marathon-modal").classList.contains("opacity-0")) {
             renderMarathonQuestion();
         }
@@ -427,7 +452,7 @@ function renderBossQuestion() {
         AudioEngine.play('levelup');
         Haptics.trigger('success');
         if (typeof confetti === 'function') confetti({ particleCount: 200, spread: 160, origin: { y: 0.5 } });
-        addXp(250, '👑', 'Bug-Lord Defeated', true); // System reward
+        addXp(250, '👑', 'Bug-Lord Defeated', true);
         content.innerHTML = `
             <div class="text-center py-8 space-y-4">
                 <div class="text-6xl animate-bounce drop-shadow-[0_0_20px_rgba(16,185,129,0.8)]">👑</div>
@@ -465,7 +490,7 @@ function renderBossQuestion() {
 function checkBossAnswer(selected, correct) {
     const btns = document.querySelectorAll(".boss-btn");
     btns.forEach((btn, idx) => {
-        btn.disabled = true; // Захист від подвійних кліків
+        btn.disabled = true;
         btn.classList.remove("glass-panel", "border-pink-500/30", "hover:border-pink-400");
         if (idx === correct) {
             btn.classList.add("border-emerald-500", "bg-emerald-500/20", "text-emerald-300");
@@ -483,6 +508,7 @@ function checkBossAnswer(selected, correct) {
         }, 850);
     } else {
         AudioEngine.play('error'); Haptics.trigger('error');
+        hero.streak = 0; updateHeroUI();
         const content = document.getElementById("marathon-content");
         if (content) {
             content.innerHTML = `
@@ -559,12 +585,10 @@ function updateCard() {
     const card = cards[currentIndex];
     const cardInner = document.getElementById("card-inner");
     
-    // Скидання класу перевороту миттєво
     if (cardInner) {
         cardInner.style.transition = 'none';
         cardInner.classList.remove("rotate-y-180");
         isFlipped = false;
-        // Відновлюємо транзишн після короткої затримки
         setTimeout(() => { cardInner.style.transition = ''; }, 50);
     }
 
@@ -583,16 +607,22 @@ function updateCard() {
 }
 
 function flipCard() {
-    AudioEngine.play('flip'); Haptics.trigger('light');
+    if (isFlipLocked) return;
+    isFlipLocked = true;
+    AudioEngine.play('flip'); 
+    Haptics.trigger('light');
     isFlipped = !isFlipped;
     const cardInner = document.getElementById("card-inner");
     if (cardInner) cardInner.classList.toggle("rotate-y-180", isFlipped);
+    setTimeout(() => { isFlipLocked = false; }, 500);
 }
 
 function nextCard() { AudioEngine.play('click'); Haptics.trigger('light'); if(cards.length > 0) currentIndex = (currentIndex + 1) % cards.length; updateCard(); }
 function prevCard() { AudioEngine.play('click'); Haptics.trigger('light'); if(cards.length > 0) currentIndex = (currentIndex - 1 + cards.length) % cards.length; updateCard(); }
 
-// ----------------- INIT -----------------
+// ----------------- INIT & SHUFFLE (No Reload) -----------------
+let isShuffled = false;
+
 window.addEventListener('error', (event) => { console.error('[A2 RPG] Error:', event.error); });
 window.addEventListener('unhandledrejection', (event) => { console.error('[A2 RPG] Promise:', event.reason); });
 
@@ -611,7 +641,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (icon) icon.className = "fa-solid fa-volume-xmark text-pink-500";
         const masterBtn = document.getElementById("sound-master-btn");
         if (masterBtn) {
-            masterBtn.className = "interactive-btn px-4 py-2 rounded-xl font-bold text-[10px] bg-slate-800 text-slate-400";
+            masterBtn.className = "interactive-btn px-4 py-2 rounded-xl font-bold text-[10px] bg-slate-800 text-slate-500";
             masterBtn.innerText = "ВИМКНЕНО";
         }
     }
@@ -619,18 +649,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function toggleShuffle() {
-    AudioEngine.play('click'); Haptics.trigger('light');
+    AudioEngine.play('click'); 
+    Haptics.trigger('light');
     isShuffled = !isShuffled;
+    
     if (isShuffled) {
         cards.sort(() => Math.random() - 0.5);
-        document.getElementById("shuffle-btn").classList.add("text-cyan-400", "border-cyan-400/50");
-    } else { 
-        window.location.reload(); 
+        const shuffleBtn = document.getElementById("shuffle-btn");
+        if (shuffleBtn) shuffleBtn.classList.add("text-cyan-400", "border-cyan-400/50", "bg-cyan-950/30");
+    } else {
+        fetch('words.json')
+            .then(res => res.json())
+            .then(data => {
+                cards = data;
+                currentIndex = 0;
+                updateCard();
+                renderCompactBlock();
+            })
+            .catch(err => console.error("Reload error:", err));
+        const shuffleBtn = document.getElementById("shuffle-btn");
+        if (shuffleBtn) shuffleBtn.classList.remove("text-cyan-400", "border-cyan-400/50", "bg-cyan-950/30");
+        return;
     }
-    currentIndex = 0; updateCard(); renderCompactBlock();
+    currentIndex = 0; 
+    updateCard(); 
+    renderCompactBlock();
 }
 
-// Управління модалками
 function openAchievementsModal() { AudioEngine.play('click'); Haptics.trigger('light'); toggleModal("achievements-modal", "achievements-box", true); renderAchievements(); }
 function closeAchievementsModal() { AudioEngine.play('click'); Haptics.trigger('light'); toggleModal("achievements-modal", "achievements-box", false); }
 
@@ -670,12 +715,33 @@ function claimAchievement(id, reward) {
     if (claimedAchievements.includes(id)) return;
     AudioEngine.play('success'); Haptics.trigger('success');
     claimedAchievements.push(id);
-    localStorage.setItem('a2_achievements', JSON.stringify(claimedAchievements));
-    addXp(reward, null, null, true); // True = System Reward (Без множника стріка)
+    StorageEngine.set('a2_achievements', claimedAchievements);
+    addXp(reward, null, null, true);
     renderAchievements();
 }
 
 // TRIAL, INVENTORY, WORD BROWSER 
+let currentTrialTarget = null;
+let currentTrialCleanWord = "";
+let trialAssembled = [];
+let trialAvailableModules = [];
+
+function getWordModules(cleanWord) {
+    if (!cleanWord) return [];
+    let parts = cleanWord.split(/[\s-]+/).filter(Boolean);
+    if (parts.length === 0) parts = [cleanWord];
+    let mods = [];
+    parts.forEach(p => {
+        if (p.length > 4) {
+            mods.push(p.slice(0, 3));
+            mods.push(p.slice(3));
+        } else {
+            mods.push(p);
+        }
+    });
+    return mods.filter(Boolean);
+}
+
 function openMasteryTrial() {
     AudioEngine.play('click'); Haptics.trigger('light');
     const card = cards[currentIndex];
@@ -720,7 +786,7 @@ function verifyTrialAssembly() {
     if (assembledStr === targetStr) {
         AudioEngine.play('success'); Haptics.trigger('success');
         masteredWords.add(currentTrialTarget.german);
-        localStorage.setItem('a2_mastered_thema8', JSON.stringify([...masteredWords]));
+        StorageEngine.set('a2_mastered_thema8', [...masteredWords]);
         setCurrentWordHp(0); updateEnemyHpUI(); 
         addXp(50, currentTrialTarget.emoji, currentTrialTarget.german, false);
         if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 90, origin: { y: 0.5 } });
@@ -740,13 +806,23 @@ function updateMasteredUI() {
     const btn = document.getElementById("soul-hack-btn");
     
     if (isM) {
-        btn.className = "interactive-btn glass-panel text-slate-500 border border-slate-700 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 cursor-not-allowed";
-        btn.innerHTML = `<i class="fa-solid fa-ghost"></i> Душу зламано ✓`;
-        btn.disabled = true;
+        if (btn) {
+            btn.className = "interactive-btn glass-panel text-slate-500 border border-slate-700 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 cursor-not-allowed";
+            btn.innerHTML = `<i class="fa-solid fa-ghost"></i> Душу зламано ✓`;
+            btn.disabled = true;
+        }
     } else {
-        btn.className = "interactive-btn bg-gradient-to-r from-pink-600 to-purple-600 text-white px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 shadow-[0_0_15px_rgba(236,72,153,0.3)]";
-        btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Зламати душу`;
-        btn.disabled = false;
+        if (btn) {
+            btn.className = "interactive-btn bg-gradient-to-r from-pink-600 to-purple-600 text-white px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 shadow-[0_0_15px_rgba(236,72,153,0.3)]";
+            btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Зламати душу`;
+            btn.disabled = false;
+        }
+    }
+
+    const progressEl = document.getElementById("theme-progress-text");
+    if (progressEl && cards.length > 0) {
+        const percent = Math.round((masteredWords.size / cards.length) * 100);
+        progressEl.innerText = `${percent}%`;
     }
 }
 
@@ -776,16 +852,7 @@ function syncSoundUI() {
     document.getElementById('sound-master-btn').className = muted ? 'interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-slate-800 text-slate-500' : 'interactive-btn px-4 py-2 rounded-xl font-black text-[10px] bg-cyan-400 text-slate-900 shadow-md shadow-cyan-400/20';
     document.getElementById('sound-master-btn').textContent = muted ? 'ВИМКНЕНО' : 'УВІМКНЕНО';
 }
-function toggleAudioMute() { AudioEngine.muted = !AudioEngine.muted; localStorage.setItem('a2_muted', String(AudioEngine.muted)); if (!AudioEngine.muted) { AudioEngine.init(); AudioEngine.play('success'); Haptics.trigger('light'); } syncSoundUI(); }
-
-function resetAllProgress() {
-    if (confirm("⚠️ Увага! Ти дійсно хочеш скинути весь свій прогрес, рівень та зламані душі?")) {
-        Haptics.trigger('error');
-        const keys = Object.keys(localStorage).filter(k => k.startsWith('a2_'));
-        keys.forEach(k => localStorage.removeItem(k));
-        window.location.reload();
-    }
-}
+function toggleAudioMute() { AudioEngine.muted = !AudioEngine.muted; StorageEngine.set('a2_muted', AudioEngine.muted); if (!AudioEngine.muted) { AudioEngine.init(); AudioEngine.play('success'); Haptics.trigger('light'); } syncSoundUI(); }
 
 function renderClasses() {
     const classes = [{ name: 'Cyber-Runner', desc: 'Швидкість' }, { name: 'Trap-Hacker', desc: 'Злам ядер' }, { name: 'Neon-Mage', desc: 'Синтаксис' }];

@@ -1,5 +1,5 @@
 // ==========================================
-// SPEECH SYNTHESIS MODULE (Німецька озвучка)
+// SPEECH SYNTHESIS MODULE (Німецька озвучка) - Production Ready
 // ==========================================
 
 let cachedDeVoice = null;
@@ -8,7 +8,9 @@ function getGermanVoice() {
     if (cachedDeVoice) return cachedDeVoice;
     if (!('speechSynthesis' in window)) return null;
     const voices = window.speechSynthesis.getVoices() || [];
-    cachedDeVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE' || v.lang === 'de-AT' || v.lang.startsWith('de'));
+    cachedDeVoice = voices.find(v => v.lang === 'de-DE' || v.lang === 'de_DE') ||
+                    voices.find(v => v.lang && v.lang.startsWith('de')) ||
+                    voices[0] || null;
     return cachedDeVoice;
 }
 
@@ -24,16 +26,13 @@ if ('speechSynthesis' in window) {
 
 function getCleanGermanWord(raw) {
     if (!raw) return '';
-    if (/[.!?]/.test(raw) || (raw.split(' ').length > 4 && !raw.includes('/'))) {
+    if (/[.!?]/.test(raw) || (raw.split(' ').length > 3 && !raw.includes('/'))) {
         return raw; 
     }
     let clean = raw.split('/')[0];
     clean = clean.split(',')[0];
     clean = clean.replace(/\(.*?\)/g, '');
     clean = clean.replace(/[·•]/g, '');
-    clean = clean.replace(/\bsich\b/gi, '');
-    clean = clean.replace(/\b(der|die|das)\b/gi, '');
-    clean = clean.replace(/[^a-zA-ZäöüßÄÖÜ\s-]/g, '');
     return clean.trim();
 }
 
@@ -48,20 +47,15 @@ function speakCompactWord(text) {
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'de-DE';
-    utterance.rate = 0.86;
+    utterance.rate = 0.85;
     utterance.pitch = 1.0;
 
     const voice = getGermanVoice();
     if (voice) {
         utterance.voice = voice;
-        window.speechSynthesis.speak(utterance);
-    } else {
-        setTimeout(() => {
-            const delayedVoice = getGermanVoice();
-            if (delayedVoice) utterance.voice = delayedVoice;
-            window.speechSynthesis.speak(utterance);
-        }, 120);
     }
+
+    window.speechSynthesis.speak(utterance);
 }
 
 function speakText(text) {
