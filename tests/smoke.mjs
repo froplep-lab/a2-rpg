@@ -42,10 +42,10 @@ const css=read('css/main.css');
 assert.match(css,/\.flashcard\.is-flipped \.flash-front\{transform:rotateY\(-180deg\)/,'flip front fix missing');
 assert.match(css,/\.flashcard\.is-flipped \.flash-back\{transform:rotateY\(0deg\)/,'flip back fix missing');
 assert.match(css,/\.flash-face\{[^}]*backface-visibility:hidden/,'backface visibility missing');
-assert.equal(read('VERSION').trim(),'0.024','version file mismatch');
-assert.equal(JSON.parse(read('package.json')).version,'0.0.24','package version mismatch');
-assert.match(read('server/index.mjs'),/VERSION='0.024'/,'server version mismatch');
-assert.match(read('sw.js'),/gestalt-v0\.024/,'service worker cache version mismatch');
+assert.equal(read('VERSION').trim(),'0.025','version file mismatch');
+assert.equal(JSON.parse(read('package.json')).version,'0.0.25','package version mismatch');
+assert.match(read('server/index.mjs'),/VERSION='0.025'/,'server version mismatch');
+assert.match(read('sw.js'),/gestalt-v0\.025/,'service worker cache version mismatch');
 
 assert.match(html,/id="backMeaning"/,'back translation element missing');
 assert.match(html,/id="sentenceToggle"/,'sentence toggle missing');

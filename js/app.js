@@ -1,5 +1,5 @@
-const VERSION='0.024';
-const WORDS_URL='./data/words.json';
+const VERSION='0.025';
+const WORDS_URL=new URL('../data/words.json', import.meta.url).href;
 const SAVE_VERSION=12;
 const SAVE_KEY='gestalt_learning_v12';
 const LEGACY_KEYS=['gestalt_learning_v9','gestalt_learning_v8','gestalt_learning_v7','gestalt_learning_v6','gestalt_learning_v5','gestalt_learning_v4','de_b1_rpg_progress_v3','deutsch_quest_v002'];
@@ -270,7 +270,41 @@ function bind(){
  $('themeSwitch').addEventListener('click',()=>{save.settings.theme=save.settings.theme==='dark'?'light':'dark';persist();syncTheme();renderSettings()});$('motionSwitch').addEventListener('click',()=>{save.settings.reducedMotion=!save.settings.reducedMotion;persist();syncTheme();renderSettings()});$('autoSpeakSwitch').addEventListener('click',()=>{save.settings.autoSpeak=!save.settings.autoSpeak;persist();renderSettings()});$('phoneticSwitch').addEventListener('click',()=>{save.settings.showPhonetic=!save.settings.showPhonetic;persist();renderSettings();renderCard()});$('voiceRate').addEventListener('change',e=>{save.settings.voiceRate=Number(e.target.value)||.9;persist()});$('voiceSelect').addEventListener('change',e=>{save.settings.voiceName=e.target.value;persist()});$('tgSyncBtn').addEventListener('click',syncTelegram);$('exportBtn').addEventListener('click',exportProgress);$('importFile').addEventListener('change',e=>{if(e.target.files?.[0])importProgress(e.target.files[0]);e.target.value=''});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('addModal').classList.contains('open'))closeAdd();if(state.screen==='learn'&&state.subview==='learn'&&!state.answerLock){if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&state.flipped){answerWord(e.key==='ArrowRight'?4:0);return}if(e.key===' '||e.key==='Enter'){e.preventDefault();toggleFlip()}}});
  $('resetBtn').addEventListener('click',async()=>{const ok=tg?.showConfirm?await new Promise(r=>tg.showConfirm('Скинути локальний прогрес?',r)):window.confirm('Скинути локальний прогрес?');if(ok){safeRemove(SAVE_KEY);location.reload()}})
 }
-function boot(){loadSave();state.currentTopic=save.currentTopic||'topic-8';syncTheme();buildNav();bind();document.addEventListener('visibilitychange',()=>{if(document.hidden){persist();speechSynthesis?.cancel?.()}});refreshVoices();if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=refreshVoices;fetch(WORDS_URL,{cache:'default'}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{words=Array.isArray(d)?d:[];if(!topics().some(t=>t.id===state.currentTopic)&&state.currentTopic!=='all')state.currentTopic='topic-8';save.currentTopic=state.currentTopic;pickSession(state.mode,state.currentTopic);renderAll();maybeSpeakCurrent(false)}).catch(()=>{words=[];toast('Словник не завантажився. Можна працювати з локальними словами.')});pickSession('learn');renderAll();initTelegram().then(syncTelegramBack);if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{})}if(navigator.storage?.persist){navigator.storage.persist().catch(()=>{})}}
+async function loadWordData(){
+  const urls=[WORDS_URL,`${WORDS_URL}${WORDS_URL.includes('?')?'&':'?'}v=${encodeURIComponent(VERSION)}`];
+  let lastError=null;
+  for(const url of urls){
+    try{
+      const r=await fetch(url,{cache:'no-store'});
+      if(!r.ok)throw new Error(`HTTP ${r.status}`);
+      const d=await r.json();
+      if(!Array.isArray(d)||d.length===0)throw new Error('Словник порожній');
+      const valid=d.filter(w=>w&&typeof w==='object'&&String(w.id||'').trim()&&String(w.german||'').trim());
+      if(valid.length<Math.min(50,d.length))throw new Error('Некоректна структура словника');
+      words=valid;
+      return true;
+    }catch(e){lastError=e}
+  }
+  words=[];
+  toast(`Не вдалося завантажити словник${lastError?.message?`: ${lastError.message}`:''}`);
+  return false;
+}
+async function boot(){
+  loadSave();state.currentTopic=save.currentTopic||'topic-8';syncTheme();buildNav();bind();
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){persist();speechSynthesis?.cancel?.()}});
+  refreshVoices();if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=refreshVoices;
+  pickSession('learn');renderAll();
+  await loadWordData();
+  const list=topics();
+  const current=list.find(t=>t.id===state.currentTopic);
+  if(state.currentTopic!=='all'&&(!current||current.count===0))state.currentTopic=list.find(t=>t.count>0)?.id||'all';
+  save.currentTopic=state.currentTopic;
+  pickSession(state.mode,state.currentTopic);renderAll();maybeSpeakCurrent(false);
+  initTelegram().then(syncTelegramBack);
+  if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{})}
+  if(navigator.storage?.persist){navigator.storage.persist().catch(()=>{})}
+}
+
 document.addEventListener('click',e=>{const pill=e.target.closest?.('.cat-pill');if(pill?.dataset.cat)setCategoryFilter(pill.dataset.cat)});
 boot();
 
