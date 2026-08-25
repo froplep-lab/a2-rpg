@@ -2,6 +2,8 @@ const VERSION='0.028';
 const WORDS_URL=new URL('../data/words.json', import.meta.url).href;
 const COMPACT_WORDS_URL=new URL('../data/words.compact.json', import.meta.url).href;
 const SAVE_VERSION=12;
+const BALANCE={dailyGoal:24,forgottenMinutes:10,rememberXp:5,forgottenXp:1,masteryBox:5,masteryIntervalDays:21,srsIntervals:[0,1,3,7,14,30,60]};
+// AI CONTEXT: BALANCE is the single source of truth for existing progression values. Changes affect SRS and XP.
 const SAVE_KEY='gestalt_learning_v12';
 const LEGACY_KEYS=['gestalt_learning_v9','gestalt_learning_v8','gestalt_learning_v7','gestalt_learning_v6','gestalt_learning_v5','gestalt_learning_v4','de_b1_rpg_progress_v3','deutsch_quest_v002'];
 const TG_PREFIX='gestalt_v12_';
@@ -30,7 +32,7 @@ const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const wordKey=w=>String(w?.id||w?.german||'').toLowerCase().trim();
 const uid=()=>`u-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
 
-function defaults(){return{version:SAVE_VERSION,xp:0,streak:0,lastActivity:'',answers:0,correct:0,errors:0,learnedToday:0,dayKey:todayKey(),dailyGoal:24,mastery:{},review:{},customWords:[],history:{},favorites:[],settings:{theme:'dark',reducedMotion:false,voiceRate:.9,voiceName:'auto',autoSpeak:false,showPhonetic:true},playerName:'Wanderer',record:0,currentTopic:'topic-8',updatedAt:0}}
+function defaults(){return{version:SAVE_VERSION,xp:0,streak:0,lastActivity:'',answers:0,correct:0,errors:0,learnedToday:0,dayKey:todayKey(),dailyGoal:BALANCE.dailyGoal,mastery:{},review:{},customWords:[],history:{},favorites:[],settings:{theme:'dark',reducedMotion:false,voiceRate:.9,voiceName:'auto',autoSpeak:false,showPhonetic:true},playerName:'Wanderer',record:0,currentTopic:'topic-8',updatedAt:0}}
 let save=defaults();
 function isObj(x){return x&&typeof x==='object'&&!Array.isArray(x)}
 function normalizeSave(input){const d=defaults(),x=isObj(input)?input:{};const out={...d,...x,settings:{...d.settings,...(isObj(x.settings)?x.settings:{})}};out.version=SAVE_VERSION;out.answers=Math.max(0,Number(out.answers)||0);out.correct=Math.max(0,Number(out.correct)||0);out.errors=Math.max(0,Number(out.errors)||0);out.xp=Math.max(0,Number(out.xp)||0);out.streak=Math.max(0,Number(out.streak)||0);out.learnedToday=Math.max(0,Number(out.learnedToday)||0);out.dailyGoal=clamp(Number(out.dailyGoal)||24,8,40);out.record=Math.max(0,Number(out.record)||0);out.mastery=isObj(out.mastery)?out.mastery:{};out.review=isObj(out.review)?out.review:{};out.history=isObj(out.history)?out.history:{};out.customWords=Array.isArray(out.customWords)?out.customWords.filter(w=>isObj(w)&&String(w.german||'').trim()&&String(w.ukrainian||'').trim()).map(w=>({...w,translationNote:String(w.translationNote||'')})).slice(0,500):[];out.favorites=Array.isArray(out.favorites)?out.favorites.map(String).slice(0,500):[];out.settings.theme=out.settings.theme==='light'?'light':'dark';out.settings.reducedMotion=Boolean(out.settings.reducedMotion);out.settings.voiceRate=clamp(Number(out.settings.voiceRate)||.9,.65,1.12);out.settings.voiceName=String(out.settings.voiceName||'auto');out.settings.autoSpeak=Boolean(out.settings.autoSpeak);out.settings.showPhonetic=out.settings.showPhonetic!==false;out.currentTopic=String(out.currentTopic||'topic-8');out.updatedAt=Math.max(0,Number(out.updatedAt)||0);if(out.dayKey!==todayKey()){out.dayKey=todayKey();out.learnedToday=0}return out}
@@ -43,6 +45,7 @@ function filterTopic(all,topicId=state.currentTopic){return topicId==='all'?all:
 function mastery(w){return clamp(Number(save.mastery[wordKey(w)]||0),0,5)}
 function due(w){const r=save.review[wordKey(w)];return Boolean(r)&&Number(r.dueAt||0)<=now()}
 function dueWords(topicId=state.currentTopic){return filterTopic(mergedWords(),topicId).filter(due).sort((a,b)=>(Number(save.review[wordKey(a)]?.dueAt)||0)-(Number(save.review[wordKey(b)]?.dueAt)||0))}
+// AI CONTEXT: builds the active queue; used by boot, navigation, topic changes and answer completion.
 function pickSession(mode='learn',topicId=state.currentTopic){
   let all=filterTopic(mergedWords(),topicId);
   if(activeCategoryFilter!=='all') all=all.filter(w=>statusFromReview(save.review[wordKey(w)]||{})===activeCategoryFilter);
@@ -63,10 +66,10 @@ function pickSession(mode='learn',topicId=state.currentTopic){
   state.mode=mode;state.flipped=false;state.answerLock=false;state.sentenceExpanded=false;
 }
 function currentWord(){return state.session[state.sessionIndex]||null}
+// AI CONTEXT: maps answer quality to the next SRS interval.
 function intervalForQuality(q,box){
-  const ladder=[0,1,3,7,14,30,60];
   const b=clamp(Number(box)||0,0,6);
-  return q===0?0:ladder[clamp(b+1,1,6)];
+  return q===0?0:BALANCE.srsIntervals[clamp(b+1,1,6)];
 }
 function statusFromReview(r){
   if(!r||!Number(r.reps)) return 'new';
@@ -78,6 +81,7 @@ function masteryPercent(r){
   const b=clamp(Number(r?.box)||0,0,6);
   return Math.round((b/6)*100);
 }
+// AI CONTEXT: commits answer → SRS + XP + history + next-card transition.
 function answerWord(q){
   if(state.answerLock)return;
   const w=currentWord();
@@ -94,7 +98,7 @@ function answerWord(q){
   if(q===0){
     box=Math.max(0,box-1);
     lapses++;
-    interval=10/1440; // 10 minutes: forgotten words return in the same day
+    interval=BALANCE.forgottenMinutes/1440;
     save.errors++;
     if(!state.sessionRequeued.has(k)){
       state.sessionRequeued.add(k);
@@ -107,7 +111,7 @@ function answerWord(q){
     save.correct++;
   }
 
-  const status=box>=5&&interval>=21?'mastered':(interval>=1?'review':(reps?'learning':'new'));
+  const status=box>=BALANCE.masteryBox&&interval>=BALANCE.masteryIntervalDays?'mastered':(interval>=1?'review':(reps?'learning':'new'));
   save.mastery[k]=masteryPercent({box});
   save.review[k]={box,reps,lapses,interval,status,dueAt:t+interval*86400000,lastSeen:t,lastQuality:q};
   save.answers++;
@@ -115,11 +119,11 @@ function answerWord(q){
   save.history[todayKey()]=(Number(save.history[todayKey()])||0)+1;
   touchActivity();
   save.record=Math.max(save.record,save.streak);
-  save.xp+=q===0?1:5;
+  save.xp+=q===0?BALANCE.forgottenXp:BALANCE.rememberXp;
   persist();
   haptic(q===0?'error':'success');
-  const intervalText=q===0?'через 10 хв.':(interval===1?'завтра':`через ${Math.round(interval)} дн.`);
-  toast(q===0?'Повернемо це слово ще раз через 10 хв.':`Добре. Наступне повторення ${intervalText} 🌱`);
+  const intervalText=q===0?`через ${BALANCE.forgottenMinutes} хв.`:(interval===1?'завтра':`через ${Math.round(interval)} дн.`);
+  toast(q===0?`Повернемо це слово ще раз через ${BALANCE.forgottenMinutes} хв.`:`Добре. Наступне повторення ${intervalText} 🌱`);
   state.flipped=false;state.sentenceExpanded=false;
   if(state.transitionTimer)clearTimeout(state.transitionTimer);
   state.transitionTimer=setTimeout(()=>{
@@ -200,6 +204,7 @@ function updateCategoryCounts(){
     const el=$(id); if(el) el.textContent=String(counts[key]);
   }
 }
+// AI CONTEXT: renders the current card; keep transform state and answer-lock semantics intact.
 function renderCard(){const w=currentWord();if(!w){$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent='Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent='Обери іншу тему або додай слово';$('wordHint').textContent='Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backMeaning').textContent='';$('backMeaningNote').textContent='';$('backMeaningNote').hidden=true;$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('sentencePanel').hidden=true;$('sentenceToggle').setAttribute('aria-expanded','false');$('sentenceToggle').textContent='Приклад речення ▾';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordLevel').textContent=w.level||'A2/B1';
   const parts=wordDisplayParts(w); const rawG=parts.base||'—';
   $('wordGerman').textContent=rawG;
@@ -307,6 +312,7 @@ async function fetchJsonFast(url,timeoutMs=10000){
     return await r.json();
   }finally{clearTimeout(timer)}
 }
+// AI CONTEXT: compact-first dictionary loader with full JSON fallback; schema validation is a safety boundary.
 async function loadWordData(){
   const sources=[
     {url:`${COMPACT_WORDS_URL}?v=${encodeURIComponent(VERSION)}`,compact:true},

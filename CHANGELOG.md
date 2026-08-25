@@ -1,3 +1,17 @@
+# GESTALT v0.029 — AI baseline + card flip correction
+
+## Added
+- Added AI knowledge-base docs: `AI_PROJECT_CONTEXT.md`, `ARCHITECTURE.md`, `FEATURE_MAP.md`, `SAFE_MODIFICATIONS.md`, `BALANCE.md`, `KNOWN_ISSUES.md`.
+- Added focused AI comments to core queue/SRS/rendering/loading paths.
+- Centralized existing balance values without changing them.
+
+## Fixed
+- Corrected mirrored card-back rendering: parent card performs the single 180° rotation; back face permanently keeps `rotateY(180deg)`.
+- Added regression assertions that reject flipped-state child transforms.
+
+## Architecture
+- Preserved vanilla HTML/CSS/JS + Node architecture; no framework rewrite.
+
 # GESTALT v0.028 — merged stability release
 
 - Applied the complete card, translation, sentence, dictionary-cleanup, SRS, category-counter, loading/fallback, cache, and flashcard-flip fixes from the preceding iterations to the supplied base project.
