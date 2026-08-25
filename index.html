@@ -49,6 +49,15 @@
         </div>
         <div class="topic-row glass-small"><div><span class="eyebrow">КУРС / ТЕМА</span><strong id="topicTitleInline">Тема 8 · Am Wochenende</strong></div><select id="topicSelect" class="select topic-select" aria-label="Тема навчання"></select></div>
 
+        
+        <div class="category-pills-row">
+          <button class="cat-pill active" data-cat="all">📚 Усі (<span id="countAll">0</span>)</button>
+          <button class="cat-pill" data-cat="new">🆕 Нові (<span id="countNew">0</span>)</button>
+          <button class="cat-pill" data-cat="learning">🔄 У процесі (<span id="countLearning">0</span>)</button>
+          <button class="cat-pill" data-cat="review">📖 Повторення (<span id="countReview">0</span>)</button>
+          <button class="cat-pill" data-cat="mastered">✅ Вивчені (<span id="countMastered">0</span>)</button>
+        </div>
+
         <div id="subview-learn" class="subview active">
           <section class="progress-card glass">
             <div class="progress-ring" id="progressRing"><div><b id="dailyPct">0%</b><span>сьогодні</span></div></div>
@@ -94,19 +103,24 @@
 
             <div class="answer-grid">
               <button id="rememberBtn" class="answer-btn remember"><span class="answer-icon">✅</span><span><b>Знаю</b><small>Збільшити інтервал</small></span></button>
-              <button id="forgotBtn" class="answer-btn forgot"><span class="answer-icon">×</span><span><b>Забув</b><small>Показати частіше</small></span></button>
+              <button id="forgotBtn" class="answer-btn forgot"><span class="answer-icon">❌</span><span><b>Не знаю</b><small>Повторити зараз</small></span></button>
             </div>
 
             <div class="streak-row glass-small"><span>🔥 Серія: <b id="streakText">0 днів</b></span><span>⚡ Рекорд: <b id="recordText">0</b></span></div>
           </section>
         </div>
 
+        
         <div id="subview-stats" class="subview">
           <section class="stats-grid">
             <div class="metric glass"><span>Всього слів</span><strong id="statTotal">0</strong></div>
-            <div class="metric glass"><span>Вивчено</span><strong id="statMastered">0</strong></div>
+            <div class="metric glass"><span>Нові</span><strong id="statNew">0</strong></div>
             <div class="metric glass"><span>В процесі</span><strong id="statLearning">0</strong></div>
+            <div class="metric glass"><span>На повторенні</span><strong id="statReview">0</strong></div>
+            <div class="metric glass"><span>Вивчено</span><strong id="statMastered">0</strong></div>
             <div class="metric glass"><span>Точність</span><strong id="statAccuracy">0%</strong></div>
+            <div class="metric glass"><span>Повторень</span><strong id="statRepetitions">0</strong></div>
+            <div class="metric glass"><span>Засвоєння</span><strong id="statMasteryPct">0%</strong></div>
           </section>
           <section class="panel glass">
             <div class="panel-head"><div><span class="eyebrow">SRS</span><h3>Стан пам'яті</h3></div><span id="statDue">0 до повторення</span></div>
@@ -117,8 +131,7 @@
             <div id="activityChart" class="activity-chart"></div>
           </section>
         </div>
-
-        <div id="subview-collection" class="subview">
+<div id="subview-collection" class="subview">
           <section class="panel glass">
             <div class="panel-head"><div><span class="eyebrow">КОЛЕКЦІЯ</span><h3>Твої слова</h3></div><span id="collectionCount">0</span></div>
             <div class="search-row"><input id="searchInput" class="input" placeholder="Пошук слова або перекладу…"><button id="collectionSpeak" class="ghost-icon" aria-label="Озвучка">🔊</button></div>

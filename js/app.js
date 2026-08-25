@@ -59,7 +59,6 @@ function answerWord(q){
   let status = r.status || 'new';
   
   if (q === 0) { 
-    // Forgot
     interval = 0;
     reps = 0;
     status = 'learning';
@@ -69,7 +68,6 @@ function answerWord(q){
       state.session.splice(Math.min(state.session.length, state.sessionIndex+3),0,w);
     }
   } else { 
-    // Remember
     if (reps === 0) interval = 1;
     else if (reps === 1) interval = 3;
     else interval = Math.round(interval * 1.5);
@@ -131,15 +129,7 @@ function renderTopicSelectors(){const list=topics();const options=[{id:'all',tit
 function setTopic(topicId){state.currentTopic=topicId||'all';save.currentTopic=state.currentTopic;persist();if(state.screen==='learn'||state.screen==='review')pickSession(state.mode,state.currentTopic);renderTopicSelectors();renderAll();toast(state.currentTopic==='topic-8'?'Тема 8 · Am Wochenende 🌿':'Тему змінено ✨')}
 
 function renderProgress(){const pct=Math.min(100,Math.round(save.learnedToday/save.dailyGoal*100));$('dailyPct').textContent=`${pct}%`;$('dailyLearned').textContent=save.learnedToday;$('progressGood').textContent=pct>=85?'Відмінно! 🔥':pct>=40?'Добрий темп ✨':'Почнемо спокійно 🌱';$('progressRing').style.setProperty('--progress',`${pct*3.6}deg`);const days=[];const labels=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];for(let i=6;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);const k=dateKey(d);days.push({k,label:labels[d.getDay()===0?6:d.getDay()-1],v:Number(save.history[k]||0)})}const max=Math.max(save.dailyGoal,...days.map(x=>x.v),1);$('weekBars').innerHTML=days.map(x=>`<div class="week-bar ${x.k===todayKey()?'active':''}" style="height:${Math.max(10,Math.round(x.v/max*100))}%"><span class="week-day">${x.label}</span></div>`).join('')}
-function renderCard(){const w=currentWord();if(!w){$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent='Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent='Обери іншу тему або додай слово';$('wordHint').textContent='Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;
-  let emj = w.emoji;
-  if (!emj || emj === '✨') {
-      const hash = rawG.length % 5;
-      const fallbacks = ['🔹','🔸','▪️','▫️','🔺'];
-      emj = fallbacks[hash];
-  }
-  $('wordEmoji').textContent = emj;
-$('wordLevel').textContent=w.level||'A2/B1';
+function renderCard(){const w=currentWord();if(!w){$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent='Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent='Обери іншу тему або додай слово';$('wordHint').textContent='Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordEmoji').textContent=w.emoji||'✨';$('wordLevel').textContent=w.level||'A2/B1';
   let rawG = w.german || '—';
   let plural = '';
   if (rawG.includes(',')) {
@@ -149,6 +139,14 @@ $('wordLevel').textContent=w.level||'A2/B1';
   }
   $('wordGerman').textContent = rawG;
   if($('wordPlural')) $('wordPlural').textContent = plural ? plural : '';
+  
+  let emj = w.emoji;
+  if (!emj || emj === '✨') {
+      const hash = rawG.length % 5;
+      const fallbacks = ['🔹','🔸','▪️','▫️','🔺'];
+      emj = fallbacks[hash];
+  }
+  $('wordEmoji').textContent = emj;
 $('wordPhonetic').textContent=`[${phonetic(w.german)}]`;$('wordGrammar').textContent=w.grammar||'';$('wordMeaning').textContent=w.ukrainian||'—';$('wordHint').textContent=w.hint||'Згадай значення до того, як натиснеш далі.';$('wordSource').textContent=w.source||'GESTALT · Картка';$('backGerman').textContent=w.german||'—';$('backSentence').textContent=w.sentence||'—';$('backSentenceUa').textContent=sentenceUa(w);
   const k = wordKey(w);
   const r = save.review[k] || { interval: 0, reps: 0, status: 'new' };
@@ -166,6 +164,7 @@ $('wordPhonetic').textContent=`[${phonetic(w.german)}]`;$('wordGrammar').textCon
   if($('wordProgressFill')) $('wordProgressFill').style.width = pct + '%';
   if($('wordProgressText')) $('wordProgressText').textContent = pct + '%';
   
+  updateCategoryCounts();
   $('flashcard').classList.toggle('is-flipped',state.flipped);
 $('rememberBtn').disabled=state.answerLock;$('forgotBtn').disabled=state.answerLock;const fav=save.favorites.includes(wordKey(w));$('favoriteBtn').classList.toggle('active',fav);$('favoriteBtn').textContent=fav?'★':'☆';maybeSpeakCurrent(false)}
 function phonetic(g=''){const s=String(g).replace(/^(der|die|das|den|dem|des)\s+/i,'').replace(/[·,.-]/g,'');return s.toLowerCase().replace(/sch/g,'ʃ').replace(/tsch/g,'tʃ').replace(/ch/g,'ç').replace(/ei/g,'aɪ').replace(/eu|äu/g,'ɔʏ').replace(/au/g,'aʊ').replace(/ie/g,'iː').replace(/sp(?=r)/g,'ʃp').replace(/st(?=r)/g,'ʃt').replace(/w/g,'v').replace(/z/g,'ts').slice(0,22)}
@@ -238,3 +237,80 @@ function bind(){
 }
 function boot(){loadSave();state.currentTopic=save.currentTopic||'topic-8';syncTheme();buildNav();bind();document.addEventListener('visibilitychange',()=>{if(document.hidden){persist();speechSynthesis?.cancel?.()}});refreshVoices();if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=refreshVoices;fetch(WORDS_URL,{cache:'default'}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{words=Array.isArray(d)?d:[];if(!topics().some(t=>t.id===state.currentTopic)&&state.currentTopic!=='all')state.currentTopic='topic-8';save.currentTopic=state.currentTopic;pickSession(state.mode,state.currentTopic);renderAll();maybeSpeakCurrent(false)}).catch(()=>{words=[];toast('Словник не завантажився. Можна працювати з локальними словами.')});pickSession('learn');renderAll();initTelegram().then(syncTelegramBack);if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{})}if(navigator.storage?.persist){navigator.storage.persist().catch(()=>{})}}
 boot();
+
+
+// --- CATEGORY FILTER STATE & DETAILED STATS ---
+let activeCategoryFilter = 'all';
+
+function setCategoryFilter(cat) {
+    activeCategoryFilter = cat;
+    document.querySelectorAll('.cat-pill').forEach(b => {
+        b.classList.toggle('active', b.dataset.cat === cat);
+    });
+    pickSession(state.mode, state.currentTopic);
+    renderCard();
+}
+
+// Hook category pill clicks in event bindings or init
+document.addEventListener('click', (e) => {
+    const pill = e.target.closest('.cat-pill');
+    if (pill && pill.dataset.cat) {
+        setCategoryFilter(pill.dataset.cat);
+    }
+});
+
+function updateCategoryCounts() {
+    const all = filterTopic(mergedWords(), state.currentTopic);
+    const newWords = all.filter(w => { const r = save.review[wordKey(w)] || {}; return (r.status === 'new' || !r.status) && (!r.reps || r.reps === 0); });
+    const learning = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'learning' || (r.status === 'new' && r.reps > 0); });
+    const review = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'review'; });
+    const mastered = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'mastered' || (r.interval || 0) >= 21; });
+    
+    if($('countAll')) $('countAll').textContent = all.length;
+    if($('countNew')) $('countNew').textContent = newWords.length;
+    if($('countLearning')) $('countLearning').textContent = learning.length;
+    if($('countReview')) $('countReview').textContent = review.length;
+    if($('countMastered')) $('countMastered').textContent = mastered.length;
+}
+
+// Override pickSession to respect activeCategoryFilter
+const originalPickSession = pickSession;
+pickSession = function(mode='learn', topicId=state.currentTopic) {
+    let all = filterTopic(mergedWords(), topicId);
+    if (activeCategoryFilter === 'new') {
+        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return (r.status === 'new' || !r.status) && (!r.reps || r.reps === 0); });
+    } else if (activeCategoryFilter === 'learning') {
+        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'learning' || (r.status === 'new' && r.reps > 0); });
+    } else if (activeCategoryFilter === 'review') {
+        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'review'; });
+    } else if (activeCategoryFilter === 'mastered') {
+        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'mastered' || (r.interval || 0) >= 21; });
+    }
+    
+    state.session = all.length ? [...all].sort(() => Math.random() - 0.5) : filterTopic(mergedWords(), topicId);
+    state.sessionIndex = 0;
+    state.sessionRequeued.clear();
+    updateCategoryCounts();
+    renderCard();
+};
+
+// Override renderStats to populate all fields
+const originalRenderStats = renderStats;
+renderStats = function() {
+    originalRenderStats();
+    const all = mergedWords();
+    const newWords = all.filter(w => { const r = save.review[wordKey(w)] || {}; return (r.status === 'new' || !r.status) && (!r.reps || r.reps === 0); }).length;
+    const learning = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'learning' || (r.status === 'new' && r.reps > 0); }).length;
+    const review = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'review'; }).length;
+    const mastered = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'mastered' || (r.interval || 0) >= 21; }).length;
+    
+    if($('statNew')) $('statNew').textContent = newWords;
+    if($('statLearning')) $('statLearning').textContent = learning;
+    if($('statReview')) $('statReview').textContent = review;
+    if($('statMastered')) $('statMastered').textContent = mastered;
+    if($('statRepetitions')) $('statRepetitions').textContent = save.answers || 0;
+    
+    const masteryPct = all.length ? Math.round((mastered / all.length) * 100) : 0;
+    if($('statMasteryPct')) $('statMasteryPct').textContent = masteryPct + '%';
+    updateCategoryCounts();
+};
