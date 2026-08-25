@@ -8,7 +8,11 @@
     "check": "node --check js/app.js && node --check server/index.mjs",
     "test": "node tests/smoke.mjs",
     "platform-check": "node tests/platform.mjs",
-    "state-check": "node tests/state.mjs"
+    "state-check": "node tests/state.mjs",
+    "test:e2e": "node tests/e2e/autonomous.mjs",
+    "test:visual": "node tests/e2e/autonomous.mjs",
+    "test:regression": "npm run test && npm run state-check && npm run platform-check && npm run check",
+    "test:all": "npm run test:regression && npm run test:e2e"
   },
   "engines": {
     "node": ">=18"

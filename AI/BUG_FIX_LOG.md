@@ -49,3 +49,31 @@
 - **Regression Risk:** Medium — existing learner data is normalized more strictly, but no persisted field names or SRS meaning were changed.
 - **Tests Performed:** source syntax + automated suites; nested normalization logic reviewed against current save schema.
 - **Result:** PASS for static regression; full browser storage round-trip remains PARTIAL because browser interaction could not be completed in this environment.
+
+## 2026-08-25 — Autonomous browser/debug infrastructure
+
+**Bug / improvement:** the project had no persistent browser-driven development loop.
+
+**Root Cause:** only static Node tests existed; no permanent browser/CDP runner, runtime state bridge, deterministic browser fixture, screenshot capture, or console/network collection.
+
+**Affected Files:** `tests/e2e/autonomous.mjs`, `tests/fixtures/long-card.json`, `tests/visual/README.md`, `js/app.js`, `package.json`, `AI/AUTONOMOUS_WORKFLOW.md`, `AI/TEST_MAP.md`, `AI/STABILITY_CHECKLIST.md`.
+
+**Fix:** added a local-only development bridge and a zero-dependency Node/CDP browser harness that starts the app, interacts through real DOM paths, inspects runtime state, captures screenshots, checks console/network, and verifies persistence after reload.
+
+**Regression Risk:** low; bridge is gated to loopback + `?debug=1` and is inactive in normal production browsing.
+
+**Verification:** static regression suite PASS. Browser automation infrastructure is present, but this sandbox currently blocks Chromium local navigation with `ERR_BLOCKED_BY_ADMINISTRATOR`; the harness records this instead of masking it.
+
+## 2026-08-25 — Card flip 3D architecture correction
+
+**Bug:** flipped card back could remain visually mirrored.
+
+**Root Cause:** the 3D transform was owned by the visual card shell itself, coupling layout/overflow with the flip transform and making the face transform context harder to reason about.
+
+**Affected Files:** `index.html`, `css/main.css`, `js/app.js`.
+
+**Fix:** introduced `#flashcardInner` as the sole 3D transform layer. The card shell is static; the inner track rotates 180 degrees; the back face retains its own 180-degree local orientation. The runtime debug inspector mathematically checks that the inner rotation multiplied by the back-face rotation resolves to an identity-facing orientation.
+
+**Regression Risk:** medium on visual interaction, low on state/persistence.
+
+**Verification:** static suite PASS; browser visual verification remains PARTIAL in the current sandbox because local Chromium navigation is blocked.

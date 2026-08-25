@@ -56,3 +56,7 @@ For server changes: verify `/health`, `/api/telegram/status`, root static servin
 
 ## 9. Known boundary
 No browser automation dependency is included in the project. In the supplied environment, static tests and direct Node server HTTP checks were possible; full Chromium interaction was not independently executed.
+
+## Autonomous testing is now mandatory
+
+Before significant behavioral changes, run `npm run test:regression`. When browser automation is available, also run `npm run test:e2e` and inspect `tests/artifacts/e2e-result.json` plus relevant screenshots. Use `window.__GESTALT_DEV__` only on loopback debug sessions for controlled fixture setup and runtime inspection. Never treat an environment-blocked browser run as a product PASS.

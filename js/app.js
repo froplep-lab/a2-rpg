@@ -353,5 +353,39 @@ async function boot(){
 }
 
 document.addEventListener('click',e=>{const pill=e.target.closest?.('.cat-pill');if(pill?.dataset.cat)setCategoryFilter(pill.dataset.cat)});
+
+// Development-only runtime bridge. It is intentionally unavailable unless ?debug=1 is present.
+function installDevBridge(){
+  const enabled=new URLSearchParams(location.search).get('debug')==='1' && /^(localhost|127\.0\.0\.1|\[::1\]|::1)$/i.test(location.hostname);
+  if(!enabled)return;
+  const safeState=()=>({
+    screen:state.screen,subview:state.subview,mode:state.mode,sessionIndex:state.sessionIndex,sessionLength:state.session.length,
+    currentTopic:state.currentTopic,flipped:state.flipped,answerLock:state.answerLock,sentenceExpanded:state.sentenceExpanded,
+    currentCard:currentWord()?.id||null,currentGerman:currentWord()?.german||null,currentUkrainian:currentWord()?.ukrainian||null,
+    xp:save.xp,level:levelFromXp(save.xp),streak:save.streak,answers:save.answers,correct:save.correct,errors:save.errors,
+    learnedToday:save.learnedToday,masteryCount:Object.keys(save.mastery||{}).length,reviewCount:Object.keys(save.review||{}).length,
+    favoritesCount:save.favorites.length,storageKey:SAVE_KEY,saveVersion:save.version,wordCount:mergedWords().length,
+    topicWordCount:filterTopic(mergedWords(),state.currentTopic).length
+  });
+  window.__GESTALT_DEV__={
+    version:VERSION,
+    isEnabled:true,
+    getState:safeState,
+    getSave:()=>JSON.parse(JSON.stringify(save)),
+    getCurrentWord:()=>JSON.parse(JSON.stringify(currentWord()||null)),
+    getComputedCard:()=>{const c=$('flashcard'),i=$('flashcardInner'),f=document.querySelector('.flash-front'),b=document.querySelector('.flash-back');const cs=getComputedStyle(c),is=getComputedStyle(i),fs=getComputedStyle(f),bs=getComputedStyle(b);let netBackIdentity=null;try{const im=new DOMMatrix(is.transform==='none'?undefined:is.transform),bm=new DOMMatrix(bs.transform==='none'?undefined:bs.transform);const n=im.multiply(bm);netBackIdentity=Math.abs(n.a-1)<1e-3&&Math.abs(n.d-1)<1e-3&&Math.abs(n.b)<1e-3&&Math.abs(n.c)<1e-3;}catch{}return {cardTransform:cs.transform,innerTransform:is.transform,frontTransform:fs.transform,backTransform:bs.transform,netBackIdentity,cardTransition:is.transitionDuration,backFaceVisibility:bs.backfaceVisibility,webkitBackfaceVisibility:bs.webkitBackfaceVisibility,perspective:getComputedStyle(document.querySelector('.flip-wrap')).perspective,frontRect:f?.getBoundingClientRect().toJSON?.(),backRect:b?.getBoundingClientRect().toJSON?.(),cardRect:c?.getBoundingClientRect().toJSON?.()};},
+    flip:()=>{if(!state.flipped)toggleFlip();return safeState()},
+    unflip:()=>{if(state.flipped)toggleFlip();return safeState()},
+    answer:(quality=4)=>{if(!state.flipped){toggleFlip()}answerWord(Number(quality)||4);return safeState()},
+    reset:()=>{safeRemove(SAVE_KEY);return true},
+    setSave:(input)=>{save=normalizeSave(input);persist();state.currentTopic=save.currentTopic||'topic-8';pickSession('learn',state.currentTopic);renderAll();return safeState()},
+    setTopic:(id)=>{setTopic(String(id));return safeState()},
+    reload:()=>location.reload()
+  };
+  document.documentElement.dataset.dev='1';
+  console.info('[GESTALT DEV] bridge enabled');
+}
+
+installDevBridge();
 boot();
 
