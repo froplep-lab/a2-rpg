@@ -72,7 +72,7 @@ html[data-theme="light"]{--bg:#eff3fa;--bg2:#fff;--surface:rgba(255,255,255,.84)
 }
 
 
-/* v0.022 learning-flow polish */
+/* v0.023 stability polish */
 .category-pills-row{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 10px;scrollbar-width:none;overscroll-behavior-inline:contain}
 .category-pills-row::-webkit-scrollbar{display:none}
 .cat-pill{flex:0 0 auto;white-space:nowrap}

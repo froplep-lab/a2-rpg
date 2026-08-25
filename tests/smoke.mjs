@@ -17,7 +17,9 @@ assert.ok(words.every(w=>w.german&&w.ukrainian&&w.emoji&&w.sentence&&w.sentenceU
 assert.ok(words.every(w=>! /\(Sg\.?\)/i.test(w.headword)),'Sg marker leaked into headword');
 assert.ok(words.every(w=>! /\(Sg\.?\)/i.test(w.phonetic)),'Sg marker leaked into phonetic');
 assert.ok(words.every(w=>w.topicNumber>=8&&w.topicNumber<=14),'vocabulary outside lesson 8-14 present');
-assert.equal(new Set(words.map(w=>w.german.toLowerCase())).size,words.length,'duplicate German heads remain');
+assert.equal(new Set(words.map(w=>w.id)).size,words.length,'duplicate word ids remain');
+assert.ok(words.every(w=>String(w.german).trim()===String(w.headword).trim()),'display German field must match clean headword');
+assert.ok(words.every(w=>!/[\(]Sg\.?[\)]|¨-|,\s*-|[\(]Pl\.?[\)]/i.test(String(w.german))), 'dictionary markers leaked into display German');
 assert.equal(words.filter(w=>w.topicNumber===8 && w.emoji).length, manifest.byLesson['8'],'topic 8 emoji coverage incomplete');
 assert.equal(words.filter(w=>w.topicNumber===14).length, manifest.byLesson['14'],'topic 14 count mismatch');
 assert.doesNotMatch(html,/Random Dice|Battle Board|START WAVE|enemy|boss|spawnDie|autoMerge/i,'old game UI still present');
@@ -27,7 +29,10 @@ assert.ok(html.includes('id="rememberBtn"')&&html.includes('id="forgotBtn"'),'tw
 assert.ok(html.includes('id="speakWord"')&&html.includes('id="speakSentence"'),'audio controls missing');
 assert.ok(js.includes('speechSynthesis'),'speech synthesis missing');
 assert.ok(js.includes('intervalForQuality')&&js.includes('mastery'),'SRS/mastery missing');
-assert.ok(js.includes('!state.flipped'),'answer buttons must stay locked before reveal');
+assert.ok(js.includes('const disabled=state.answerLock||!state.flipped'),'answer buttons must stay locked before reveal');
+assert.ok(js.includes('state.flipped&&!state.answerLock'),'swipe answers must stay locked before reveal');
+assert.ok(js.includes("if(mode==='review')"),'review mode must retain dedicated SRS selection');
+assert.ok(!js.includes('const originalPickSession'),'pickSession must not be overridden after boot');
 assert.ok(js.includes('phoneticSource') || js.includes('phonetic(w.phonetic'),'phonetic rendering missing');
 const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);
 const dup=ids.filter((id,i)=>ids.indexOf(id)!==i);assert.equal(new Set(dup).size,0,'duplicate ids: '+[...new Set(dup)].join(', '));
@@ -37,10 +42,10 @@ const css=read('css/main.css');
 assert.match(css,/\.flashcard\.is-flipped \.flash-front\{transform:rotateY\(-180deg\)/,'flip front fix missing');
 assert.match(css,/\.flashcard\.is-flipped \.flash-back\{transform:rotateY\(0deg\)/,'flip back fix missing');
 assert.match(css,/\.flash-face\{[^}]*backface-visibility:hidden/,'backface visibility missing');
-assert.equal(read('VERSION').trim(),'0.022','version file mismatch');
-assert.equal(JSON.parse(read('package.json')).version,'0.0.22','package version mismatch');
-assert.match(read('server/index.mjs'),/VERSION='0.022'/,'server version mismatch');
-assert.match(read('sw.js'),/gestalt-v0\.022/,'service worker cache version mismatch');
+assert.equal(read('VERSION').trim(),'0.023','version file mismatch');
+assert.equal(JSON.parse(read('package.json')).version,'0.0.23','package version mismatch');
+assert.match(read('server/index.mjs'),/VERSION='0.023'/,'server version mismatch');
+assert.match(read('sw.js'),/gestalt-v0\.023/,'service worker cache version mismatch');
 const sw=read('sw.js');for(const asset of [...sw.matchAll(/'([^']+)'/g)].map(m=>m[1]).filter(x=>x.startsWith('./'))){assert.ok(fs.existsSync(path.join(root,asset))||asset==='./','missing SW asset '+asset)}
 const srcs=[...new Set(words.map(w=>w.source))];assert.equal(srcs.length,7,'expected seven lesson source groups');
 console.log('SMOKE OK');

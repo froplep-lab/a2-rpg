@@ -1,4 +1,4 @@
-const VERSION='0.022';
+const VERSION='0.023';
 const WORDS_URL='./data/words.json';
 const SAVE_VERSION=12;
 const SAVE_KEY='gestalt_learning_v12';
@@ -8,6 +8,14 @@ const TG_PREFIX='gestalt_v12_';
 let tg=null, words=[], voiceList=[], telegramSaveTimer=null;
 const $=id=>document.getElementById(id);
 const state={screen:'learn',subview:'learn',mode:'learn',session:[],sessionIndex:0,seen:new Set(),flipped:false,answerLock:false,favorites:new Set(),toastTimer:null,lastSpokenKey:'',transitionTimer:null,currentTopic:'topic-8',sessionRequeued:new Set(),swipeStartX:0,swipeStartY:0};
+let activeCategoryFilter='all';
+function setCategoryFilter(cat){
+  const allowed=new Set(['all','new','learning','review','mastered']);
+  activeCategoryFilter=allowed.has(cat)?cat:'all';
+  document.querySelectorAll('.cat-pill').forEach(b=>b.classList.toggle('active',b.dataset.cat===activeCategoryFilter));
+  if(state.screen==='learn' || state.screen==='review') pickSession(state.mode,state.currentTopic);
+  renderAll();
+}
 const navItems=[['learn','⌂','Головна'],['collections','▢','Колекції'],['add','＋',''],['review','◉','Повторення'],['settings','⚙','Налаштування']];
 const titles={learn:'Слова',collections:'Колекції',review:'Повторення',settings:'Налаштування'};
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -36,16 +44,18 @@ function due(w){const r=save.review[wordKey(w)];return Boolean(r)&&Number(r.dueA
 function dueWords(topicId=state.currentTopic){return filterTopic(mergedWords(),topicId).filter(due).sort((a,b)=>(Number(save.review[wordKey(a)]?.dueAt)||0)-(Number(save.review[wordKey(b)]?.dueAt)||0))}
 function pickSession(mode='learn',topicId=state.currentTopic){
   let all=filterTopic(mergedWords(),topicId);
-  const dueList=dueWords(topicId);
+  if(activeCategoryFilter!=='all') all=all.filter(w=>statusFromReview(save.review[wordKey(w)]||{})===activeCategoryFilter);
+  const dueList=all.filter(due).sort((a,b)=>(Number(save.review[wordKey(a)]?.dueAt)||0)-(Number(save.review[wordKey(b)]?.dueAt)||0));
   const selected=[]; const seen=new Set();
   const add=w=>{if(w&&!seen.has(wordKey(w))){seen.add(wordKey(w));selected.push(w)}};
-  if(mode==='review'){dueList.forEach(add)}
-  else{
+  if(mode==='review'){
+    dueList.forEach(add);
+  }else{
     dueList.forEach(add);
     const fresh=all.filter(w=>{const r=save.review[wordKey(w)];return !r||statusFromReview(r)==='new'||statusFromReview(r)==='learning'})
       .sort((a,b)=>mastery(a)-mastery(b)||Number(a.frequency||99999)-Number(b.frequency||99999));
     fresh.forEach(add);
-    if(selected.length<8) all.sort((a,b)=>mastery(a)-mastery(b)).forEach(add);
+    if(selected.length<8) all.slice().sort((a,b)=>mastery(a)-mastery(b)||Number(a.frequency||99999)-Number(b.frequency||99999)).forEach(add);
   }
   state.session=selected.slice(0,24);
   state.sessionIndex=0;state.seen=new Set();state.sessionRequeued=new Set();
@@ -139,7 +149,7 @@ function maybeSpeakCurrent(force=false){
 function sentenceUa(w){if(w?.sentenceUa)return w.sentenceUa;const fallback={"Das ist ein gutes Beispiel für unsere Arbeit.":'Це хороший приклад для нашої роботи.'};return fallback[w?.sentence]||'Приклад речення для кращого запам’ятовування.'}
 
 function buildNav(){const html=navItems.map(([id,icon,label])=>`<button data-nav="${id}" class="${id==='add'?'add':''}"><span class="ico">${icon}</span>${label?`<span>${label}</span>`:''}</button>`).join('');$('sideNav').innerHTML=html;$('bottomNav').innerHTML=html;document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>b.dataset.nav==='add'?openAdd():navigate(b.dataset.nav)))}
-function navigate(screen){if(screen==='add'){openAdd();return}const changed=state.screen!==screen;state.screen=screen;if(screen==='learn'){state.mode='learn';state.subview='learn'}if(screen==='review'){state.mode='review';state.subview='learn'}if(screen==='collections'){state.subview='collection'}document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===`screen-${screen==='collections'?'collections':screen==='settings'?'settings':screen==='review'?'review':'learn'}`));document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===screen));$('pageTitle').textContent=screen==='learn'?'Слова':titles[screen]||'Слова';if((screen==='learn'||screen==='review')&&(changed||!state.session.length))pickSession(screen==='review'?'review':'learn',state.currentTopic);renderAll();syncTelegramBack()}
+function navigate(screen){if(screen==='add'){openAdd();return}const changed=state.screen!==screen;state.screen=screen;if(screen==='learn'){state.mode='learn';state.subview='learn'}if(screen==='review'){state.mode='review';state.subview='learn';setCategoryFilter('all')}if(screen==='collections'){state.subview='collection'}document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===`screen-${screen==='collections'?'collections':screen==='settings'?'settings':screen==='review'?'review':'learn'}`));document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===screen));$('pageTitle').textContent=screen==='learn'?'Слова':titles[screen]||'Слова';if((screen==='learn'||screen==='review')&&(changed||!state.session.length))pickSession(screen==='review'?'review':'learn',state.currentTopic);renderAll();syncTelegramBack()}
 function setSubview(view){state.subview=view;document.querySelectorAll('.subtab').forEach(b=>b.classList.toggle('active',b.dataset.subview===view));document.querySelectorAll('.subview').forEach(s=>s.classList.toggle('active',s.id===`subview-${view}`));renderAll()}
 
 function renderHeader(){const l=levelFromXp(save.xp);$('level').textContent=l.lvl;$('profileName').textContent=save.playerName||'Wanderer';}
@@ -232,6 +242,8 @@ async function cloudLoad(){if(!tg?.CloudStorage)return null;for(const prefix of 
 async function initTelegram(){const ok=await tgLoadSdk();tg=ok?window.Telegram.WebApp:null;if(!tg)return;applyTelegram();const remote=await cloudLoad();if(remote&&Number(remote.updatedAt||0)>Number(save.updatedAt||0))save=remote;persist();renderAll();$('tgStatus').textContent='Telegram Mini App · синхронізація готова'}
 async function syncTelegram(){if(!tg){toast('Синхронізація буде доступна в Telegram');return}const ok=await cloudSave();if(ok)$('tgStatus').textContent='Telegram Mini App · синхронізовано';toast(ok?'Збережено в Telegram ✅':'Синхронізація тимчасово недоступна')}
 function startReviewSession(){
+  activeCategoryFilter='all';
+  document.querySelectorAll('.cat-pill').forEach(b=>b.classList.toggle('active',b.dataset.cat==='all'));
   const due=dueWords(state.currentTopic);
   state.session=due.slice(0,24);
   state.sessionIndex=0;
@@ -249,7 +261,7 @@ function startReviewSession(){
 }
 function bind(){
  document.querySelectorAll('.subtab').forEach(b=>b.addEventListener('click',()=>setSubview(b.dataset.subview)));$('topicSelect').addEventListener('change',e=>setTopic(e.target.value));$('collectionTopicSelect').addEventListener('change',e=>setTopic(e.target.value));
- $('cardWrap').addEventListener('click',e=>{if(e.target.closest('button'))return;toggleFlip()});$('cardWrap').addEventListener('pointerdown',e=>{state.swipeStartX=e.clientX;state.swipeStartY=e.clientY});$('cardWrap').addEventListener('pointerup',e=>{const dx=e.clientX-state.swipeStartX,dy=e.clientY-state.swipeStartY;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)&&!state.answerLock){dx>0?answerWord(4):answerWord(0)}state.swipeStartX=0;state.swipeStartY=0});$('cardWrap').addEventListener('pointercancel',()=>{state.swipeStartX=0;state.swipeStartY=0});$('cardWrap').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFlip()}});$('speakWord').addEventListener('click',e=>{e.stopPropagation();speak(lexicalForIpa(currentWord()||{}))});$('speakSentence').addEventListener('click',e=>{e.stopPropagation();speak(currentWord()?.sentence)});$('favoriteBtn').addEventListener('click',toggleFavorite);$('rememberBtn').addEventListener('click',()=>answerWord(4));$('forgotBtn').addEventListener('click',()=>answerWord(0));
+ $('cardWrap').addEventListener('click',e=>{if(e.target.closest('button'))return;toggleFlip()});$('cardWrap').addEventListener('pointerdown',e=>{state.swipeStartX=e.clientX;state.swipeStartY=e.clientY});$('cardWrap').addEventListener('pointerup',e=>{const dx=e.clientX-state.swipeStartX,dy=e.clientY-state.swipeStartY;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)&&state.flipped&&!state.answerLock){dx>0?answerWord(4):answerWord(0)}state.swipeStartX=0;state.swipeStartY=0});$('cardWrap').addEventListener('pointercancel',()=>{state.swipeStartX=0;state.swipeStartY=0});$('cardWrap').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFlip()}});$('speakWord').addEventListener('click',e=>{e.stopPropagation();speak(lexicalForIpa(currentWord()||{}))});$('speakSentence').addEventListener('click',e=>{e.stopPropagation();speak(currentWord()?.sentence)});$('favoriteBtn').addEventListener('click',toggleFavorite);$('rememberBtn').addEventListener('click',()=>answerWord(4));$('forgotBtn').addEventListener('click',()=>answerWord(0));
  $('searchInput').addEventListener('input',()=>renderCollection('inlineWordList','searchInput','collectionCount'));$('collectionSearch').addEventListener('input',()=>renderCollection('collectionList','collectionSearch','collectionBigCount'));$('collectionSpeak').addEventListener('click',()=>{const q=String($('collectionSearch').value||'').trim();const w=filterTopic(mergedWords(),state.currentTopic).find(x=>!q||`${x.german} ${x.ukrainian}`.toLowerCase().includes(q.toLowerCase()));if(w)speak(w.german);else toast('Немає слова для озвучення')});
  $('reviewStart').addEventListener('click',startReviewSession);
  $('openAddCollection').addEventListener('click',openAdd);$('closeAdd').addEventListener('click',closeAdd);$('addModal').addEventListener('click',e=>{if(e.target.id==='addModal')closeAdd()});$('addBtn').addEventListener('click',addWord);
@@ -258,81 +270,6 @@ function bind(){
  $('resetBtn').addEventListener('click',async()=>{const ok=tg?.showConfirm?await new Promise(r=>tg.showConfirm('Скинути локальний прогрес?',r)):window.confirm('Скинути локальний прогрес?');if(ok){safeRemove(SAVE_KEY);location.reload()}})
 }
 function boot(){loadSave();state.currentTopic=save.currentTopic||'topic-8';syncTheme();buildNav();bind();document.addEventListener('visibilitychange',()=>{if(document.hidden){persist();speechSynthesis?.cancel?.()}});refreshVoices();if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=refreshVoices;fetch(WORDS_URL,{cache:'default'}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{words=Array.isArray(d)?d:[];if(!topics().some(t=>t.id===state.currentTopic)&&state.currentTopic!=='all')state.currentTopic='topic-8';save.currentTopic=state.currentTopic;pickSession(state.mode,state.currentTopic);renderAll();maybeSpeakCurrent(false)}).catch(()=>{words=[];toast('Словник не завантажився. Можна працювати з локальними словами.')});pickSession('learn');renderAll();initTelegram().then(syncTelegramBack);if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{})}if(navigator.storage?.persist){navigator.storage.persist().catch(()=>{})}}
+document.addEventListener('click',e=>{const pill=e.target.closest?.('.cat-pill');if(pill?.dataset.cat)setCategoryFilter(pill.dataset.cat)});
 boot();
 
-
-// --- CATEGORY FILTER STATE & DETAILED STATS ---
-let activeCategoryFilter = 'all';
-
-function setCategoryFilter(cat) {
-    activeCategoryFilter = cat;
-    document.querySelectorAll('.cat-pill').forEach(b => {
-        b.classList.toggle('active', b.dataset.cat === cat);
-    });
-    pickSession(state.mode, state.currentTopic);
-    renderCard();
-}
-
-// Hook category pill clicks in event bindings or init
-document.addEventListener('click', (e) => {
-    const pill = e.target.closest('.cat-pill');
-    if (pill && pill.dataset.cat) {
-        setCategoryFilter(pill.dataset.cat);
-    }
-});
-
-function updateCategoryCounts() {
-    const all = filterTopic(mergedWords(), state.currentTopic);
-    const newWords = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'new'; });
-    const learning = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'learning'; });
-    const review = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'review'; });
-    const mastered = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'mastered'; });
-    
-    if($('countAll')) $('countAll').textContent = all.length;
-    if($('countNew')) $('countNew').textContent = newWords.length;
-    if($('countLearning')) $('countLearning').textContent = learning.length;
-    if($('countReview')) $('countReview').textContent = review.length;
-    if($('countMastered')) $('countMastered').textContent = mastered.length;
-}
-
-// Override pickSession to respect activeCategoryFilter
-const originalPickSession = pickSession;
-pickSession = function(mode='learn', topicId=state.currentTopic) {
-    let all = filterTopic(mergedWords(), topicId);
-    if (activeCategoryFilter === 'new') {
-        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'new'; });
-    } else if (activeCategoryFilter === 'learning') {
-        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'learning'; });
-    } else if (activeCategoryFilter === 'review') {
-        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'review'; });
-    } else if (activeCategoryFilter === 'mastered') {
-        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'mastered'; });
-    }
-    
-    state.session = [...all].sort(() => Math.random() - 0.5);
-    state.sessionIndex = 0;
-    state.sessionRequeued.clear();
-    updateCategoryCounts();
-    renderCard();
-};
-
-// Override renderStats to populate all fields
-const originalRenderStats = renderStats;
-renderStats = function() {
-    originalRenderStats();
-    const all = mergedWords();
-    const newWords = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'new'; }).length;
-    const learning = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'learning'; }).length;
-    const review = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'review'; }).length;
-    const mastered = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'mastered'; }).length;
-    
-    if($('statNew')) $('statNew').textContent = newWords;
-    if($('statLearning')) $('statLearning').textContent = learning;
-    if($('statReview')) $('statReview').textContent = review;
-    if($('statMastered')) $('statMastered').textContent = mastered;
-    if($('statRepetitions')) $('statRepetitions').textContent = save.answers || 0;
-    
-    const masteryPct = all.length ? Math.round((mastered / all.length) * 100) : 0;
-    if($('statMasteryPct')) $('statMasteryPct').textContent = masteryPct + '%';
-    updateCategoryCounts();
-};
