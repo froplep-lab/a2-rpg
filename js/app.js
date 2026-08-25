@@ -1,4 +1,4 @@
-const VERSION='0.026';
+const VERSION='0.027';
 const WORDS_URL=new URL('../data/words.json', import.meta.url).href;
 const COMPACT_WORDS_URL=new URL('../data/words.compact.json', import.meta.url).href;
 const SAVE_VERSION=12;
@@ -184,6 +184,21 @@ function lexicalForIpa(w){
 function pluralForDisplay(w){
   const {plural}=wordDisplayParts(w);
   return plural && !/^Sg\.?$/i.test(plural) ? `Plural: ${plural}` : '';
+}
+function updateCategoryCounts(){
+  const all=filterTopic(mergedWords(),state.currentTopic);
+  const counts={all:all.length,new:0,learning:0,review:0,mastered:0};
+  for(const w of all){
+    const r=save.review[wordKey(w)]||{};
+    const st=statusFromReview(r);
+    if(st==='new') counts.new++;
+    else if(st==='learning') counts.learning++;
+    else if(st==='review') counts.review++;
+    else if(st==='mastered') counts.mastered++;
+  }
+  for(const [id,key] of [['countAll','all'],['countNew','new'],['countLearning','learning'],['countReview','review'],['countMastered','mastered']]){
+    const el=$(id); if(el) el.textContent=String(counts[key]);
+  }
 }
 function renderCard(){const w=currentWord();if(!w){$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent='Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent='Обери іншу тему або додай слово';$('wordHint').textContent='Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backMeaning').textContent='';$('backMeaningNote').textContent='';$('backMeaningNote').hidden=true;$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('sentencePanel').hidden=true;$('sentenceToggle').setAttribute('aria-expanded','false');$('sentenceToggle').textContent='Приклад речення ▾';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordLevel').textContent=w.level||'A2/B1';
   const parts=wordDisplayParts(w); const rawG=parts.base||'—';

@@ -45,3 +45,10 @@
 - Service Worker no longer blocks installation on dictionary pre-cache failure.
 - Dictionary requests use network-first with cache fallback.
 - Disabled immutable HTTP caching for HTML/JS/CSS/JSON/WebManifest so Telegram/mobile clients can receive fixes promptly.
+
+## v0.027 — Critical UI regression fix
+
+- Restored category counters for the active topic (`Усі`, `Нові`, `У процесі`, `Повторення`, `Вивчені`).
+- Fixed missing `updateCategoryCounts()` runtime function that stopped rendering after the dictionary loaded.
+- Restored flashcard 3D rotation by removing the `transform:none` override and applying `rotateY(180deg)` on `.flashcard.is-flipped`.
+- Kept sentence example collapsed by default and translation on the back side.
