@@ -33,8 +33,8 @@ const css=read('css/main.css');
 assert.match(css,/\.flashcard\.is-flipped \.flash-front\{transform:rotateY\(-180deg\)/,'flip front fix missing');
 assert.match(css,/\.flashcard\.is-flipped \.flash-back\{transform:rotateY\(0deg\)/,'flip back fix missing');
 assert.match(css,/\.flash-face\{[^}]*backface-visibility:hidden/,'backface visibility missing');
-assert.equal(read('VERSION').trim(),'0.020','version file mismatch');
-assert.equal(JSON.parse(read('package.json')).version,'0.0.20','package version mismatch');
+assert.equal(read('VERSION').trim(),'0.021','version file mismatch');
+assert.equal(JSON.parse(read('package.json')).version,'0.0.21','package version mismatch');
 const sw=read('sw.js');for(const asset of [...sw.matchAll(/'([^']+)'/g)].map(m=>m[1]).filter(x=>x.startsWith('./'))){assert.ok(fs.existsSync(path.join(root,asset))||asset==='./','missing SW asset '+asset)}
 const srcs=[...new Set(words.map(w=>w.source))];assert.equal(srcs.length,7,'expected seven lesson source groups');
 console.log('SMOKE OK');
