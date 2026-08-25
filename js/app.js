@@ -1,4 +1,4 @@
-const VERSION='0.027';
+const VERSION='0.028';
 const WORDS_URL=new URL('../data/words.json', import.meta.url).href;
 const COMPACT_WORDS_URL=new URL('../data/words.compact.json', import.meta.url).href;
 const SAVE_VERSION=12;

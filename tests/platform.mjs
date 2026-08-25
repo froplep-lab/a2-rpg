@@ -15,6 +15,7 @@ assert.match(js,/WORDS_URL/,'full dictionary fallback missing');
 assert.match(sw,/networkFirst/,'dictionary network-first strategy missing');
 assert.match(sw,/words\.compact\.json/,'compact dictionary missing from service worker');
 assert.doesNotMatch(sw,/cache\.addAll\(ASSETS\)/,'service worker must not fail all install when one asset is slow');
+assert.doesNotMatch(sw,/words\.compact\.json.*cache\.add|cache\.add.*words\.compact\.json/,'dictionary must not block service-worker install');
 const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);
 assert.equal(new Set(ids).size,ids.length,'duplicate DOM ids');
 console.log('PLATFORM STATIC CHECK OK');

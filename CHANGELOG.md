@@ -1,3 +1,9 @@
+# GESTALT v0.028 — merged stability release
+
+- Applied the complete card, translation, sentence, dictionary-cleanup, SRS, category-counter, loading/fallback, cache, and flashcard-flip fixes from the preceding iterations to the supplied base project.
+- Kept the existing feature set; no new learning mechanics introduced.
+- Service Worker installation no longer preloads the dictionary; dictionary remains network-first with cache fallback.
+
 # GESTALT v0.024
 
 ## v0.024 — card translation / example stability
