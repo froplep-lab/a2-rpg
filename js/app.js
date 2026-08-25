@@ -1,4 +1,4 @@
-const VERSION='0.031';
+const VERSION='0.032';
 const WORDS_URL=new URL('../data/words.json', import.meta.url).href;
 const COMPACT_WORDS_URL=new URL('../data/words.compact.json', import.meta.url).href;
 const SAVE_VERSION=12;
@@ -368,8 +368,12 @@ async function boot(){
   loadSave();state.currentTopic=save.currentTopic||'topic-8';syncTheme();buildNav();bind();
   document.addEventListener('visibilitychange',()=>{if(document.hidden){persist();speechSynthesis?.cancel?.()}});
   refreshVoices();if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=refreshVoices;
-  pickSession('learn');renderAll();
+
+  // Load the dictionary before the first learning render. Telegram Mini Apps can
+  // restore a previous UI frame very quickly; rendering an empty session first
+  // can leave the card looking blank until another navigation event occurs.
   await loadWordData();
+
   const list=topics();
   const current=list.find(t=>t.id===state.currentTopic);
   if(state.currentTopic!=='all'&&(!current||current.count===0))state.currentTopic=list.find(t=>t.count>0)?.id||'all';

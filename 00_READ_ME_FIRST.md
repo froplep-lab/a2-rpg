@@ -1,3 +1,5 @@
+Release 0.032 — Telegram Mini App dictionary/cache fix
+
 # STOP — READ THIS FIRST BEFORE MODIFYING GESTALT
 
 1. Read `AI/MASTER_INSTRUCTIONS.md`.
