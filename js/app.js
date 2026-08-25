@@ -179,7 +179,7 @@ function maybeSpeakCurrent(force=false){
   setTimeout(()=>{ if(!state.answerLock && currentWord()===w && !state.flipped) speak(w.german); }, force?60:450);
 }
 
-function sentenceUa(w){if(w?.sentenceUa)return w.sentenceUa;const fallback={"Das ist ein gutes Beispiel für unsere Arbeit.":'Це хороший приклад для нашої роботи.'};return fallback[w?.sentence]||'Приклад речення для кращого запам’ятовування.'}
+function sentenceUa(w){if(w?.sentenceUa)return w.sentenceUa;const fallback={"Das ist ein gutes Beispiel für unsere Arbeit.":'Це хороший приклад для нашої роботи.'};return fallback[w?.sentence]||`Приклад речення для кращого запам’ятовування.`}
 
 function buildNav(){const html=navItems.map(([id,icon,label])=>`<button data-nav="${id}" class="${id==='add'?'add':''}"><span class="ico">${icon}</span>${label?`<span>${label}</span>`:''}</button>`).join('');$('sideNav').innerHTML=html;$('bottomNav').innerHTML=html;document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>b.dataset.nav==='add'?openAdd():navigate(b.dataset.nav)))}
 function navigate(screen){if(screen==='add'){openAdd();return}const changed=state.screen!==screen;state.screen=screen;if(screen==='learn'){state.mode='learn';state.subview='learn'}if(screen==='review'){state.mode='review';state.subview='learn';setCategoryFilter('all')}if(screen==='collections'){state.subview='collection'}document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===`screen-${screen==='collections'?'collections':screen==='settings'?'settings':screen==='review'?'review':'learn'}`));document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===screen));$('pageTitle').textContent=screen==='learn'?'Слова':titles[screen]||'Слова';if((screen==='learn'||screen==='review')&&(changed||!state.session.length))pickSession(screen==='review'?'review':'learn',state.currentTopic);renderAll();syncTelegramBack()}
@@ -270,7 +270,7 @@ function addWord(){
   if(!de||!ua){toast('Вкажи слово і переклад');return}
   const normalized=de.toLocaleLowerCase('de-DE').trim();
   if(mergedWords().some(w=>String(w.german||'').toLocaleLowerCase('de-DE').trim()===normalized)){toast('Це слово вже є в колекції');return}
-  const w={id:uid(),german:de,ukrainian:ua,translationNote:'',hint:ua,grammar:'Власне слово',emoji,sentence:ex,sentenceUa:'Ваш власний приклад.',level:'A2/B1',category:'Мої слова',source:'GESTALT · Моя колекція',frequency:1,topicId:'my-words',topicNumber:null,topicTitle:'Мої слова',sentenceUa:'Ваш власний приклад.'};
+  const w={id:uid(),german:de,ukrainian:ua,translationNote:'',hint:ua,grammar:'Власне слово',emoji,sentence:ex,sentenceUa:'Ваш власний приклад.',level:'A2/B1',category:'Мої слова',source:'GESTALT · Моя колекція',frequency:1,topicId:'my-words',topicNumber:null,topicTitle:'Мої слова'};
   save.customWords.unshift(w);
   persist();
   pickSession('learn');
