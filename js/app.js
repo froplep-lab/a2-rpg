@@ -1,4 +1,4 @@
-const VERSION='0.030';
+const VERSION='0.031';
 const WORDS_URL=new URL('../data/words.json', import.meta.url).href;
 const COMPACT_WORDS_URL=new URL('../data/words.compact.json', import.meta.url).href;
 const SAVE_VERSION=12;
@@ -65,7 +65,35 @@ function pickSession(mode='learn',topicId=state.currentTopic){
   state.sessionIndex=0;state.seen=new Set();state.sessionRequeued=new Set();
   state.mode=mode;state.flipped=false;state.answerLock=false;state.sentenceExpanded=false;
 }
-function currentWord(){return state.session[state.sessionIndex]||null}
+function currentWord(){
+  const candidate=state.session[state.sessionIndex];
+  if(candidate&&typeof candidate==='object'&&String(candidate.german||'').trim()) return candidate;
+  const topicWords=filterTopic(mergedWords(),state.currentTopic);
+  if(!topicWords.length) return null;
+  const fallback=topicWords.find((w)=>String(w?.german||'').trim())||null;
+  if(fallback){
+    const key=wordKey(fallback);
+    state.session=topicWords.filter((w)=>w&&wordKey(w)).slice(0,24);
+    const idx=state.session.findIndex((w)=>wordKey(w)===key);
+    state.sessionIndex=idx>=0?idx:0;
+    return state.session[state.sessionIndex]||fallback;
+  }
+  return null;
+}
+function ensureLearningSession(){
+  const topicWords=filterTopic(mergedWords(),state.currentTopic);
+  if(!topicWords.length) return false;
+  const validSession=Array.isArray(state.session)&&state.session.some((w)=>w&&String(w.german||'').trim());
+  if(!validSession){
+    pickSession(state.mode,state.currentTopic);
+  }
+  if(!state.session.length){
+    state.session=topicWords.filter((w)=>w&&wordKey(w)).slice(0,24);
+    state.sessionIndex=0;
+  }
+  if(state.sessionIndex<0||state.sessionIndex>=state.session.length) state.sessionIndex=0;
+  return Boolean(currentWord());
+}
 // AI CONTEXT: maps answer quality to the next SRS interval.
 function intervalForQuality(q,box){
   const b=clamp(Number(box)||0,0,6);
@@ -205,7 +233,7 @@ function updateCategoryCounts(){
   }
 }
 // AI CONTEXT: renders the current card; keep transform state and answer-lock semantics intact.
-function renderCard(){const w=currentWord();if(!w){$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent='Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent='Обери іншу тему або додай слово';$('wordHint').textContent='Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backMeaning').textContent='';$('backMeaningNote').textContent='';$('backMeaningNote').hidden=true;$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('sentencePanel').hidden=true;$('sentenceToggle').setAttribute('aria-expanded','false');$('sentenceToggle').textContent='Приклад речення ▾';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordLevel').textContent=w.level||'A2/B1';
+function renderCard(){ensureLearningSession();const w=currentWord();if(!w){const topicCount=filterTopic(mergedWords(),state.currentTopic).length;$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent=topicCount?'Відновлюю картку…':'Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent=topicCount?'Перезапускаю сесію навчання':'Обери іншу тему або додай слово';$('wordHint').textContent=topicCount?'Будь ласка, зачекай мить…':'Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backMeaning').textContent='';$('backMeaningNote').textContent='';$('backMeaningNote').hidden=true;$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('sentencePanel').hidden=true;$('sentenceToggle').setAttribute('aria-expanded','false');$('sentenceToggle').textContent='Приклад речення ▾';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordLevel').textContent=w.level||'A2/B1';
   const parts=wordDisplayParts(w); const rawG=parts.base||'—';
   const wordEl=$('wordGerman');
   wordEl.classList.remove('word-long','word-xlong');
@@ -346,7 +374,13 @@ async function boot(){
   const current=list.find(t=>t.id===state.currentTopic);
   if(state.currentTopic!=='all'&&(!current||current.count===0))state.currentTopic=list.find(t=>t.count>0)?.id||'all';
   save.currentTopic=state.currentTopic;
-  pickSession(state.mode,state.currentTopic);renderAll();maybeSpeakCurrent(false);
+  pickSession(state.mode,state.currentTopic);
+  if(!ensureLearningSession() && mergedWords().length){
+    state.currentTopic='all';
+    save.currentTopic='all';
+    pickSession('learn','all');
+  }
+  renderAll();maybeSpeakCurrent(false);
   initTelegram().then(syncTelegramBack);
   if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{})}
   if(navigator.storage?.persist){navigator.storage.persist().catch(()=>{})}

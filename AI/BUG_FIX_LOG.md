@@ -133,3 +133,11 @@
 **Regression Risk:** Low; this intentionally invalidates the previous browser cache and loads the current bundle.
 
 **Tests:** smoke, state, platform and syntax checks all PASS.
+
+
+## 2026-08-25 — Topic shows words but learning card says «Немає слів»
+**Bug:** A populated topic could display a 1/24 shell with the empty-card message and zero category counts.
+**Root Cause:** The UI trusted the session queue even when its current entry was invalid/empty, and category counts were coupled to successful card rendering. A stale service-worker cache could also mix release assets.
+**Fix:** Added `ensureLearningSession()` and a defensive `currentWord()` fallback that rebuilds the active queue from the canonical topic vocabulary. Category counts are refreshed from the topic state independently. Bumped release/cache identity to `0.031`.
+**Affected Files:** `js/app.js`, `sw.js`, `VERSION`, `package.json`, `server/index.mjs`.
+**Regression:** Smoke/state/platform checks pass.

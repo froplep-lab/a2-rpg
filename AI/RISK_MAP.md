@@ -25,7 +25,7 @@
 - Spacing/shadows/typography.
 
 ## Confirmed issues from source inspection
-- **RESOLVED:** `js/app.js` now matches release identity `0.030`; automated suites pass after the correction.
+- **RESOLVED:** `js/app.js` now matches release identity `0.031`; automated suites pass after the correction.
 - **RESOLVED:** flashcard face transform architecture was tightened to remove nested 3D contexts and face-level transform animation.
 - **RESOLVED:** long-word content clipping path was addressed through runtime class selection and safe wrapping.
 - **RESOLVED:** selected topic now exposes a derived total word count in the UI.
@@ -42,3 +42,5 @@
 **Card flip:** high visual sensitivity. The flip must remain split between static card shell, `flashcard-inner` 3D rotation, and locally reversed back face. Do not reintroduce shell-level transform or a second independent face animation without regression testing.
 
 - **RESOLVED:** card flip now uses the standard two-face 3D pattern. The Ukrainian/back content lives on the actual back face with a matching 180° local rotation, preventing mirrored text without a separate overlay layer.
+
+- **RESOLVED:** Topic session now self-recovers when the active queue is empty/invalid while vocabulary exists.

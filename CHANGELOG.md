@@ -1,3 +1,9 @@
+## v0.031 — topic session recovery
+- Fixed a failure mode where a populated topic could render the empty-card state.
+- Learning sessions now self-heal if the active queue becomes empty or contains invalid entries.
+- Category counters render independently of card content.
+- Added release/cache bump to prevent stale service-worker assets from mixing with new UI.
+
 
 ## v0.030 — card flip stabilization
 - Replaced the previous flat-overlay flip workaround with a canonical two-face 3D card.

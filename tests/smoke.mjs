@@ -45,7 +45,7 @@ assert.ok(js.includes("if(mode==='review')"),'review mode must retain dedicated 
 assert.ok(!js.includes('const originalPickSession'),'pickSession must not be overridden after boot');
 assert.ok(js.includes('phonetic(w.phonetic'),'phonetic rendering missing');
 assert.ok(js.includes('COMPACT_WORDS_URL'),'compact dictionary loader missing');
-assert.ok(sw.includes('gestalt-v0.030'),'service worker version mismatch');
+assert.ok(sw.includes('gestalt-v0.031'),'service worker version mismatch');
 assert.ok(sw.includes('words.compact.json'),'service worker compact dictionary missing');
 const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);
 const dup=ids.filter((id,i)=>ids.indexOf(id)!==i);assert.equal(new Set(dup).size,0,'duplicate ids: '+[...new Set(dup)].join(', '));
@@ -73,12 +73,12 @@ assert.match(css,/\.flash-face\{[^}]*overflow:hidden/,'card faces must clip thei
 assert.ok(css.includes('.flashcard.is-flipped .flashcard-inner{transform:rotateY(180deg)}'),'inner must own flip transform');
 assert.match(css,/\.flash-back\{transform:rotateY\(180deg\)/,'back content must live on the canonical 3D back face');
 assert.ok(html.includes('class="flash-face flash-back"'),'canonical back face missing');
-assert.ok(js.includes("const VERSION='0.030'"),'app version must match release identity');
+assert.ok(js.includes("const VERSION='0.031'"),'app version must match release identity');
 assert.ok(js.includes("wordEl.classList.remove('word-long','word-xlong')"),'long-word card sizing logic missing');
-assert.equal(read('VERSION').trim(),'0.030','version file mismatch');
-assert.equal(JSON.parse(read('package.json')).version,'0.0.30','package version mismatch');
-assert.match(read('server/index.mjs'),/VERSION='0.030'/,'server version mismatch');
-assert.match(read('sw.js'),/gestalt-v0\.030/,'service worker cache version mismatch');
+assert.equal(read('VERSION').trim(),'0.031','version file mismatch');
+assert.equal(JSON.parse(read('package.json')).version,'0.0.31','package version mismatch');
+assert.match(read('server/index.mjs'),/VERSION='0.031'/,'server version mismatch');
+assert.match(read('sw.js'),/gestalt-v0\.031/,'service worker cache version mismatch');
 
 assert.match(html,/id="backMeaning"/,'back translation element missing');
 assert.match(html,/id="sentenceToggle"/,'sentence toggle missing');

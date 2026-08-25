@@ -1,4 +1,4 @@
-# KNOWN ISSUES — GESTALT v0.030
+# KNOWN ISSUES — GESTALT v0.031
 
 ## CRITICAL
 - Node smoke tests cannot replace full real-browser interaction testing across engines/devices.
