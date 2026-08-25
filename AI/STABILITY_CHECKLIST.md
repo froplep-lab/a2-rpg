@@ -7,7 +7,7 @@
 | Topic word counts | PASS | smoke suite + browser fixture assertion prepared |
 | Card rendering | PASS (static) | DOM/state invariants |
 | Card flip architecture | PASS (static) / PARTIAL visual | inner layer owns 3D transform; browser visual blocked in this sandbox |
-| Back translation orientation | PASS (structural) / PARTIAL runtime visual | combined transform is checked by browser harness when available |
+| Back translation orientation | PASS (structural) / PARTIAL runtime visual | canonical two-face 3D invariant is checked; browser visual remains environment-dependent |
 | Answer system | PASS (static) / PARTIAL runtime | e2e click path implemented |
 | Progress / XP / SRS | PASS (static) / PARTIAL runtime | state normalization + e2e assertions |
 | Persistence / reload | PASS (static) / PARTIAL runtime | e2e reload assertion implemented |
@@ -24,3 +24,11 @@ Card Back Orientation: PARTIAL — code invariant PASS; full Chromium visual ver
 E2E Runtime Console/Network: PARTIAL — harness is implemented and captures diagnostics, but the same navigation policy prevents app-page execution here.
 
 Do not upgrade these rows to PASS without running `npm run test:e2e` in an environment where the app page can actually load.
+
+
+## Final regression after canonical flip fix
+- `npm test` — PASS
+- `npm run state-check` — PASS
+- `npm run check` — PASS
+- `npm run platform-check` — PASS
+- `npm run test:e2e` — PARTIAL/ENVIRONMENT BLOCKED (`ERR_BLOCKED_BY_ADMINISTRATOR` before application load)

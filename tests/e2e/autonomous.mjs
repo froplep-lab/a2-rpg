@@ -82,7 +82,7 @@ async function main() {
   try {
     await waitFor(`http://127.0.0.1:${appPort}/health`);
     chrome = spawn('chromium', [
-      '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--no-proxy-server',
+      '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--no-proxy-server', '--remote-allow-origins=*',
       `--remote-debugging-port=${chromePort}`,
       `--user-data-dir=${path.join(ARTIFACTS, 'chrome-profile')}`,
       'about:blank'
@@ -185,7 +185,7 @@ async function main() {
 
     const result = {
       environment: {browserHost},
-      ok: errors.length === 0 && networkFailures.filter(x => !x.canceled).length === 0 && topicCount.includes('1') && backInfo.visual.netBackIdentity === true && backInfo.visual.backContentTransform === 'none' && backInfo.visual.backContentVisibility === 'visible' && backInfo.text === fixture.customWords[0].ukrainian && backInfo.backGerman === fixture.customWords[0].german && flipResult.flipped === true && answerAfter.answers === answerBefore.answers + 1 && savedAfterAnswer.xp > 0 && restored.xp === savedAfterAnswer.xp,
+      ok: errors.length === 0 && networkFailures.filter(x => !x.canceled).length === 0 && topicCount.includes('1') && backInfo.visual.netBackIdentity === true && /matrix3d?\(/.test(backInfo.visual.backTransform || '') && backInfo.text === fixture.customWords[0].ukrainian && backInfo.backGerman === fixture.customWords[0].german && flipResult.flipped === true && answerAfter.answers === answerBefore.answers + 1 && savedAfterAnswer.xp > 0 && restored.xp === savedAfterAnswer.xp,
       appPort, chromePort, stateBefore, topicCount, frontText, flipResult, answerBefore, answerAfter, savedAfterAnswer, restored, backInfo, desktop, mobile,
       errors, warnings, networkFailures: networkFailures.filter(x => !x.canceled),
       artifacts: 'tests/artifacts/', serverLog, chromeErr

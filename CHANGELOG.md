@@ -1,3 +1,9 @@
+
+## v0.029 — card flip stabilization
+- Replaced the previous flat-overlay flip workaround with a canonical two-face 3D card.
+- `.flashcard-inner` is now the single transform track; `.flash-back` carries the real Ukrainian translation with local `rotateY(180deg)`.
+- Updated autonomous E2E inspector and smoke tests to verify the real back-face matrix relationship.
+- Preserved existing SRS, statistics, persistence, navigation and card controls.
 # GESTALT v0.029 — AI baseline + card flip correction
 
 ## Added

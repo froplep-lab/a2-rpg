@@ -47,4 +47,4 @@ start server
 
 ### Card-flip invariants
 
-The 3D inner track and back visual surface may rotate. Actual back content must remain in `.flash-back` with `transform:none`, and the E2E inspector verifies `backContentTransform === "none"` plus the fixture Ukrainian translation.
+The 3D inner track rotates once. `.flash-front` stays at `rotateY(0deg)` and the real `.flash-back` uses the canonical local `rotateY(180deg)`, so the two 180° transforms combine to a readable back face. The E2E inspector verifies this matrix relationship plus the fixture Ukrainian translation.

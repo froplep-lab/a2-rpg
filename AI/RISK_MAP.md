@@ -41,4 +41,4 @@
 
 **Card flip:** high visual sensitivity. The flip must remain split between static card shell, `flashcard-inner` 3D rotation, and locally reversed back face. Do not reintroduce shell-level transform or a second independent face animation without regression testing.
 
-- **RESOLVED:** actual Ukrainian/back content is no longer rendered inside a transformed 3D face; the back text uses a flat sibling overlay to eliminate mirrored-text compositor failures.
+- **RESOLVED:** card flip now uses the standard two-face 3D pattern. The Ukrainian/back content lives on the actual back face with a matching 180° local rotation, preventing mirrored text without a separate overlay layer.

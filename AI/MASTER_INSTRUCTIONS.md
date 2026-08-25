@@ -61,4 +61,4 @@ No browser automation dependency is included in the project. In the supplied env
 
 Before significant behavioral changes, run `npm run test:regression`. When browser automation is available, also run `npm run test:e2e` and inspect `tests/artifacts/e2e-result.json` plus relevant screenshots. Use `window.__GESTALT_DEV__` only on loopback debug sessions for controlled fixture setup and runtime inspection. Never treat an environment-blocked browser run as a product PASS.
 
-- Flashcard architecture invariant: the 3D track is visual-only for the back surface; `.flash-back` is a flat sibling overlay for readable Ukrainian content. Do not move real back text into the transformed 3D surface without visual regression evidence.
+- Flashcard architecture invariant: `.flashcard-inner` is the only flipped track; `.flash-front` is the front face at `rotateY(0deg)` and `.flash-back` is the real back face at `rotateY(180deg)` with `backface-visibility:hidden`. Keep this standard two-face relationship; do not add shell transforms or overlay workarounds.

@@ -38,3 +38,14 @@ The test suite is intended to accumulate regression knowledge rather than remain
 ## Browser runner environment
 
 `npm run test:e2e` starts the local server and Chromium/CDP automatically. In restricted environments where loopback navigation is blocked, set `E2E_HOST` to a reachable host/IP; the harness records `tests/artifacts/e2e-result.json` with the exact browser/network failure instead of reporting a false PASS.
+
+
+## Card flip invariant
+
+The card uses one 3D track and two real faces:
+- `.flashcard-inner` rotates 180° when `.flashcard.is-flipped` is active.
+- `.flash-front` stays at 0°.
+- `.flash-back` stays at local 180°.
+- Therefore the final back content orientation is identity (180° + 180°).
+
+Do not replace this with a separate translated overlay unless a confirmed browser regression requires it and the replacement is covered by visual E2E evidence.

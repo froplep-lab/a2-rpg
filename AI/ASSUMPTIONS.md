@@ -9,7 +9,7 @@
 - Telegram CloudStorage prefix is `gestalt_v12_` with 2400-character chunks.
 - SRS ladder and XP values are defined in `BALANCE`.
 - Card answers require reveal.
-- Card flip is parent-only in current CSS.
+- Card flip uses a single `.flashcard-inner` 3D track; the real back content lives in `.flash-back` and has its canonical local `rotateY(180deg)`.
 - Service Worker cache is `gestalt-v0.029`.
 - Existing automated tests pass in this environment.
 - Server root/health/API status endpoints work without Telegram credentials.
