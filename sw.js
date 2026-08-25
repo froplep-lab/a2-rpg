@@ -1,4 +1,4 @@
-const CACHE='gestalt-v0.032';
+const CACHE='gestalt-v0.031';
 const SHELL=['./','./index.html','./css/main.css','./js/app.js','./data/book-vocabulary-manifest.json','./manifest.webmanifest','./assets/icon-192.png','./assets/icon-512.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(async cache=>{
@@ -10,7 +10,7 @@ self.addEventListener('activate',e=>{
 });
 async function networkFirst(request){
   try{
-    const response=await fetch(request);
+    const response=await fetch(request,{cache:'no-store'});
     if(response.ok){const cache=await caches.open(CACHE);cache.put(request,response.clone()).catch(()=>{});}
     return response;
   }catch{
