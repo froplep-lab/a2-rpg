@@ -53,12 +53,13 @@ function answerWord(q){
   let box=clamp(Number(r.box)||0,0,5);
   let m=mastery(w);
   
-  // SRS Mochi-style logic
+  // --- MOCHI SRS LOGIC ---
   let interval = r.interval || 0;
   let reps = r.reps || 0;
   let status = r.status || 'new';
   
-  if (q === 0) { // Forgot
+  if (q === 0) { 
+    // Forgot
     interval = 0;
     reps = 0;
     status = 'learning';
@@ -67,10 +68,11 @@ function answerWord(q){
       state.sessionRequeued.add(k);
       state.session.splice(Math.min(state.session.length, state.sessionIndex+3),0,w);
     }
-  } else { // Remember
+  } else { 
+    // Remember
     if (reps === 0) interval = 1;
     else if (reps === 1) interval = 3;
-    else interval = Math.round(interval * 1.5); // Spaced Repetition multiplier
+    else interval = Math.round(interval * 1.5);
     
     reps++;
     status = interval >= 21 ? 'mastered' : 'review';
@@ -79,10 +81,9 @@ function answerWord(q){
   
   save.mastery[k] = interval >= 21 ? 5 : (interval > 0 ? 3 : 0);
   const days = interval;
-  save.review[k] = { interval, reps, status, dueAt: now() + days * 86400000, lastSeen: now(), lastQuality: q };
-  
-  save.answers++;
-
+  save.review[k] = { interval, reps, status, box: box, dueAt: now() + days * 86400000, lastSeen: now(), lastQuality: q };
+  // -------------------------
+save.answers++;
   save.learnedToday++;
   save.history[todayKey()]=(Number(save.history[todayKey()])||0)+1;
   touchActivity();
@@ -130,7 +131,15 @@ function renderTopicSelectors(){const list=topics();const options=[{id:'all',tit
 function setTopic(topicId){state.currentTopic=topicId||'all';save.currentTopic=state.currentTopic;persist();if(state.screen==='learn'||state.screen==='review')pickSession(state.mode,state.currentTopic);renderTopicSelectors();renderAll();toast(state.currentTopic==='topic-8'?'Тема 8 · Am Wochenende 🌿':'Тему змінено ✨')}
 
 function renderProgress(){const pct=Math.min(100,Math.round(save.learnedToday/save.dailyGoal*100));$('dailyPct').textContent=`${pct}%`;$('dailyLearned').textContent=save.learnedToday;$('progressGood').textContent=pct>=85?'Відмінно! 🔥':pct>=40?'Добрий темп ✨':'Почнемо спокійно 🌱';$('progressRing').style.setProperty('--progress',`${pct*3.6}deg`);const days=[];const labels=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];for(let i=6;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);const k=dateKey(d);days.push({k,label:labels[d.getDay()===0?6:d.getDay()-1],v:Number(save.history[k]||0)})}const max=Math.max(save.dailyGoal,...days.map(x=>x.v),1);$('weekBars').innerHTML=days.map(x=>`<div class="week-bar ${x.k===todayKey()?'active':''}" style="height:${Math.max(10,Math.round(x.v/max*100))}%"><span class="week-day">${x.label}</span></div>`).join('')}
-function renderCard(){const w=currentWord();if(!w){$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent='Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent='Обери іншу тему або додай слово';$('wordHint').textContent='Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordEmoji').textContent=w.emoji||'✨';$('wordLevel').textContent=w.level||'A2/B1';
+function renderCard(){const w=currentWord();if(!w){$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent='Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent='Обери іншу тему або додай слово';$('wordHint').textContent='Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;
+  let emj = w.emoji;
+  if (!emj || emj === '✨') {
+      const hash = rawG.length % 5;
+      const fallbacks = ['🔹','🔸','▪️','▫️','🔺'];
+      emj = fallbacks[hash];
+  }
+  $('wordEmoji').textContent = emj;
+$('wordLevel').textContent=w.level||'A2/B1';
   let rawG = w.german || '—';
   let plural = '';
   if (rawG.includes(',')) {
@@ -146,16 +155,16 @@ $('wordPhonetic').textContent=`[${phonetic(w.german)}]`;$('wordGrammar').textCon
   
   let stIcon = '🆕 Нове';
   let pct = 0;
-  if (r.status === 'learning') { stIcon = '🔄 У процесі'; pct = 30; }
+  if (r.status === 'learning' || (r.status === 'new' && r.reps > 0)) { stIcon = '🔄 У процесі'; pct = 30; }
   else if (r.status === 'review') { stIcon = '📖 На повторенні'; pct = 60; }
-  else if (r.status === 'mastered') { stIcon = '✅ Вивчене'; pct = 100; }
-  else if (r.interval > 0) { stIcon = '🔄 У процесі'; pct = Math.min(100, r.interval * 5); }
+  else if (r.status === 'mastered' || r.interval >= 21) { stIcon = '✅ Вивчене'; pct = 100; }
+  else if (r.interval > 0) { stIcon = '🔄 У процесі'; pct = Math.min(100, Math.round((r.interval / 21) * 100)); }
   
-  if (r.interval >= 21) { stIcon = '✅ Вивчене'; pct = 100; }
+  if (pct === 0 && r.reps > 0) pct = 10; 
   
   if($('wordStatus')) $('wordStatus').textContent = stIcon;
   if($('wordProgressFill')) $('wordProgressFill').style.width = pct + '%';
-  if($('wordProgressText')) $('wordProgressText').textContent = Math.round(pct) + '%';
+  if($('wordProgressText')) $('wordProgressText').textContent = pct + '%';
   
   $('flashcard').classList.toggle('is-flipped',state.flipped);
 $('rememberBtn').disabled=state.answerLock;$('forgotBtn').disabled=state.answerLock;const fav=save.favorites.includes(wordKey(w));$('favoriteBtn').classList.toggle('active',fav);$('favoriteBtn').textContent=fav?'★':'☆';maybeSpeakCurrent(false)}
