@@ -1,13 +1,12 @@
 {
   "name": "gestalt-deutsch-learning",
-  "version": "0.0.27",
+  "version": "0.0.16",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node server/index.mjs",
     "check": "node --check js/app.js && node --check server/index.mjs",
-    "test": "node tests/smoke.mjs",
-    "platform-check": "node tests/platform.mjs"
+    "test": "node tests/smoke.mjs"
   },
   "engines": {
     "node": ">=18"
