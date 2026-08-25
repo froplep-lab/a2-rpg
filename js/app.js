@@ -1,9 +1,9 @@
-const VERSION='0.016';
+const VERSION='0.020';
 const WORDS_URL='./data/words.json';
-const SAVE_VERSION=10;
-const SAVE_KEY='gestalt_learning_v10';
+const SAVE_VERSION=11;
+const SAVE_KEY='gestalt_learning_v11';
 const LEGACY_KEYS=['gestalt_learning_v9','gestalt_learning_v8','gestalt_learning_v7','gestalt_learning_v6','gestalt_learning_v5','gestalt_learning_v4','de_b1_rpg_progress_v3','deutsch_quest_v002'];
-const TG_PREFIX='gestalt_v10_';
+const TG_PREFIX='gestalt_v11_';
 
 let tg=null, words=[], voiceList=[], telegramSaveTimer=null;
 const $=id=>document.getElementById(id);
@@ -21,10 +21,10 @@ const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const wordKey=w=>String(w?.id||w?.german||'').toLowerCase().trim();
 const uid=()=>`u-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`;
 
-function defaults(){return{version:SAVE_VERSION,xp:0,streak:0,lastActivity:'',answers:0,correct:0,errors:0,learnedToday:0,dayKey:todayKey(),dailyGoal:24,mastery:{},review:{},customWords:[],history:{},favorites:[],settings:{theme:'dark',reducedMotion:false,voiceRate:.9,voiceName:'auto',autoSpeak:false},playerName:'Wanderer',record:0,currentTopic:'topic-8',updatedAt:0}}
+function defaults(){return{version:SAVE_VERSION,xp:0,streak:0,lastActivity:'',answers:0,correct:0,errors:0,learnedToday:0,dayKey:todayKey(),dailyGoal:24,mastery:{},review:{},customWords:[],history:{},favorites:[],settings:{theme:'dark',reducedMotion:false,voiceRate:.9,voiceName:'auto',autoSpeak:false,showPhonetic:true},playerName:'Wanderer',record:0,currentTopic:'topic-8',updatedAt:0}}
 let save=defaults();
 function isObj(x){return x&&typeof x==='object'&&!Array.isArray(x)}
-function normalizeSave(input){const d=defaults(),x=isObj(input)?input:{};const out={...d,...x,settings:{...d.settings,...(isObj(x.settings)?x.settings:{})}};out.version=SAVE_VERSION;out.answers=Math.max(0,Number(out.answers)||0);out.correct=Math.max(0,Number(out.correct)||0);out.errors=Math.max(0,Number(out.errors)||0);out.xp=Math.max(0,Number(out.xp)||0);out.streak=Math.max(0,Number(out.streak)||0);out.learnedToday=Math.max(0,Number(out.learnedToday)||0);out.dailyGoal=clamp(Number(out.dailyGoal)||24,8,40);out.record=Math.max(0,Number(out.record)||0);out.mastery=isObj(out.mastery)?out.mastery:{};out.review=isObj(out.review)?out.review:{};out.history=isObj(out.history)?out.history:{};out.customWords=Array.isArray(out.customWords)?out.customWords.filter(w=>isObj(w)&&String(w.german||'').trim()&&String(w.ukrainian||'').trim()).slice(0,500):[];out.favorites=Array.isArray(out.favorites)?out.favorites.map(String).slice(0,500):[];out.settings.theme=out.settings.theme==='light'?'light':'dark';out.settings.reducedMotion=Boolean(out.settings.reducedMotion);out.settings.voiceRate=clamp(Number(out.settings.voiceRate)||.9,.65,1.12);out.settings.voiceName=String(out.settings.voiceName||'auto');out.settings.autoSpeak=Boolean(out.settings.autoSpeak);out.currentTopic=String(out.currentTopic||'topic-8');out.updatedAt=Math.max(0,Number(out.updatedAt)||0);if(out.dayKey!==todayKey()){out.dayKey=todayKey();out.learnedToday=0}return out}
+function normalizeSave(input){const d=defaults(),x=isObj(input)?input:{};const out={...d,...x,settings:{...d.settings,...(isObj(x.settings)?x.settings:{})}};out.version=SAVE_VERSION;out.answers=Math.max(0,Number(out.answers)||0);out.correct=Math.max(0,Number(out.correct)||0);out.errors=Math.max(0,Number(out.errors)||0);out.xp=Math.max(0,Number(out.xp)||0);out.streak=Math.max(0,Number(out.streak)||0);out.learnedToday=Math.max(0,Number(out.learnedToday)||0);out.dailyGoal=clamp(Number(out.dailyGoal)||24,8,40);out.record=Math.max(0,Number(out.record)||0);out.mastery=isObj(out.mastery)?out.mastery:{};out.review=isObj(out.review)?out.review:{};out.history=isObj(out.history)?out.history:{};out.customWords=Array.isArray(out.customWords)?out.customWords.filter(w=>isObj(w)&&String(w.german||'').trim()&&String(w.ukrainian||'').trim()).slice(0,500):[];out.favorites=Array.isArray(out.favorites)?out.favorites.map(String).slice(0,500):[];out.settings.theme=out.settings.theme==='light'?'light':'dark';out.settings.reducedMotion=Boolean(out.settings.reducedMotion);out.settings.voiceRate=clamp(Number(out.settings.voiceRate)||.9,.65,1.12);out.settings.voiceName=String(out.settings.voiceName||'auto');out.settings.autoSpeak=Boolean(out.settings.autoSpeak);out.settings.showPhonetic=out.settings.showPhonetic!==false;out.currentTopic=String(out.currentTopic||'topic-8');out.updatedAt=Math.max(0,Number(out.updatedAt)||0);if(out.dayKey!==todayKey()){out.dayKey=todayKey();out.learnedToday=0}return out}
 function loadSave(){const raw=safeGet(SAVE_KEY);if(raw){try{save=normalizeSave(JSON.parse(raw));return}catch{}}for(const k of LEGACY_KEYS){const r=safeGet(k);if(r){try{save=normalizeSave(JSON.parse(r));persist();return}catch{}}}save=defaults();persist()}
 function persist(){save.updatedAt=Date.now();safeSet(SAVE_KEY,JSON.stringify(save));scheduleTelegramSave()}
 function scheduleTelegramSave(){if(!tg?.CloudStorage)return;clearTimeout(telegramSaveTimer);telegramSaveTimer=setTimeout(()=>cloudSave().catch(()=>{}),900)}
@@ -34,14 +34,38 @@ function filterTopic(all,topicId=state.currentTopic){return topicId==='all'?all:
 function mastery(w){return clamp(Number(save.mastery[wordKey(w)]||0),0,5)}
 function due(w){const r=save.review[wordKey(w)];return Boolean(r)&&Number(r.dueAt||0)<=now()}
 function dueWords(topicId=state.currentTopic){return filterTopic(mergedWords(),topicId).filter(due).sort((a,b)=>(Number(save.review[wordKey(a)]?.dueAt)||0)-(Number(save.review[wordKey(b)]?.dueAt)||0))}
-function pickSession(mode='learn',topicId=state.currentTopic){const all=filterTopic(mergedWords(),topicId);const dueList=dueWords(topicId);const selected=[];const seen=new Set();const add=w=>{if(!w||seen.has(wordKey(w)))return;seen.add(wordKey(w));selected.push(w)};if(mode==='review'){for(const w of dueList)add(w)}else{for(const w of dueList)add(w);const rest=[...all].sort((a,b)=>mastery(a)-mastery(b)||Number(a.frequency||99999)-Number(b.frequency||99999));for(const w of rest)add(w)}const n=Math.min(24,selected.length);state.session=selected.slice(0,n);state.sessionIndex=0;state.seen=new Set();state.sessionRequeued=new Set();state.mode=mode;state.flipped=false;state.answerLock=false}
+function pickSession(mode='learn',topicId=state.currentTopic){
+  let all=filterTopic(mergedWords(),topicId);
+  const dueList=dueWords(topicId);
+  const selected=[]; const seen=new Set();
+  const add=w=>{if(w&&!seen.has(wordKey(w))){seen.add(wordKey(w));selected.push(w)}};
+  if(mode==='review'){dueList.forEach(add)}
+  else{
+    dueList.forEach(add);
+    const fresh=all.filter(w=>{const r=save.review[wordKey(w)];return !r||statusFromReview(r)==='new'||statusFromReview(r)==='learning'})
+      .sort((a,b)=>mastery(a)-mastery(b)||Number(a.frequency||99999)-Number(b.frequency||99999));
+    fresh.forEach(add);
+    if(selected.length<8) all.sort((a,b)=>mastery(a)-mastery(b)).forEach(add);
+  }
+  state.session=selected.slice(0,24);
+  state.sessionIndex=0;state.seen=new Set();state.sessionRequeued=new Set();
+  state.mode=mode;state.flipped=false;state.answerLock=false;
+}
 function currentWord(){return state.session[state.sessionIndex]||null}
 function intervalForQuality(q,box){
-  const ladder=[1,2,4,7,14,30];
-  if(q===0) return 1;
-  if(q===5) return 30;
-  const currentBox=clamp(Number(box)||0,0,5);
-  return ladder[currentBox];
+  const ladder=[0,1,3,7,14,30,60];
+  const b=clamp(Number(box)||0,0,6);
+  return q===0?0:ladder[clamp(b+1,1,6)];
+}
+function statusFromReview(r){
+  if(!r||!Number(r.reps)) return 'new';
+  if(r.status==='mastered'||Number(r.interval||0)>=21) return 'mastered';
+  if(r.status==='review') return 'review';
+  return 'learning';
+}
+function masteryPercent(r){
+  const b=clamp(Number(r?.box)||0,0,6);
+  return Math.round((b/6)*100);
 }
 function answerWord(q){
   if(state.answerLock)return;
@@ -49,48 +73,42 @@ function answerWord(q){
   if(!w||w.german==='—')return;
   state.answerLock=true;
   const k=wordKey(w);
-  const r=save.review[k]||{box:0};
-  let box=clamp(Number(r.box)||0,0,5);
-  let m=mastery(w);
-  
-  // --- MOCHI SRS LOGIC ---
-  let interval = r.interval || 0;
-  let reps = r.reps || 0;
-  let status = r.status || 'new';
-  
-  if (q === 0) { 
-    interval = 0;
-    reps = 0;
-    status = 'learning';
+  const prev=save.review[k]||{box:0,reps:0,lapses:0,interval:0,status:'new'};
+  let box=clamp(Number(prev.box)||0,0,6);
+  let reps=Number(prev.reps)||0;
+  let lapses=Number(prev.lapses)||0;
+  let interval=Number(prev.interval)||0;
+  const t=now();
+
+  if(q===0){
+    box=Math.max(0,box-1);
+    lapses++;
+    interval=10/1440; // 10 minutes: forgotten words return in the same day
     save.errors++;
     if(!state.sessionRequeued.has(k)){
       state.sessionRequeued.add(k);
-      state.session.splice(Math.min(state.session.length, state.sessionIndex+3),0,w);
+      state.session.splice(Math.min(state.session.length,state.sessionIndex+2),0,w);
     }
-  } else { 
-    if (reps === 0) interval = 1;
-    else if (reps === 1) interval = 3;
-    else interval = Math.round(interval * 1.5);
-    
+  }else{
+    box=Math.min(6,box+1);
     reps++;
-    status = interval >= 21 ? 'mastered' : 'review';
+    interval=intervalForQuality(q,box-1);
     save.correct++;
   }
-  
-  save.mastery[k] = interval >= 21 ? 5 : (interval > 0 ? 3 : 0);
-  const days = interval;
-  save.review[k] = { interval, reps, status, box: box, dueAt: now() + days * 86400000, lastSeen: now(), lastQuality: q };
-  // -------------------------
-save.answers++;
+
+  const status=box>=5&&interval>=21?'mastered':(interval>=1?'review':(reps?'learning':'new'));
+  save.mastery[k]=masteryPercent({box});
+  save.review[k]={box,reps,lapses,interval,status,dueAt:t+interval*86400000,lastSeen:t,lastQuality:q};
+  save.answers++;
   save.learnedToday++;
   save.history[todayKey()]=(Number(save.history[todayKey()])||0)+1;
   touchActivity();
   save.record=Math.max(save.record,save.streak);
-  save.xp+=q===0?1:(q===5?5:4);
+  save.xp+=q===0?1:5;
   persist();
   haptic(q===0?'error':'success');
-  const intervalText=days===1?'завтра':`через ${days} дн.`;
-  toast(q===0?'Повернемо це слово завтра.':`Добре. Наступне повторення ${intervalText} 🌱`);
+  const intervalText=q===0?'через 10 хв.':(interval===1?'завтра':`через ${Math.round(interval)} дн.`);
+  toast(q===0?'Повернемо це слово ще раз через 10 хв.':`Добре. Наступне повторення ${intervalText} 🌱`);
   state.flipped=false;
   if(state.transitionTimer)clearTimeout(state.transitionTimer);
   state.transitionTimer=setTimeout(()=>{
@@ -167,11 +185,12 @@ $('wordPhonetic').textContent=`[${phonetic(w.german)}]`;$('wordGrammar').textCon
   updateCategoryCounts();
   $('flashcard').classList.toggle('is-flipped',state.flipped);
 $('rememberBtn').disabled=state.answerLock;$('forgotBtn').disabled=state.answerLock;const fav=save.favorites.includes(wordKey(w));$('favoriteBtn').classList.toggle('active',fav);$('favoriteBtn').textContent=fav?'★':'☆';maybeSpeakCurrent(false)}
-function phonetic(g=''){const s=String(g).replace(/^(der|die|das|den|dem|des)\s+/i,'').replace(/[·,.-]/g,'');return s.toLowerCase().replace(/sch/g,'ʃ').replace(/tsch/g,'tʃ').replace(/ch/g,'ç').replace(/ei/g,'aɪ').replace(/eu|äu/g,'ɔʏ').replace(/au/g,'aʊ').replace(/ie/g,'iː').replace(/sp(?=r)/g,'ʃp').replace(/st(?=r)/g,'ʃt').replace(/w/g,'v').replace(/z/g,'ts').slice(0,22)}
+function phonetic(g=''){return String(g||'').trim().slice(0,80)}
+function emojiForWord(g='',ua=''){const s=(g+' '+ua).toLowerCase();const map=[['hund','🐕'],['haus','🏠'],['sonne','☀️'],['regen','🌧️'],['wasser','💧'],['essen','🍽️'],['brot','🍞'],['milch','🥛'],['kaffee','☕'],['tee','🍵'],['arbeit','💼'],['schule','🏫'],['auto','🚗'],['zug','🚆'],['fahrrad','🚲'],['arzt','🩺'],['buch','📖'],['musik','🎵'],['sport','⚽'],['urlaub','🏖️'],['famil','👨‍👩‍👧‍👦'],['freund','🤝'],['liebe','❤️'],['geld','💶'],['kaufen','🛒'],['telefon','📱']];const hit=map.find(([k])=>s.includes(k));return hit?hit[1]:'✨'}
 function renderStats(){const all=mergedWords();const mastered=all.filter(w=>mastery(w)>=5).length;const learning=all.filter(w=>mastery(w)>0&&mastery(w)<5).length;const acc=save.answers?Math.round(save.correct/save.answers*100):0;$('statTotal').textContent=all.length;$('statMastered').textContent=mastered;$('statLearning').textContent=learning;$('statAccuracy').textContent=`${acc}%`;$('statDue').textContent=`${dueWords(state.currentTopic).length} до повторення`;const counts=[0,0,0,0,0,0];all.forEach(w=>counts[mastery(w)]++);$('masteryBars').innerHTML=counts.map((n,i)=>`<div class="mastery-row"><span>Рівень ${i}</span><div class="mastery-track"><div class="mastery-fill" style="width:${all.length?Math.round(n/all.length*100):0}%"></div></div><b>${n}</b></div>`).join('');const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=dateKey(d);days.push({v:Number(save.history[k]||0),l:['Нд','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()]})}const mx=Math.max(1,...days.map(x=>x.v));$('activityChart').innerHTML=days.map(x=>`<div class="chart-col"><div class="chart-bar" style="height:${Math.max(8,Math.round(x.v/mx*100))}%"></div><span class="chart-label">${x.l}</span></div>`).join('')}
 function renderCollection(listId,searchId,countId){const all=filterTopic(mergedWords(),state.currentTopic);const q=String($(searchId)?.value||'').toLowerCase().trim();const filtered=all.filter(w=>`${w.german} ${w.ukrainian}`.toLowerCase().includes(q));if(countId)$(countId).textContent=all.length;$(listId).innerHTML=filtered.map(w=>`<div class="word-item"><div class="word-left"><div class="mini-emoji">${esc(w.emoji||'✨')}</div><div class="word-copy"><b>${esc(w.german)}</b><small>${esc(w.ukrainian)} · ${mastery(w)}/5</small></div></div><div class="word-meta"><span class="badge">${due(w)?'Повторити':'Пізніше'}</span><button class="mini-speak" data-word="${esc(w.german)}">🔊</button></div></div>`).join('')||'<div class="setting"><div><b>Нічого не знайдено</b><small>Зміни пошуковий запит або додай слово.</small></div></div>';$(listId).querySelectorAll('.mini-speak').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.word)))}
 function renderReview(){const dueList=dueWords(state.currentTopic);$('reviewDue').textContent=dueList.length;$('reviewToday').textContent=save.learnedToday;$('reviewStreak').textContent=save.streak;$('reviewList').innerHTML=dueList.slice(0,40).map(w=>`<div class="word-item"><div class="word-left"><div class="mini-emoji">${esc(w.emoji||'✨')}</div><div class="word-copy"><b>${esc(w.german)}</b><small>${esc(w.ukrainian)}</small></div></div><span class="badge">${mastery(w)}/5</span></div>`).join('')||'<div class="setting"><div><b>Все чисто ✨</b><small>Зараз немає слів, які потрібно повторити.</small></div></div>'}
-function renderSettings(){const dark=save.settings.theme==='dark';$('themeSwitch').classList.toggle('on',dark);$('motionSwitch').classList.toggle('on',save.settings.reducedMotion);$('autoSpeakSwitch').classList.toggle('on',save.settings.autoSpeak);$('voiceRate').value=String(save.settings.voiceRate);$('voiceSelect').value=voiceList.some(v=>v.name===save.settings.voiceName)?save.settings.voiceName:'auto'}
+function renderSettings(){const dark=save.settings.theme==='dark';$('themeSwitch').classList.toggle('on',dark);$('motionSwitch').classList.toggle('on',save.settings.reducedMotion);$('autoSpeakSwitch').classList.toggle('on',save.settings.autoSpeak);$('phoneticSwitch').classList.toggle('on',save.settings.showPhonetic);$('voiceRate').value=String(save.settings.voiceRate);$('voiceSelect').value=voiceList.some(v=>v.name===save.settings.voiceName)?save.settings.voiceName:'auto'}
 function renderAll(){renderTopicSelectors();renderHeader();renderProgress();renderCard();renderStats();renderCollection('inlineWordList','searchInput','collectionCount');renderCollection('collectionList','collectionSearch','collectionBigCount');renderReview();renderSettings();}
 function toast(msg){const e=$('toast');e.textContent=msg;e.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>e.classList.remove('show'),2200)}
 function haptic(kind='light'){try{if(tg?.HapticFeedback){if(kind==='success'||kind==='error')tg.HapticFeedback.notificationOccurred(kind);else tg.HapticFeedback.impactOccurred('light')}}catch{}}
@@ -206,7 +225,7 @@ async function tgLoadSdk(){if(window.Telegram?.WebApp)return true;if(!inTelegram
 function applyTelegram(){if(!tg)return;try{tg.ready();tg.expand();tg.disableVerticalSwipes?.();tg.setHeaderColor?.(save.settings.theme==='dark'?'#050711':'#eff3fa');tg.setBackgroundColor?.(save.settings.theme==='dark'?'#050711':'#eff3fa');const applyInsets=()=>{const s=tg.safeAreaInset||{},c=tg.contentSafeAreaInset||{};document.documentElement.style.setProperty('--tg-safe-bottom',`${Number(s.bottom||0)}px`);document.documentElement.style.setProperty('--tg-content-bottom',`${Number(c.bottom||0)}px`)};applyInsets();tg.onEvent?.('viewportChanged',applyInsets);tg.onEvent?.('themeChanged',()=>{syncTheme();applyInsets()});tg.BackButton?.onClick(()=>navigate('learn'));}catch{}}
 function syncTelegramBack(){try{if(!tg?.BackButton)return;state.screen==='learn'?tg.BackButton.hide():tg.BackButton.show()}catch{}}
 async function cloudSave(){if(!tg?.CloudStorage)return false;try{const raw=JSON.stringify(save);const chunk=2400;const count=Math.ceil(raw.length/chunk);await new Promise((res,rej)=>tg.CloudStorage.setItem(`${TG_PREFIX}count`,String(count),e=>e?rej(e):res()));for(let i=0;i<count;i++){const part=raw.slice(i*chunk,(i+1)*chunk);await new Promise((res,rej)=>tg.CloudStorage.setItem(`${TG_PREFIX}${i}`,part,e=>e?rej(e):res()))}return true}catch{return false}}
-async function cloudLoad(){if(!tg?.CloudStorage)return null;for(const prefix of [TG_PREFIX,'gestalt_v8_','gestalt_v7_']){try{const count=await new Promise((res,rej)=>tg.CloudStorage.getItem(`${prefix}count`,(e,v)=>e?rej(e):res(Number(v)||0)));if(!count)continue;const keys=Array.from({length:count},(_,i)=>`${prefix}${i}`);const vals=await new Promise((res,rej)=>tg.CloudStorage.getItems(keys,(e,v)=>e?rej(e):res(v||{})));let raw='';for(const k of keys)raw+=vals[k]||'';if(raw)return normalizeSave(JSON.parse(raw))}catch{}}return null}
+async function cloudLoad(){if(!tg?.CloudStorage)return null;for(const prefix of [TG_PREFIX,'gestalt_v10_','gestalt_v9_','gestalt_v8_','gestalt_v7_']){try{const count=await new Promise((res,rej)=>tg.CloudStorage.getItem(`${prefix}count`,(e,v)=>e?rej(e):res(Number(v)||0)));if(!count)continue;const keys=Array.from({length:count},(_,i)=>`${prefix}${i}`);const vals=await new Promise((res,rej)=>tg.CloudStorage.getItems(keys,(e,v)=>e?rej(e):res(v||{})));let raw='';for(const k of keys)raw+=vals[k]||'';if(raw)return normalizeSave(JSON.parse(raw))}catch{}}return null}
 async function initTelegram(){const ok=await tgLoadSdk();tg=ok?window.Telegram.WebApp:null;if(!tg)return;applyTelegram();const remote=await cloudLoad();if(remote&&Number(remote.updatedAt||0)>Number(save.updatedAt||0))save=remote;persist();renderAll();$('tgStatus').textContent='Telegram Mini App · синхронізація готова'}
 async function syncTelegram(){if(!tg){toast('Синхронізація буде доступна в Telegram');return}const ok=await cloudSave();if(ok)$('tgStatus').textContent='Telegram Mini App · синхронізовано';toast(ok?'Збережено в Telegram ✅':'Синхронізація тимчасово недоступна')}
 function startReviewSession(){
@@ -232,7 +251,7 @@ function bind(){
  $('reviewStart').addEventListener('click',startReviewSession);
  $('openAddCollection').addEventListener('click',openAdd);$('closeAdd').addEventListener('click',closeAdd);$('addModal').addEventListener('click',e=>{if(e.target.id==='addModal')closeAdd()});$('addBtn').addEventListener('click',addWord);
  $('topSearch').addEventListener('click',()=>{navigate('collections');setTimeout(()=>$('collectionSearch')?.focus(),50)});$('mobileMenu').addEventListener('click',()=>navigate('settings'));
- $('themeSwitch').addEventListener('click',()=>{save.settings.theme=save.settings.theme==='dark'?'light':'dark';persist();syncTheme();renderSettings()});$('motionSwitch').addEventListener('click',()=>{save.settings.reducedMotion=!save.settings.reducedMotion;persist();syncTheme();renderSettings()});$('autoSpeakSwitch').addEventListener('click',()=>{save.settings.autoSpeak=!save.settings.autoSpeak;persist();renderSettings()});$('voiceRate').addEventListener('change',e=>{save.settings.voiceRate=Number(e.target.value)||.9;persist()});$('voiceSelect').addEventListener('change',e=>{save.settings.voiceName=e.target.value;persist()});$('tgSyncBtn').addEventListener('click',syncTelegram);$('exportBtn').addEventListener('click',exportProgress);$('importFile').addEventListener('change',e=>{if(e.target.files?.[0])importProgress(e.target.files[0]);e.target.value=''});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('addModal').classList.contains('open'))closeAdd();if(state.screen==='learn'&&state.subview==='learn'&&!state.answerLock){if(e.key==='ArrowRight')answerWord(4);if(e.key==='ArrowLeft')answerWord(0);if(e.key===' '||e.key==='Enter'){e.preventDefault();toggleFlip()}}});
+ $('themeSwitch').addEventListener('click',()=>{save.settings.theme=save.settings.theme==='dark'?'light':'dark';persist();syncTheme();renderSettings()});$('motionSwitch').addEventListener('click',()=>{save.settings.reducedMotion=!save.settings.reducedMotion;persist();syncTheme();renderSettings()});$('autoSpeakSwitch').addEventListener('click',()=>{save.settings.autoSpeak=!save.settings.autoSpeak;persist();renderSettings()});$('phoneticSwitch').addEventListener('click',()=>{save.settings.showPhonetic=!save.settings.showPhonetic;persist();renderSettings();renderCard()});$('voiceRate').addEventListener('change',e=>{save.settings.voiceRate=Number(e.target.value)||.9;persist()});$('voiceSelect').addEventListener('change',e=>{save.settings.voiceName=e.target.value;persist()});$('tgSyncBtn').addEventListener('click',syncTelegram);$('exportBtn').addEventListener('click',exportProgress);$('importFile').addEventListener('change',e=>{if(e.target.files?.[0])importProgress(e.target.files[0]);e.target.value=''});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('addModal').classList.contains('open'))closeAdd();if(state.screen==='learn'&&state.subview==='learn'&&!state.answerLock){if(e.key==='ArrowRight')answerWord(4);if(e.key==='ArrowLeft')answerWord(0);if(e.key===' '||e.key==='Enter'){e.preventDefault();toggleFlip()}}});
  $('resetBtn').addEventListener('click',async()=>{const ok=tg?.showConfirm?await new Promise(r=>tg.showConfirm('Скинути локальний прогрес?',r)):window.confirm('Скинути локальний прогрес?');if(ok){safeRemove(SAVE_KEY);location.reload()}})
 }
 function boot(){loadSave();state.currentTopic=save.currentTopic||'topic-8';syncTheme();buildNav();bind();document.addEventListener('visibilitychange',()=>{if(document.hidden){persist();speechSynthesis?.cancel?.()}});refreshVoices();if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=refreshVoices;fetch(WORDS_URL,{cache:'default'}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{words=Array.isArray(d)?d:[];if(!topics().some(t=>t.id===state.currentTopic)&&state.currentTopic!=='all')state.currentTopic='topic-8';save.currentTopic=state.currentTopic;pickSession(state.mode,state.currentTopic);renderAll();maybeSpeakCurrent(false)}).catch(()=>{words=[];toast('Словник не завантажився. Можна працювати з локальними словами.')});pickSession('learn');renderAll();initTelegram().then(syncTelegramBack);if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{})}if(navigator.storage?.persist){navigator.storage.persist().catch(()=>{})}}
@@ -261,10 +280,10 @@ document.addEventListener('click', (e) => {
 
 function updateCategoryCounts() {
     const all = filterTopic(mergedWords(), state.currentTopic);
-    const newWords = all.filter(w => { const r = save.review[wordKey(w)] || {}; return (r.status === 'new' || !r.status) && (!r.reps || r.reps === 0); });
-    const learning = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'learning' || (r.status === 'new' && r.reps > 0); });
-    const review = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'review'; });
-    const mastered = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'mastered' || (r.interval || 0) >= 21; });
+    const newWords = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'new'; });
+    const learning = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'learning'; });
+    const review = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'review'; });
+    const mastered = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'mastered'; });
     
     if($('countAll')) $('countAll').textContent = all.length;
     if($('countNew')) $('countNew').textContent = newWords.length;
@@ -278,13 +297,13 @@ const originalPickSession = pickSession;
 pickSession = function(mode='learn', topicId=state.currentTopic) {
     let all = filterTopic(mergedWords(), topicId);
     if (activeCategoryFilter === 'new') {
-        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return (r.status === 'new' || !r.status) && (!r.reps || r.reps === 0); });
+        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'new'; });
     } else if (activeCategoryFilter === 'learning') {
-        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'learning' || (r.status === 'new' && r.reps > 0); });
+        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'learning'; });
     } else if (activeCategoryFilter === 'review') {
-        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'review'; });
+        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'review'; });
     } else if (activeCategoryFilter === 'mastered') {
-        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'mastered' || (r.interval || 0) >= 21; });
+        all = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'mastered'; });
     }
     
     state.session = all.length ? [...all].sort(() => Math.random() - 0.5) : filterTopic(mergedWords(), topicId);
@@ -299,10 +318,10 @@ const originalRenderStats = renderStats;
 renderStats = function() {
     originalRenderStats();
     const all = mergedWords();
-    const newWords = all.filter(w => { const r = save.review[wordKey(w)] || {}; return (r.status === 'new' || !r.status) && (!r.reps || r.reps === 0); }).length;
-    const learning = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'learning' || (r.status === 'new' && r.reps > 0); }).length;
-    const review = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'review'; }).length;
-    const mastered = all.filter(w => { const r = save.review[wordKey(w)] || {}; return r.status === 'mastered' || (r.interval || 0) >= 21; }).length;
+    const newWords = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'new'; }).length;
+    const learning = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'learning'; }).length;
+    const review = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'review'; }).length;
+    const mastered = all.filter(w => { const r = save.review[wordKey(w)] || {}; return statusFromReview(r) === 'mastered'; }).length;
     
     if($('statNew')) $('statNew').textContent = newWords;
     if($('statLearning')) $('statLearning').textContent = learning;
