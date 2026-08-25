@@ -1,4 +1,4 @@
-const VERSION='0.023';
+const VERSION='0.024';
 const WORDS_URL='./data/words.json';
 const SAVE_VERSION=12;
 const SAVE_KEY='gestalt_learning_v12';
@@ -7,7 +7,7 @@ const TG_PREFIX='gestalt_v12_';
 
 let tg=null, words=[], voiceList=[], telegramSaveTimer=null;
 const $=id=>document.getElementById(id);
-const state={screen:'learn',subview:'learn',mode:'learn',session:[],sessionIndex:0,seen:new Set(),flipped:false,answerLock:false,favorites:new Set(),toastTimer:null,lastSpokenKey:'',transitionTimer:null,currentTopic:'topic-8',sessionRequeued:new Set(),swipeStartX:0,swipeStartY:0};
+const state={screen:'learn',subview:'learn',mode:'learn',session:[],sessionIndex:0,seen:new Set(),flipped:false,answerLock:false,favorites:new Set(),toastTimer:null,lastSpokenKey:'',transitionTimer:null,currentTopic:'topic-8',sessionRequeued:new Set(),swipeStartX:0,swipeStartY:0,sentenceExpanded:false};
 let activeCategoryFilter='all';
 function setCategoryFilter(cat){
   const allowed=new Set(['all','new','learning','review','mastered']);
@@ -32,7 +32,7 @@ const uid=()=>`u-${Date.now().toString(36)}-${Math.random().toString(36).slice(2
 function defaults(){return{version:SAVE_VERSION,xp:0,streak:0,lastActivity:'',answers:0,correct:0,errors:0,learnedToday:0,dayKey:todayKey(),dailyGoal:24,mastery:{},review:{},customWords:[],history:{},favorites:[],settings:{theme:'dark',reducedMotion:false,voiceRate:.9,voiceName:'auto',autoSpeak:false,showPhonetic:true},playerName:'Wanderer',record:0,currentTopic:'topic-8',updatedAt:0}}
 let save=defaults();
 function isObj(x){return x&&typeof x==='object'&&!Array.isArray(x)}
-function normalizeSave(input){const d=defaults(),x=isObj(input)?input:{};const out={...d,...x,settings:{...d.settings,...(isObj(x.settings)?x.settings:{})}};out.version=SAVE_VERSION;out.answers=Math.max(0,Number(out.answers)||0);out.correct=Math.max(0,Number(out.correct)||0);out.errors=Math.max(0,Number(out.errors)||0);out.xp=Math.max(0,Number(out.xp)||0);out.streak=Math.max(0,Number(out.streak)||0);out.learnedToday=Math.max(0,Number(out.learnedToday)||0);out.dailyGoal=clamp(Number(out.dailyGoal)||24,8,40);out.record=Math.max(0,Number(out.record)||0);out.mastery=isObj(out.mastery)?out.mastery:{};out.review=isObj(out.review)?out.review:{};out.history=isObj(out.history)?out.history:{};out.customWords=Array.isArray(out.customWords)?out.customWords.filter(w=>isObj(w)&&String(w.german||'').trim()&&String(w.ukrainian||'').trim()).slice(0,500):[];out.favorites=Array.isArray(out.favorites)?out.favorites.map(String).slice(0,500):[];out.settings.theme=out.settings.theme==='light'?'light':'dark';out.settings.reducedMotion=Boolean(out.settings.reducedMotion);out.settings.voiceRate=clamp(Number(out.settings.voiceRate)||.9,.65,1.12);out.settings.voiceName=String(out.settings.voiceName||'auto');out.settings.autoSpeak=Boolean(out.settings.autoSpeak);out.settings.showPhonetic=out.settings.showPhonetic!==false;out.currentTopic=String(out.currentTopic||'topic-8');out.updatedAt=Math.max(0,Number(out.updatedAt)||0);if(out.dayKey!==todayKey()){out.dayKey=todayKey();out.learnedToday=0}return out}
+function normalizeSave(input){const d=defaults(),x=isObj(input)?input:{};const out={...d,...x,settings:{...d.settings,...(isObj(x.settings)?x.settings:{})}};out.version=SAVE_VERSION;out.answers=Math.max(0,Number(out.answers)||0);out.correct=Math.max(0,Number(out.correct)||0);out.errors=Math.max(0,Number(out.errors)||0);out.xp=Math.max(0,Number(out.xp)||0);out.streak=Math.max(0,Number(out.streak)||0);out.learnedToday=Math.max(0,Number(out.learnedToday)||0);out.dailyGoal=clamp(Number(out.dailyGoal)||24,8,40);out.record=Math.max(0,Number(out.record)||0);out.mastery=isObj(out.mastery)?out.mastery:{};out.review=isObj(out.review)?out.review:{};out.history=isObj(out.history)?out.history:{};out.customWords=Array.isArray(out.customWords)?out.customWords.filter(w=>isObj(w)&&String(w.german||'').trim()&&String(w.ukrainian||'').trim()).map(w=>({...w,translationNote:String(w.translationNote||'')})).slice(0,500):[];out.favorites=Array.isArray(out.favorites)?out.favorites.map(String).slice(0,500):[];out.settings.theme=out.settings.theme==='light'?'light':'dark';out.settings.reducedMotion=Boolean(out.settings.reducedMotion);out.settings.voiceRate=clamp(Number(out.settings.voiceRate)||.9,.65,1.12);out.settings.voiceName=String(out.settings.voiceName||'auto');out.settings.autoSpeak=Boolean(out.settings.autoSpeak);out.settings.showPhonetic=out.settings.showPhonetic!==false;out.currentTopic=String(out.currentTopic||'topic-8');out.updatedAt=Math.max(0,Number(out.updatedAt)||0);if(out.dayKey!==todayKey()){out.dayKey=todayKey();out.learnedToday=0}return out}
 function loadSave(){const raw=safeGet(SAVE_KEY);if(raw){try{save=normalizeSave(JSON.parse(raw));return}catch{}}for(const k of LEGACY_KEYS){const r=safeGet(k);if(r){try{save=normalizeSave(JSON.parse(r));persist();return}catch{}}}save=defaults();persist()}
 function persist(){save.updatedAt=Date.now();safeSet(SAVE_KEY,JSON.stringify(save));scheduleTelegramSave()}
 function scheduleTelegramSave(){if(!tg?.CloudStorage)return;clearTimeout(telegramSaveTimer);telegramSaveTimer=setTimeout(()=>cloudSave().catch(()=>{}),900)}
@@ -59,7 +59,7 @@ function pickSession(mode='learn',topicId=state.currentTopic){
   }
   state.session=selected.slice(0,24);
   state.sessionIndex=0;state.seen=new Set();state.sessionRequeued=new Set();
-  state.mode=mode;state.flipped=false;state.answerLock=false;
+  state.mode=mode;state.flipped=false;state.answerLock=false;state.sentenceExpanded=false;
 }
 function currentWord(){return state.session[state.sessionIndex]||null}
 function intervalForQuality(q,box){
@@ -119,7 +119,7 @@ function answerWord(q){
   haptic(q===0?'error':'success');
   const intervalText=q===0?'через 10 хв.':(interval===1?'завтра':`через ${Math.round(interval)} дн.`);
   toast(q===0?'Повернемо це слово ще раз через 10 хв.':`Добре. Наступне повторення ${intervalText} 🌱`);
-  state.flipped=false;
+  state.flipped=false;state.sentenceExpanded=false;
   if(state.transitionTimer)clearTimeout(state.transitionTimer);
   state.transitionTimer=setTimeout(()=>{
     state.sessionIndex+=1;
@@ -184,14 +184,15 @@ function pluralForDisplay(w){
   const {plural}=wordDisplayParts(w);
   return plural && !/^Sg\.?$/i.test(plural) ? `Plural: ${plural}` : '';
 }
-function renderCard(){const w=currentWord();if(!w){$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent='Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent='Обери іншу тему або додай слово';$('wordHint').textContent='Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordLevel').textContent=w.level||'A2/B1';
+function renderCard(){const w=currentWord();if(!w){$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent='Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent='Обери іншу тему або додай слово';$('wordHint').textContent='Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backMeaning').textContent='';$('backMeaningNote').textContent='';$('backMeaningNote').hidden=true;$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('sentencePanel').hidden=true;$('sentenceToggle').setAttribute('aria-expanded','false');$('sentenceToggle').textContent='Приклад речення ▾';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordLevel').textContent=w.level||'A2/B1';
   const parts=wordDisplayParts(w); const rawG=parts.base||'—';
   $('wordGerman').textContent=rawG;
   if($('wordPlural')) $('wordPlural').textContent=pluralForDisplay(w);
   let emj=w.emoji; if(!emj||emj==='✨') emj=emojiForWord(rawG,w.ukrainian); $('wordEmoji').textContent=emj;
   $('wordPhonetic').textContent=save.settings.showPhonetic&&w.phonetic?`/${phonetic(w.phonetic)}/`:'';
-  $('wordGrammar').textContent=w.grammar||'';$('wordMeaning').textContent=w.ukrainian||'—';$('wordHint').textContent=w.hint||'Згадай значення до того, як натиснеш далі.';$('wordSource').textContent=w.source||'GESTALT · Картка';
-  $('backGerman').textContent=rawG||'—';$('backSentence').textContent=w.sentence||'—';$('backSentenceUa').textContent=sentenceUa(w);
+  $('wordGrammar').textContent=w.grammar||'';$('wordMeaning').textContent='';$('wordHint').textContent='Переверни картку, щоб перевірити переклад.';$('wordSource').textContent=w.source||'GESTALT · Картка';
+  $('backGerman').textContent=rawG||'—';$('backMeaning').textContent=w.ukrainian||'—';$('backMeaningNote').textContent=w.translationNote||'';$('backMeaningNote').hidden=!w.translationNote;
+  $('backSentence').textContent=w.sentence||'—';$('backSentenceUa').textContent=sentenceUa(w);$('sentencePanel').hidden=!state.sentenceExpanded;$('sentenceToggle').setAttribute('aria-expanded',state.sentenceExpanded?'true':'false');$('sentenceToggle').textContent=state.sentenceExpanded?'Приклад речення ▴':'Приклад речення ▾';
   const k=wordKey(w), r=save.review[k]||{interval:0,reps:0,status:'new'};
   let stIcon='🆕 Нове',pct=0; if(r.status==='learning'||(r.status==='new'&&r.reps>0)){stIcon='🔄 У процесі';pct=30}else if(r.status==='review'){stIcon='📖 На повторенні';pct=Math.min(95,Math.round((r.interval/30)*100))}else if(r.status==='mastered'||r.interval>=21){stIcon='✅ Вивчене';pct=100}else if(r.interval>0){stIcon='🔄 У процесі';pct=Math.min(100,Math.round((r.interval/21)*100))} if(pct===0&&r.reps>0)pct=10;
   $('wordStatus').textContent=stIcon;$('wordProgressFill').style.width=pct+'%';$('wordProgressText').textContent=pct+'%';
@@ -217,7 +218,7 @@ function addWord(){
   if(!de||!ua){toast('Вкажи слово і переклад');return}
   const normalized=de.toLocaleLowerCase('de-DE').trim();
   if(mergedWords().some(w=>String(w.german||'').toLocaleLowerCase('de-DE').trim()===normalized)){toast('Це слово вже є в колекції');return}
-  const w={id:uid(),german:de,ukrainian:ua,hint:ua,grammar:'Власне слово',emoji,sentence:ex,sentenceUa:'Ваш власний приклад.',level:'A2/B1',category:'Мої слова',source:'GESTALT · Моя колекція',frequency:1,topicId:'my-words',topicNumber:null,topicTitle:'Мої слова',sentenceUa:'Ваш власний приклад.'};
+  const w={id:uid(),german:de,ukrainian:ua,translationNote:'',hint:ua,grammar:'Власне слово',emoji,sentence:ex,sentenceUa:'Ваш власний приклад.',level:'A2/B1',category:'Мої слова',source:'GESTALT · Моя колекція',frequency:1,topicId:'my-words',topicNumber:null,topicTitle:'Мої слова',sentenceUa:'Ваш власний приклад.'};
   save.customWords.unshift(w);
   persist();
   pickSession('learn');
@@ -261,7 +262,7 @@ function startReviewSession(){
 }
 function bind(){
  document.querySelectorAll('.subtab').forEach(b=>b.addEventListener('click',()=>setSubview(b.dataset.subview)));$('topicSelect').addEventListener('change',e=>setTopic(e.target.value));$('collectionTopicSelect').addEventListener('change',e=>setTopic(e.target.value));
- $('cardWrap').addEventListener('click',e=>{if(e.target.closest('button'))return;toggleFlip()});$('cardWrap').addEventListener('pointerdown',e=>{state.swipeStartX=e.clientX;state.swipeStartY=e.clientY});$('cardWrap').addEventListener('pointerup',e=>{const dx=e.clientX-state.swipeStartX,dy=e.clientY-state.swipeStartY;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)&&state.flipped&&!state.answerLock){dx>0?answerWord(4):answerWord(0)}state.swipeStartX=0;state.swipeStartY=0});$('cardWrap').addEventListener('pointercancel',()=>{state.swipeStartX=0;state.swipeStartY=0});$('cardWrap').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFlip()}});$('speakWord').addEventListener('click',e=>{e.stopPropagation();speak(lexicalForIpa(currentWord()||{}))});$('speakSentence').addEventListener('click',e=>{e.stopPropagation();speak(currentWord()?.sentence)});$('favoriteBtn').addEventListener('click',toggleFavorite);$('rememberBtn').addEventListener('click',()=>answerWord(4));$('forgotBtn').addEventListener('click',()=>answerWord(0));
+ $('cardWrap').addEventListener('click',e=>{if(e.target.closest('button'))return;toggleFlip()});$('sentenceToggle').addEventListener('click',e=>{e.stopPropagation();if(!state.flipped||state.answerLock)return;state.sentenceExpanded=!state.sentenceExpanded;$('sentencePanel').hidden=!state.sentenceExpanded;$('sentenceToggle').setAttribute('aria-expanded',state.sentenceExpanded?'true':'false');$('sentenceToggle').textContent=state.sentenceExpanded?'Приклад речення ▴':'Приклад речення ▾'});$('cardWrap').addEventListener('pointerdown',e=>{state.swipeStartX=e.clientX;state.swipeStartY=e.clientY});$('cardWrap').addEventListener('pointerup',e=>{const dx=e.clientX-state.swipeStartX,dy=e.clientY-state.swipeStartY;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)&&state.flipped&&!state.answerLock){dx>0?answerWord(4):answerWord(0)}state.swipeStartX=0;state.swipeStartY=0});$('cardWrap').addEventListener('pointercancel',()=>{state.swipeStartX=0;state.swipeStartY=0});$('cardWrap').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFlip()}});$('speakWord').addEventListener('click',e=>{e.stopPropagation();speak(lexicalForIpa(currentWord()||{}))});$('speakSentence').addEventListener('click',e=>{e.stopPropagation();speak(currentWord()?.sentence)});$('favoriteBtn').addEventListener('click',toggleFavorite);$('rememberBtn').addEventListener('click',()=>answerWord(4));$('forgotBtn').addEventListener('click',()=>answerWord(0));
  $('searchInput').addEventListener('input',()=>renderCollection('inlineWordList','searchInput','collectionCount'));$('collectionSearch').addEventListener('input',()=>renderCollection('collectionList','collectionSearch','collectionBigCount'));$('collectionSpeak').addEventListener('click',()=>{const q=String($('collectionSearch').value||'').trim();const w=filterTopic(mergedWords(),state.currentTopic).find(x=>!q||`${x.german} ${x.ukrainian}`.toLowerCase().includes(q.toLowerCase()));if(w)speak(w.german);else toast('Немає слова для озвучення')});
  $('reviewStart').addEventListener('click',startReviewSession);
  $('openAddCollection').addEventListener('click',openAdd);$('closeAdd').addEventListener('click',closeAdd);$('addModal').addEventListener('click',e=>{if(e.target.id==='addModal')closeAdd()});$('addBtn').addEventListener('click',addWord);

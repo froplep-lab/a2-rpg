@@ -77,17 +77,24 @@
                   <div class="word-main-row"><div style="position:relative; display:inline-block; max-width:100%;"><h2 id="wordGerman">—</h2><div id="wordPlural" class="word-plural"></div></div><button id="speakWord" class="speak-btn" aria-label="Озвучити слово">◖)))</button></div>
                   <div id="wordPhonetic" class="phonetic">[—]</div>
                   <div id="wordGrammar" class="word-grammar">Іменник</div>
-                  <div id="wordMeaning" class="word-meaning">—</div>
-                  <div id="wordHint" class="word-hint">—</div>
+                  <div id="wordMeaning" class="word-meaning" hidden>—</div>
+                  <div id="wordHint" class="word-hint">Переверни картку, щоб перевірити переклад.</div>
                   <div class="card-bottom"><span id="wordSource">Kursbuch · 8 Am Wochenende</span><span>↻ натисни картку для відповіді</span></div>
                 </div>
                 <div class="flash-face flash-back">
-                  <div class="back-label">КОНТЕКСТ</div>
+                  <div class="back-label">ПЕРЕКЛАД</div>
                   <h3 id="backGerman">—</h3>
-                  <div id="backSentence" class="back-sentence">—</div>
-                  <div id="backSentenceUa" class="back-sentence-ua">—</div>
-                  <button id="speakSentence" class="secondary-btn">🔊 Прослухати речення</button>
-                  <div class="back-tip">Переверни → прочитай приклад → обери «Знаю» або «Не знаю».</div>
+                  <div id="backMeaning" class="back-meaning">—</div>
+                  <div id="backMeaningNote" class="back-meaning-note" hidden></div>
+                  <div class="sentence-block">
+                    <button id="sentenceToggle" class="sentence-toggle" type="button" aria-expanded="false" aria-controls="sentencePanel">Приклад речення ▾</button>
+                    <div id="sentencePanel" class="sentence-panel" hidden>
+                      <div id="backSentence" class="back-sentence">—</div>
+                      <div id="backSentenceUa" class="back-sentence-ua">—</div>
+                      <button id="speakSentence" class="secondary-btn" type="button">🔊 Прослухати речення</button>
+                    </div>
+                  </div>
+                  <div class="back-tip">Приклад відкривається тільки за твоїм бажанням.</div>
                 </div>
               </article>
             </div>

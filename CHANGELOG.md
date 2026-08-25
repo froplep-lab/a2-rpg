@@ -1,9 +1,13 @@
-# GESTALT v0.023
+# GESTALT v0.024
 
-## Learning
-- Real spaced repetition progression with explicit memory boxes.
-- Forgot answers create a short 10-minute retry and requeue the card.
-- Learned answers increase the next interval progressively.
+## v0.024 — card translation / example stability
+- Ukrainian word translation is now shown on the back face, centered as the primary answer.
+- Removed the Ukrainian translation from the front face so the card remains a real recall check.
+- Added an optional collapsed example section; the German example and Ukrainian sentence translation are hidden until opened.
+- Added `translationNote` to the vocabulary schema for precise explanations, clarifications, gender/context notes, and ambiguity handling where needed.
+- Corrected a set of clearly broken/ambiguous Ukrainian glossary entries and example sentence inflections.
+- Fixed `das Stadtzentrum → Stadtzentren`.
+- Kept the existing SRS, Telegram Mini App, speech, navigation, collections and statistics architecture unchanged.
 
 ## Cards
 - Clean single-line word rendering for long German vocabulary.
@@ -16,7 +20,7 @@
 - Existing localStorage migration keys remain supported.
 - Telegram CloudStorage keeps compatibility with previous prefixes.
 - Existing Telegram Mini App integration, speech synthesis, import/export and navigation are retained.
-## v0.023
+## v0.024
 - Домашній екран очищено від щоденного блоку статистики; детальний прогрес залишається у «Статистика».
 - Відповідь «Знаю / Не знаю» доступна лише після перевертання картки.
 - Граматичні маркери `(Sg.)` та службові позначення множини відокремлені від learner-facing слова.
@@ -24,7 +28,7 @@
 - Транскрипція словника перегенерована через eSpeak German IPA mode 2 з чистої лексичної форми.
 - Озвучка слова також використовує очищену лексичну форму без артикля та `(sich)`.
 - Поліпшена мобільна висота картки, горизонтальний список категорій та візуальний стан disabled для кнопок.
-## v0.023 — stability / data integrity
+## v0.024 — stability / data integrity
 - Fixed SRS session selection being overwritten by a late category-filter patch.
 - Fixed swipe answers being possible before card reveal.
 - Removed dictionary notation such as `(Sg.)` and plural markers from the display `german` field.

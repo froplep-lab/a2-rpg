@@ -42,10 +42,23 @@ const css=read('css/main.css');
 assert.match(css,/\.flashcard\.is-flipped \.flash-front\{transform:rotateY\(-180deg\)/,'flip front fix missing');
 assert.match(css,/\.flashcard\.is-flipped \.flash-back\{transform:rotateY\(0deg\)/,'flip back fix missing');
 assert.match(css,/\.flash-face\{[^}]*backface-visibility:hidden/,'backface visibility missing');
-assert.equal(read('VERSION').trim(),'0.023','version file mismatch');
-assert.equal(JSON.parse(read('package.json')).version,'0.0.23','package version mismatch');
-assert.match(read('server/index.mjs'),/VERSION='0.023'/,'server version mismatch');
-assert.match(read('sw.js'),/gestalt-v0\.023/,'service worker cache version mismatch');
+assert.equal(read('VERSION').trim(),'0.024','version file mismatch');
+assert.equal(JSON.parse(read('package.json')).version,'0.0.24','package version mismatch');
+assert.match(read('server/index.mjs'),/VERSION='0.024'/,'server version mismatch');
+assert.match(read('sw.js'),/gestalt-v0\.024/,'service worker cache version mismatch');
+
+assert.match(html,/id="backMeaning"/,'back translation element missing');
+assert.match(html,/id="sentenceToggle"/,'sentence toggle missing');
+assert.match(html,/id="sentencePanel"[^>]*hidden/,'sentence panel must be collapsed by default');
+assert.match(html,/id="wordMeaning"[^>]*hidden/,'front-face translation must stay hidden');
+assert.match(read('js/app.js'),/sentenceExpanded:false/,'sentence state missing');
+assert.match(read('js/app.js'),/backMeaningNote/,'translation note binding missing');
+assert.equal(words.length,954,'unexpected vocabulary size');
+assert.equal(new Set(words.map(w=>w.id)).size,words.length,'duplicate word ids');
+for(const w of words){assert.ok(typeof w.ukrainian==='string'&&w.ukrainian.trim(),'missing Ukrainian translation');assert.ok('translationNote' in w,'translationNote field missing')}
+const centrum=words.find(w=>w.german==='das Stadtzentrum');
+assert.equal(centrum?.pluralForm,'Stadtzentren','plural reconstruction regression');
+
 const sw=read('sw.js');for(const asset of [...sw.matchAll(/'([^']+)'/g)].map(m=>m[1]).filter(x=>x.startsWith('./'))){assert.ok(fs.existsSync(path.join(root,asset))||asset==='./','missing SW asset '+asset)}
 const srcs=[...new Set(words.map(w=>w.source))];assert.equal(srcs.length,7,'expected seven lesson source groups');
 console.log('SMOKE OK');
