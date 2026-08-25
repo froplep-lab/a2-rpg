@@ -1,4 +1,4 @@
-# GESTALT v0.029
+# GESTALT v0.030
 
 Premium mobile-first German vocabulary trainer for Telegram Mini Apps.
 
@@ -27,7 +27,7 @@ npm run start
 Для Telegram Mini App використовуйте HTTPS URL та server/.env з BOT_TOKEN і MINI_APP_URL.
 
 
-## v0.029
+## v0.030
 - Definitive card flip fix: only the parent card rotates; revealed text stays physically readable.
 - Added maintained AI architecture/context documentation.
 - Centralized existing SRS/reward values without changing learning behavior.

@@ -1,4 +1,4 @@
-# PROJECT CONTEXT — GESTALT v0.029
+# PROJECT CONTEXT — GESTALT v0.030
 
 ## Product
 Premium/lightweight German vocabulary trainer for browser and Telegram Mini App. UI language is Ukrainian; target learning content is German with Ukrainian translations.
@@ -36,4 +36,4 @@ Telegram CloudStorage uses `gestalt_v12_` chunk keys and can read several older 
 See `GAME_RULES.md` and `BALANCE.md` (root). Runtime constants are centralized in `BALANCE` in `js/app.js`.
 
 ## Release identity
-Package/server/cache/root VERSION and `js/app.js` now all report `0.029`. This keeps dictionary query cache-busting and exported progress filenames aligned with the release identity.
+Package/server/cache/root VERSION and `js/app.js` now all report `0.030`. This keeps dictionary query cache-busting and exported progress filenames aligned with the release identity.

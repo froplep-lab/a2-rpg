@@ -31,6 +31,10 @@ assert.ok(html.includes('id="rememberBtn"')&&html.includes('id="forgotBtn"'),'tw
 assert.ok(html.includes('id="speakWord"')&&html.includes('id="speakSentence"'),'audio controls missing');
 assert.ok(js.includes('speechSynthesis'),'speech synthesis missing');
 assert.ok(js.includes('intervalForQuality')&&js.includes('mastery'),'SRS/mastery missing');
+assert.ok(js.includes('const rawMastery=isObj(out.mastery)?out.mastery:{}'),'mastery migration boundary missing');
+assert.ok(js.includes('save.mastery[k]=box'),'mastery must persist as the canonical 0–5 box value');
+assert.ok(js.includes('Number(r.box||0)>=BALANCE.masteryBox'),'status must derive from canonical review state');
+
 assert.match(js,/const BALANCE=\{dailyGoal:24,/,'balance source missing or self-referential');
 assert.ok(js.includes('BALANCE.srsIntervals'),'SRS ladder not centralized');
 assert.ok(js.includes('function updateCategoryCounts()'),'category counters function missing');
@@ -41,7 +45,7 @@ assert.ok(js.includes("if(mode==='review')"),'review mode must retain dedicated 
 assert.ok(!js.includes('const originalPickSession'),'pickSession must not be overridden after boot');
 assert.ok(js.includes('phonetic(w.phonetic'),'phonetic rendering missing');
 assert.ok(js.includes('COMPACT_WORDS_URL'),'compact dictionary loader missing');
-assert.ok(sw.includes('gestalt-v0.029'),'service worker version mismatch');
+assert.ok(sw.includes('gestalt-v0.030'),'service worker version mismatch');
 assert.ok(sw.includes('words.compact.json'),'service worker compact dictionary missing');
 const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);
 const dup=ids.filter((id,i)=>ids.indexOf(id)!==i);assert.equal(new Set(dup).size,0,'duplicate ids: '+[...new Set(dup)].join(', '));
@@ -59,6 +63,9 @@ assert.ok(html.includes('id="flashcardInner"'),'flashcard inner layer missing');
 assert.ok(js.includes("$('backMeaning').textContent=w.ukrainian"),'back translation binding missing');
 assert.ok(js.includes("$('sentencePanel').hidden=!state.sentenceExpanded"),'example must be collapsed by default');
 assert.ok(js.includes("function updateCategoryCounts()"),'category count renderer missing');
+assert.ok(js.includes('renderProgress();renderCard();renderStats();'),'daily progress must be refreshed with the main UI');
+assert.ok(js.includes('statNew')&&js.includes('statReview')&&js.includes('statRepetitions')&&js.includes('statMasteryPct'),'statistics counters must be wired to runtime state');
+assert.match(html,/id="flashcard"[^>]*role="button"/,'flashcard should expose keyboard/button semantics');
 assert.ok(js.includes("const all=filterTopic(mergedWords(),state.currentTopic)"),'category counts must follow selected topic');
 assert.match(css,/\.flash-face\{[^}]*backface-visibility:hidden/,'backface visibility missing');
 assert.ok(!/\.flash-face\{[^}]*transform-style:flat/.test(css),'card faces should preserve the 3D track rather than force a flat compositing context');
@@ -66,12 +73,12 @@ assert.match(css,/\.flash-face\{[^}]*overflow:hidden/,'card faces must clip thei
 assert.ok(css.includes('.flashcard.is-flipped .flashcard-inner{transform:rotateY(180deg)}'),'inner must own flip transform');
 assert.match(css,/\.flash-back\{transform:rotateY\(180deg\)/,'back content must live on the canonical 3D back face');
 assert.ok(html.includes('class="flash-face flash-back"'),'canonical back face missing');
-assert.ok(js.includes("const VERSION='0.029'"),'app version must match release identity');
+assert.ok(js.includes("const VERSION='0.030'"),'app version must match release identity');
 assert.ok(js.includes("wordEl.classList.remove('word-long','word-xlong')"),'long-word card sizing logic missing');
-assert.equal(read('VERSION').trim(),'0.029','version file mismatch');
-assert.equal(JSON.parse(read('package.json')).version,'0.0.29','package version mismatch');
-assert.match(read('server/index.mjs'),/VERSION='0.029'/,'server version mismatch');
-assert.match(read('sw.js'),/gestalt-v0\.029/,'service worker cache version mismatch');
+assert.equal(read('VERSION').trim(),'0.030','version file mismatch');
+assert.equal(JSON.parse(read('package.json')).version,'0.0.30','package version mismatch');
+assert.match(read('server/index.mjs'),/VERSION='0.030'/,'server version mismatch');
+assert.match(read('sw.js'),/gestalt-v0\.030/,'service worker cache version mismatch');
 
 assert.match(html,/id="backMeaning"/,'back translation element missing');
 assert.match(html,/id="sentenceToggle"/,'sentence toggle missing');

@@ -27,13 +27,15 @@ const malformed={
 const out=fn.normalizeSave(malformed);
 assert.equal(out.version,12);
 assert.equal(out.streak,0);
-assert.deepEqual(out.mastery,{a:100});
+assert.deepEqual(out.mastery,{a:5});
 assert.equal(out.review.a.box,6);
 assert.equal(out.review.a.reps,0);
 assert.equal(out.review.a.lapses,3);
 assert.equal(out.review.a.interval,0);
 assert.equal(out.review.a.status,'new');
 assert.equal(out.review.a.lastQuality,5);
+assert.equal(out.mastery.a,5);
+assert.equal(out.mastery.a, out.review.a.box>5?5:out.review.a.box);
 assert.deepEqual(out.history,{[today]:7});
 assert.deepEqual(out.favorites,['a','2']);
 assert.equal(out.customWords.length,1);

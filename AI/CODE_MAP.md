@@ -8,13 +8,13 @@
 | `data/words.json` | Full canonical vocabulary | 954 records, lessons 8–14 |
 | `data/words.compact.json` | Compact transport representation | object with `fields` + row arrays; expanded by `expandCompactDictionary()` |
 | `data/book-vocabulary-manifest.json` | Dataset counts/lesson bounds | historical manifest version 0.016 |
-| `sw.js` | Offline cache | shell cache `gestalt-v0.029`, network-first dictionary |
+| `sw.js` | Offline cache | shell cache `gestalt-v0.030`, network-first dictionary |
 | `server/index.mjs` | Node server + Telegram bot | static serving, health/status, webhook, polling |
 | `tests/smoke.mjs` | Content/UI regression checks | vocabulary integrity, DOM refs, card transform, SRS presence, cache/version checks |
 | `tests/platform.mjs` | Platform/static checks | responsive CSS, safe areas, dictionary loading and SW invariants |
 | `manifest.webmanifest` | PWA metadata | standalone display, icons |
-| `VERSION` | human-readable version | `0.029` |
-| `package.json` | scripts/engine | version 0.0.29, Node >=18 |
+| `VERSION` | human-readable version | `0.030` |
+| `package.json` | scripts/engine | version 0.0.30, Node >=18 |
 
 ## Where to modify X
 - Card visuals/rotation: `css/main.css` + `renderCard()`; high risk because the parent owns the flip and face transforms are deliberately constrained.

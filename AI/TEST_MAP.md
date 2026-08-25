@@ -48,3 +48,11 @@ start server
 ### Card-flip invariants
 
 The 3D inner track rotates once. `.flash-front` stays at `rotateY(0deg)` and the real `.flash-back` uses the canonical local `rotateY(180deg)`, so the two 180° transforms combine to a readable back face. The E2E inspector verifies this matrix relationship plus the fixture Ukrainian translation.
+
+## Latest regression additions
+
+`renderAll()` must refresh daily progress (`renderProgress`) so the progress ring, today count, and seven-day bars cannot remain stale after an answer, topic change, or reload.
+
+The statistics view must derive `Нові`, `В процесі`, `На повторенні`, `Вивчено`, `Повторень`, `Засвоєння`, and `Точність` from the same merged vocabulary + review/save state used by category counters.
+
+The flashcard must expose `role="button"` and synchronize `aria-pressed` with `state.flipped` so keyboard/touch users receive an accurate state announcement.

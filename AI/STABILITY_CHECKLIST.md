@@ -32,3 +32,16 @@ Do not upgrade these rows to PASS without running `npm run test:e2e` in an envir
 - `npm run check` — PASS
 - `npm run platform-check` — PASS
 - `npm run test:e2e` — PARTIAL/ENVIRONMENT BLOCKED (`ERR_BLOCKED_BY_ADMINISTRATOR` before application load)
+
+
+### Latest stabilization pass
+- Daily progress renderer connected to main UI render: PASS (static/code verification)
+- Statistics cards synchronized with review state: PASS (static/code verification)
+- Flashcard accessible pressed-state semantics: PASS (static/code verification)
+
+
+### 2026-08-25 stabilization pass
+- PASS — Canonical mastery state (`0–5` SRS box)
+- PASS — Legacy mastery percentage migration
+- PASS — Derived review status from canonical SRS values
+- PASS — Release/service-worker cache identity synchronized to `0.030`

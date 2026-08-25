@@ -11,7 +11,7 @@ Created by `defaults()` and normalized by `normalizeSave()`.
 | `answers`, `correct`, `errors` | `save` | yes | aggregate accuracy |
 | `learnedToday`, `dayKey`, `history` | `save` | yes | daily/7-day progress |
 | `dailyGoal` | `save.dailyGoal` | yes | daily target, clamped 8–40 |
-| `mastery` | `save.mastery[wordKey]` | yes | derived box percentage per word |
+| `mastery` | `save.mastery[wordKey]` | yes | canonical SRS box value (0–5) per word, mirrored from `save.review[wordKey].box` during normalization/answering |
 | `review` | `save.review[wordKey]` | yes | SRS record/source for due status |
 | `customWords` | `save.customWords` | yes | user-created vocabulary, max 500 after normalization |
 | `favorites` | `save.favorites` | yes | favorite ids/keys |

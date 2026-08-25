@@ -11,12 +11,12 @@
 - **Result:** PASS for source/test invariants; Chromium interactive verification was blocked by the execution environment's browser navigation restriction, so cross-browser visual verification remains PARTIAL.
 
 ## Fix 2026-08-25 — Release version drift
-- **Bug:** `js/app.js` declared `0.028` while package/server/root VERSION/Service Worker identified `0.029`.
+- **Bug:** `js/app.js` declared `0.028` while package/server/root VERSION/Service Worker identified `0.030`.
 - **Root Cause:** Documentation-only baseline preserved the source inconsistency instead of reconciling release identity.
 - **Affected Files:** `js/app.js`.
-- **Fix:** Set frontend `VERSION` to `0.029` so cache-busting/export naming matches the rest of the release.
+- **Fix:** Set frontend `VERSION` to `0.030` so cache-busting/export naming matches the rest of the release.
 - **Why This Fix Is Correct:** This is a consistency correction inside an already-established release identity; it does not alter save/SRS behavior.
-- **Regression Risk:** Low/Medium — dictionary request query and exported filename change from `0.028` to the already-declared release `0.029`.
+- **Regression Risk:** Low/Medium — dictionary request query and exported filename change from `0.028` to the already-declared release `0.030`.
 - **Tests Performed:** all three automated suites.
 - **Result:** PASS.
 
@@ -89,3 +89,47 @@
 - **Regression Risk:** Medium; DOM hierarchy for the back content changed, but all existing IDs remain unchanged and event handlers continue to target the same elements.
 - **Tests:** `npm test`, `npm run state-check`, `npm run platform-check`, `node --check js/app.js`; browser harness updated to assert the back overlay is readable and matches the fixture translation.
 - **Regression Status:** Static regression PASS. Full browser visual verification remains environment-limited when Chromium navigation is blocked by the sandbox policy; this is recorded by the E2E harness rather than hidden.
+
+
+## Stability polish — statistics and progress
+
+**Bug:** Daily progress UI could remain at its initial values because `renderProgress()` existed but was never called by `renderAll()`.
+
+**Root Cause:** The renderer was implemented but disconnected from the main render pipeline.
+
+**Fix:** `renderAll()` now refreshes daily progress before rendering the card/statistics.
+
+**Why This Fix Is Correct:** It keeps the existing single-source state and only reconnects an already-existing renderer; no new behavior or data model was introduced.
+
+**Related Bug:** Several statistics fields (`Нові`, `На повторенні`, `Повторень`, `Засвоєння`) existed in HTML but were never assigned during `renderStats()`.
+
+**Fix:** All four fields are now derived from the same vocabulary/review state used by category counters and SRS.
+
+**UX Improvement:** The flashcard now exposes real button semantics and announces whether the translation side is visible.
+
+
+## 2026-08-25 — Canonical mastery state mismatch
+
+**Bug:** `save.mastery` was written as a 0–100 percentage while readers (`mastery()`, category sorting, collection badges and mastery buckets) treated it as a 0–5 SRS box. This could make partially learned words appear fully mastered.
+
+**Root Cause:** `answerWord()` persisted `masteryPercent({box})` into a field consumed as a box value.
+
+**Fix:** `save.mastery[k]` now stores the canonical SRS box (0–5). `normalizeSave()` migrates historical percentage values greater than 5 to the equivalent 0–5 box and then synchronizes persisted mastery from `review[*].box`, making review state authoritative. `statusFromReview()` now derives status from box/interval/lapse data rather than trusting stale saved status strings.
+
+**Regression Risk:** Medium because existing saved data may contain the old percentage representation; migration is intentionally included to preserve learner progress.
+
+**Tests:** `npm test`, `npm run state-check`, `npm run platform-check`, `npm run check`.
+
+**Result:** PASS.
+
+## 2026-08-25 — Service-worker cache identity after stabilization changes
+
+**Bug:** Functional changes were still using release/cache identity `0.029`, allowing already-installed service workers to keep serving the previous JavaScript bundle.
+
+**Root Cause:** source version and service-worker cache key did not change when the application code changed.
+
+**Fix:** bumped the synchronized release identity to `0.030` across runtime, package metadata and service-worker cache markers.
+
+**Regression Risk:** Low; this intentionally invalidates the previous browser cache and loads the current bundle.
+
+**Tests:** smoke, state, platform and syntax checks all PASS.

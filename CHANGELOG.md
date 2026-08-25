@@ -1,10 +1,10 @@
 
-## v0.029 — card flip stabilization
+## v0.030 — card flip stabilization
 - Replaced the previous flat-overlay flip workaround with a canonical two-face 3D card.
 - `.flashcard-inner` is now the single transform track; `.flash-back` carries the real Ukrainian translation with local `rotateY(180deg)`.
 - Updated autonomous E2E inspector and smoke tests to verify the real back-face matrix relationship.
 - Preserved existing SRS, statistics, persistence, navigation and card controls.
-# GESTALT v0.029 — AI baseline + card flip correction
+# GESTALT v0.030 — AI baseline + card flip correction
 
 ## Added
 - Added AI knowledge-base docs: `AI_PROJECT_CONTEXT.md`, `ARCHITECTURE.md`, `FEATURE_MAP.md`, `SAFE_MODIFICATIONS.md`, `BALANCE.md`, `KNOWN_ISSUES.md`.
@@ -78,3 +78,8 @@
 - Fixed missing `updateCategoryCounts()` runtime function that stopped rendering after the dictionary loaded.
 - Restored flashcard 3D rotation by removing the `transform:none` override and applying `rotateY(180deg)` on `.flashcard.is-flipped`.
 - Kept sentence example collapsed by default and translation on the back side.
+
+### 0.030 — stability/polish pass
+- Fixed stale daily progress UI: the 7-day activity/ring renderer now runs during every full render.
+- Wired previously static statistics cards (new, review, repetitions, mastery %) to the single runtime state source.
+- Added explicit accessible button semantics and `aria-pressed` state to the flashcard; label updates when the translation side is visible.

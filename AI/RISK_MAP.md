@@ -25,7 +25,7 @@
 - Spacing/shadows/typography.
 
 ## Confirmed issues from source inspection
-- **RESOLVED:** `js/app.js` now matches release identity `0.029`; automated suites pass after the correction.
+- **RESOLVED:** `js/app.js` now matches release identity `0.030`; automated suites pass after the correction.
 - **RESOLVED:** flashcard face transform architecture was tightened to remove nested 3D contexts and face-level transform animation.
 - **RESOLVED:** long-word content clipping path was addressed through runtime class selection and safe wrapping.
 - **RESOLVED:** selected topic now exposes a derived total word count in the UI.

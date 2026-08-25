@@ -18,7 +18,7 @@ Prefix: `gestalt_v12_`.
 - `initTelegram()` chooses remote save only when `remote.updatedAt > local.updatedAt`.
 
 ## Service Worker CacheStorage
-Cache: `gestalt-v0.029`.
+Cache: `gestalt-v0.030`.
 - Shell assets are individually cached during install; failure of one shell asset does not abort installation.
 - Vocabulary is network-first with cache fallback.
 - Other GETs are cache-first-ish with network fill and `index.html` fallback.
