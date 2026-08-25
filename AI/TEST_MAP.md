@@ -13,6 +13,9 @@ Runs Node syntax checks on `js/app.js` and `server/index.mjs`.
 Current observed result: `PLATFORM STATIC CHECK OK`.
 Checks viewport/safe-area CSS, mobile/desktop breakpoints, AbortController timeout, compact/full dictionary loading and Service Worker cache rules.
 
+### `npm run state-check`
+Current observed result: `STATE NORMALIZATION OK`. It exercises the actual `defaults()` / `normalizeSave()` source block against malformed nested persisted data.
+
 ## Direct runtime evidence
 With a temporary free port and no Telegram credentials, the Node server successfully returned:
 - `GET /health` → 200 with version 0.029, Telegram false, Mini App false.
@@ -37,5 +40,7 @@ Port 8080 was already occupied by the execution environment, so the server was v
 13. Speech synthesis on devices with/without German voices.
 14. Offline reopen after Service Worker has cached shell.
 
-## Tooling gap
-No Playwright/Puppeteer dependency is present, so Chromium-level behavior was not independently automated during documentation-only work.
+## Stabilization evidence
+- All three repository suites pass after the fixes.
+- Chromium is installed, but browser navigation to the application is blocked by the execution environment, so full interactive app verification could not be completed here. This is tracked as `PARTIAL` in `AI/STABILITY_CHECKLIST.md`.
+- A real server runtime check remains valid: `/health`, `/`, and `/api/telegram/status` respond on an isolated port without Telegram credentials.

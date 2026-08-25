@@ -14,8 +14,8 @@
 - Existing automated tests pass in this environment.
 - Server root/health/API status endpoints work without Telegram credentials.
 
-## CONFIRMED discrepancy
-- `js/app.js` uses `VERSION='0.028'` while the project release identity elsewhere is 0.029.
+## Resolved discrepancy
+- `js/app.js` previously used `VERSION='0.028'`; it now uses the repository release identity `0.029`.
 
 ## LIKELY / needs targeted verification
 - Exact visual rendering across all browser engines/devices.

@@ -31,7 +31,7 @@
 - export/import/reset.
 
 ## Card DOM contract
-Important ids include `cardWrap`, `flashcard`, `wordGerman`, `wordMeaning`, `backGerman`, `backMeaning`, `backMeaningNote`, `sentenceToggle`, `sentencePanel`, `backSentence`, `backSentenceUa`, `rememberBtn`, `forgotBtn`, `favoriteBtn`, `speakWord`, `speakSentence`.
+Important ids include `cardWrap`, `flashcard`, `wordGerman`, `wordMeaning`, `backGerman`, `backMeaning`, `backMeaningNote`, `sentenceToggle`, `sentencePanel`, `backSentence`, `backSentenceUa`, `rememberBtn`, `forgotBtn`, `favoriteBtn`, `speakWord`, `speakSentence`. Topic header also includes derived `topicWordCount`.
 
 ## Rendering contract
 `renderCard()` writes directly into the card DOM. It disables answer controls if not flipped or while `answerLock` is active. The sentence panel starts collapsed and opens only after reveal.
@@ -43,4 +43,4 @@ Important ids include `cardWrap`, `flashcard`, `wordGerman`, `wordMeaning`, `bac
 - Safe-area variables cover browser/Telegram bottom insets.
 
 ## Card 3D invariant
-`.flashcard.is-flipped { transform: rotateY(180deg) }`; `.flash-back { transform: rotateY(180deg) }`; faces use `backface-visibility:hidden`. No child flip override.
+`.flashcard.is-flipped { transform: rotateY(180deg) }`; `.flash-back { transform: rotateY(180deg) }`; faces use `backface-visibility:hidden` and `transform-style:flat`. No child flip override or face transform transition.

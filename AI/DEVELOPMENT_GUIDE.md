@@ -13,6 +13,7 @@ USER REQUEST
 → npm run check
 → npm run platform-check
 → targeted manual checks
+→ update `AI/BUG_FIX_LOG.md` and `AI/STABILITY_CHECKLIST.md` when a meaningful defect or verification status changes
 → update AI docs if behavior/architecture changed
 ```
 

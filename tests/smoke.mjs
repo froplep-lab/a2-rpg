@@ -26,6 +26,7 @@ assert.equal(words.filter(w=>w.topicNumber===14).length, manifest.byLesson['14']
 assert.doesNotMatch(html,/Random Dice|Battle Board|START WAVE|enemy|boss|spawnDie|autoMerge/i,'old game UI still present');
 assert.doesNotMatch(js,/diceTypes|startWave|spawnDie|autoMerge|battleQuestion|Random Dice/i,'old game logic still present');
 assert.ok(html.includes('id="flashcard"'),'flashcard missing');
+assert.ok(html.includes('id="topicWordCount"'),'topic word count missing');
 assert.ok(html.includes('id="rememberBtn"')&&html.includes('id="forgotBtn"'),'two-action controls missing');
 assert.ok(html.includes('id="speakWord"')&&html.includes('id="speakSentence"'),'audio controls missing');
 assert.ok(js.includes('speechSynthesis'),'speech synthesis missing');
@@ -56,6 +57,10 @@ assert.ok(js.includes("$('sentencePanel').hidden=!state.sentenceExpanded"),'exam
 assert.ok(js.includes("function updateCategoryCounts()"),'category count renderer missing');
 assert.ok(js.includes("const all=filterTopic(mergedWords(),state.currentTopic)"),'category counts must follow selected topic');
 assert.match(css,/\.flash-face\{[^}]*backface-visibility:hidden/,'backface visibility missing');
+assert.match(css,/\.flash-face\{[^}]*transform-style:flat/,'card faces must not create nested 3D transform contexts');
+assert.match(css,/\.flashcard\.is-flipped\{transform:rotateY\(180deg\)/,'parent must own flip transform');
+assert.ok(js.includes("const VERSION='0.029'"),'app version must match release identity');
+assert.ok(js.includes("wordEl.classList.remove('word-long','word-xlong')"),'long-word card sizing logic missing');
 assert.equal(read('VERSION').trim(),'0.029','version file mismatch');
 assert.equal(JSON.parse(read('package.json')).version,'0.0.29','package version mismatch');
 assert.match(read('server/index.mjs'),/VERSION='0.029'/,'server version mismatch');

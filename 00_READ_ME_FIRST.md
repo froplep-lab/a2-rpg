@@ -24,4 +24,4 @@
 Do not change save schema, SRS logic, Telegram CloudStorage format, vocabulary format, DOM ids or card transform semantics casually.
 
 ## Release identity note
-The repository identifies itself as v0.029 in package/server/root VERSION/SW, but `js/app.js` currently declares v0.028. Treat this as a confirmed inconsistency until intentionally reconciled.
+Release identity is now aligned at v0.029 across package/server/root VERSION/SW and `js/app.js`.

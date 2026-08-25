@@ -25,7 +25,11 @@
 - Spacing/shadows/typography.
 
 ## Confirmed issues from source inspection
-- **CONFIRMED:** `js/app.js` declares version 0.028 while package/server/root VERSION/SW indicate 0.029.
+- **RESOLVED:** `js/app.js` now matches release identity `0.029`; automated suites pass after the correction.
+- **RESOLVED:** flashcard face transform architecture was tightened to remove nested 3D contexts and face-level transform animation.
+- **RESOLVED:** long-word content clipping path was addressed through runtime class selection and safe wrapping.
+- **RESOLVED:** selected topic now exposes a derived total word count in the UI.
+- **RESOLVED:** nested imported/legacy save records are centrally sanitized in `normalizeSave()`.
 - **CONFIRMED:** the compact dictionary intentionally omits some richer object fields; `expandCompactDictionary()` reconstructs only the fields present in its `fields` list. Full `words.json` is the richer canonical object form.
 - **POTENTIAL:** `validateDictionary()` performs presence/minimum-count validation but does not type-check every vocabulary field.
 - **POTENTIAL:** no browser-level automated regression exists in the supplied project.

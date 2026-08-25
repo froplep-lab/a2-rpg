@@ -35,5 +35,5 @@ Telegram CloudStorage uses `gestalt_v12_` chunk keys and can read several older 
 ## Progression values
 See `GAME_RULES.md` and `BALANCE.md` (root). Runtime constants are centralized in `BALANCE` in `js/app.js`.
 
-## Important version fact
-Package/server/cache/root VERSION report 0.029, but `js/app.js` currently declares `const VERSION='0.028'`. This is a confirmed source inconsistency and affects dictionary query cache-busting and exported filename naming. It was not changed during documentation-only work.
+## Release identity
+Package/server/cache/root VERSION and `js/app.js` now all report `0.029`. This keeps dictionary query cache-busting and exported progress filenames aligned with the release identity.

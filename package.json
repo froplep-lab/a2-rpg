@@ -7,7 +7,8 @@
     "start": "node server/index.mjs",
     "check": "node --check js/app.js && node --check server/index.mjs",
     "test": "node tests/smoke.mjs",
-    "platform-check": "node tests/platform.mjs"
+    "platform-check": "node tests/platform.mjs",
+    "state-check": "node tests/state.mjs"
   },
   "engines": {
     "node": ">=18"
