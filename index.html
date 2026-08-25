@@ -49,7 +49,67 @@
         </div>
         <div class="topic-row glass-small"><div><span class="eyebrow">КУРС / ТЕМА</span><strong id="topicTitleInline">Тема 8 · Am Wochenende</strong></div><select id="topicSelect" class="select topic-select" aria-label="Тема навчання"></select></div>
 
+        
+        <div class="category-pills-row">
+          <button class="cat-pill active" data-cat="all">📚 Усі (<span id="countAll">0</span>)</button>
+          <button class="cat-pill" data-cat="new">🆕 Нові (<span id="countNew">0</span>)</button>
+          <button class="cat-pill" data-cat="learning">🔄 У процесі (<span id="countLearning">0</span>)</button>
+          <button class="cat-pill" data-cat="review">📖 Повторення (<span id="countReview">0</span>)</button>
+          <button class="cat-pill" data-cat="mastered">✅ Вивчені (<span id="countMastered">0</span>)</button>
+        </div>
+
         <div id="subview-learn" class="subview active">
+
+          <section class="study-zone">
+            <div class="study-meta"><span id="sourceBadge">A2 · B1</span><span id="sessionPosition">1/24</span><button id="favoriteBtn" class="favorite" aria-label="Улюблене">☆</button></div>
+            <div class="flip-wrap" id="cardWrap">
+              <article class="flashcard" id="flashcard" tabindex="0" aria-label="Картка слова">
+                <div class="flash-face flash-front">
+                  <div class="card-glow"></div>
+                  <div class="word-top" style="justify-content: space-between; width: 100%;">
+         <div style="display:flex; gap:8px; align-items:center;">
+            <span id="wordStatus" class="word-status">🆕 Нове</span>
+            <span id="wordLevel" class="word-level">A2/B1</span>
+         </div>
+         <span id="wordEmoji" class="word-emoji">✨</span>
+       </div>
+       <div class="progress-wrap"><div class="progress-track"><div id="wordProgressFill" class="progress-fill"></div></div><span id="wordProgressText" class="progress-text">0%</span></div>
+                  <div class="word-main-row"><div style="position:relative; display:inline-block; max-width:100%;"><h2 id="wordGerman">—</h2><div id="wordPlural" class="word-plural"></div></div><button id="speakWord" class="speak-btn" aria-label="Озвучити слово">◖)))</button></div>
+                  <div id="wordPhonetic" class="phonetic">[—]</div>
+                  <div id="wordGrammar" class="word-grammar">Іменник</div>
+                  <div id="wordMeaning" class="word-meaning" hidden>—</div>
+                  <div id="wordHint" class="word-hint">Переверни картку, щоб перевірити переклад.</div>
+                  <div class="card-bottom"><span id="wordSource">Kursbuch · 8 Am Wochenende</span><span>↻ натисни картку для відповіді</span></div>
+                </div>
+                <div class="flash-face flash-back">
+                  <div class="back-label">ПЕРЕКЛАД</div>
+                  <h3 id="backGerman">—</h3>
+                  <div id="backMeaning" class="back-meaning">—</div>
+                  <div id="backMeaningNote" class="back-meaning-note" hidden></div>
+                  <div class="sentence-block">
+                    <button id="sentenceToggle" class="sentence-toggle" type="button" aria-expanded="false" aria-controls="sentencePanel">Приклад речення ▾</button>
+                    <div id="sentencePanel" class="sentence-panel" hidden>
+                      <div id="backSentence" class="back-sentence">—</div>
+                      <div id="backSentenceUa" class="back-sentence-ua">—</div>
+                      <button id="speakSentence" class="secondary-btn" type="button">🔊 Прослухати речення</button>
+                    </div>
+                  </div>
+                  <div class="back-tip">Приклад відкривається тільки за твоїм бажанням.</div>
+                </div>
+              </article>
+            </div>
+
+            <div class="answer-grid">
+              <button id="rememberBtn" class="answer-btn remember"><span class="answer-icon">✅</span><span><b>Знаю</b><small>Збільшити інтервал</small></span></button>
+              <button id="forgotBtn" class="answer-btn forgot"><span class="answer-icon">❌</span><span><b>Не знаю</b><small>Повторити зараз</small></span></button>
+            </div>
+
+          </section>
+        </div>
+
+        
+        <div id="subview-stats" class="subview">
+          
           <section class="progress-card glass">
             <div class="progress-ring" id="progressRing"><div><b id="dailyPct">0%</b><span>сьогодні</span></div></div>
             <div class="progress-copy">
@@ -60,46 +120,15 @@
             <div class="week-bars" id="weekBars" aria-label="Активність за тиждень"></div>
           </section>
 
-          <section class="study-zone">
-            <div class="study-meta"><span id="sourceBadge">A2 · B1</span><span id="sessionPosition">1/24</span><button id="favoriteBtn" class="favorite" aria-label="Улюблене">☆</button></div>
-            <div class="flip-wrap" id="cardWrap">
-              <article class="flashcard" id="flashcard" tabindex="0" aria-label="Картка слова">
-                <div class="flash-face flash-front">
-                  <div class="card-glow"></div>
-                  <div class="word-top"><span id="wordEmoji" class="word-emoji">✨</span><span id="wordLevel" class="word-level">A2/B1</span></div>
-                  <div class="word-main-row"><h2 id="wordGerman">—</h2><button id="speakWord" class="speak-btn" aria-label="Озвучити слово">◖)))</button></div>
-                  <div id="wordPhonetic" class="phonetic">[—]</div>
-                  <div id="wordGrammar" class="word-grammar">Іменник</div>
-                  <div id="wordMeaning" class="word-meaning">—</div>
-                  <div id="wordHint" class="word-hint">—</div>
-                  <div class="card-bottom"><span id="wordSource">Kursbuch · 8 Am Wochenende</span><span>↻ торкнись для прикладу</span></div>
-                </div>
-                <div class="flash-face flash-back">
-                  <div class="back-label">КОНТЕКСТ</div>
-                  <h3 id="backGerman">—</h3>
-                  <div id="backSentence" class="back-sentence">—</div>
-                  <div id="backSentenceUa" class="back-sentence-ua">—</div>
-                  <button id="speakSentence" class="secondary-btn">🔊 Прослухати речення</button>
-                  <div class="back-tip">Контекст допомагає запам'ятати слово надовше.</div>
-                </div>
-              </article>
-            </div>
-
-            <div class="answer-grid">
-              <button id="rememberBtn" class="answer-btn remember"><span class="answer-icon">✓</span><span><b>Запам'ятав</b><small>Показати рідше</small></span></button>
-              <button id="forgotBtn" class="answer-btn forgot"><span class="answer-icon">×</span><span><b>Забув</b><small>Показати частіше</small></span></button>
-            </div>
-
-            <div class="streak-row glass-small"><span>🔥 Серія: <b id="streakText">0 днів</b></span><span>⚡ Рекорд: <b id="recordText">0</b></span></div>
-          </section>
-        </div>
-
-        <div id="subview-stats" class="subview">
           <section class="stats-grid">
             <div class="metric glass"><span>Всього слів</span><strong id="statTotal">0</strong></div>
-            <div class="metric glass"><span>Вивчено</span><strong id="statMastered">0</strong></div>
+            <div class="metric glass"><span>Нові</span><strong id="statNew">0</strong></div>
             <div class="metric glass"><span>В процесі</span><strong id="statLearning">0</strong></div>
+            <div class="metric glass"><span>На повторенні</span><strong id="statReview">0</strong></div>
+            <div class="metric glass"><span>Вивчено</span><strong id="statMastered">0</strong></div>
             <div class="metric glass"><span>Точність</span><strong id="statAccuracy">0%</strong></div>
+            <div class="metric glass"><span>Повторень</span><strong id="statRepetitions">0</strong></div>
+            <div class="metric glass"><span>Засвоєння</span><strong id="statMasteryPct">0%</strong></div>
           </section>
           <section class="panel glass">
             <div class="panel-head"><div><span class="eyebrow">SRS</span><h3>Стан пам'яті</h3></div><span id="statDue">0 до повторення</span></div>
@@ -110,8 +139,7 @@
             <div id="activityChart" class="activity-chart"></div>
           </section>
         </div>
-
-        <div id="subview-collection" class="subview">
+<div id="subview-collection" class="subview">
           <section class="panel glass">
             <div class="panel-head"><div><span class="eyebrow">КОЛЕКЦІЯ</span><h3>Твої слова</h3></div><span id="collectionCount">0</span></div>
             <div class="search-row"><input id="searchInput" class="input" placeholder="Пошук слова або перекладу…"><button id="collectionSpeak" class="ghost-icon" aria-label="Озвучка">🔊</button></div>
@@ -139,6 +167,7 @@
         <section class="panel glass">
           <div class="panel-head"><div><span class="eyebrow">НАЛАШТУВАННЯ</span><h2>Твій комфорт</h2></div></div>
           <div class="setting"><div><b>Автоматична озвучка</b><small>Промовляти слово після відкриття</small></div><button id="autoSpeakSwitch" class="switch"><i></i></button></div>
+          <div class="setting"><div><b>Транскрипція</b><small>Показувати IPA на лицьовій стороні картки</small></div><button id="phoneticSwitch" class="switch on"><i></i></button></div>
           <div class="setting"><div><b>Швидкість голосу</b><small>Для чіткої німецької вимови</small></div><select id="voiceRate" class="select"><option value="0.75">Повільно</option><option value="0.9">Звичайно</option><option value="1.0">Природно</option><option value="1.08">Швидше</option></select></div>
           <div class="setting"><div><b>Німецький голос</b><small>Обирай доступний de-DE голос</small></div><select id="voiceSelect" class="select"><option value="auto">Автоматично</option></select></div>
           <div class="setting"><div><b>Зменшити анімації</b><small>Для максимальної легкості</small></div><button id="motionSwitch" class="switch"><i></i></button></div>

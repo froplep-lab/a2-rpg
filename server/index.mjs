@@ -10,7 +10,7 @@ const MINI_APP_URL=(process.env.MINI_APP_URL||'').replace(/\/$/,'');
 const WEBHOOK_URL=(process.env.WEBHOOK_URL||'').replace(/\/$/,'');
 const WEBHOOK_PATH='/telegram/webhook';
 const WEBHOOK_SECRET=process.env.WEBHOOK_SECRET||'';
-const VERSION='0.016';
+const VERSION='0.027';
 if(MINI_APP_URL&& !/^https:\/\//i.test(MINI_APP_URL))console.warn('MINI_APP_URL should use HTTPS for Telegram Mini App deployment');
 const jsonHeaders={'content-type':'application/json; charset=utf-8','cache-control':'no-store'};
 
@@ -28,7 +28,7 @@ function serveStatic(req,res){
   let rel=decodeURIComponent(new URL(req.url,`http://${req.headers.host||'localhost'}`).pathname);if(rel==='/'||rel==='')rel='/index.html';
   const file=path.resolve(ROOT,'.'+rel);
   if(!file.startsWith(ROOT+path.sep)||!fs.existsSync(file)||fs.statSync(file).isDirectory()){sendJson(res,404,{ok:false,error:'Not found'});return}
-  res.writeHead(200,{'content-type':contentType(file),'cache-control':file.endsWith('.html')?'no-cache':'public, max-age=3600, immutable'});if(req.method==='HEAD')res.end();else fs.createReadStream(file).pipe(res);
+  const ext=path.extname(file).toLowerCase();const immutable=!['.html','.js','.css','.json','.webmanifest','.mjs'].includes(ext);res.writeHead(200,{'content-type':contentType(file),'cache-control':immutable?'public, max-age=31536000, immutable':'no-cache, must-revalidate'});if(req.method==='HEAD')res.end();else fs.createReadStream(file).pipe(res);
 }
 async function readJson(req){return await new Promise((resolve,reject)=>{let raw='';req.on('data',c=>{raw+=c;if(raw.length>500000)reject(new Error('payload too large'))});req.on('end',()=>{try{resolve(raw?JSON.parse(raw):{})}catch{reject(new Error('invalid json'))}});req.on('error',reject)})}
 
