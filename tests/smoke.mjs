@@ -8,6 +8,7 @@ const js=read('js/app.js');
 const server=read('server/index.mjs');
 const words=JSON.parse(read('data/words.json'));
 const manifest=JSON.parse(read('data/book-vocabulary-manifest.json'));
+const sw=read('sw.js');
 assert.ok(Array.isArray(words)&&words.length>=900,'book vocabulary is incomplete');
 assert.deepEqual(new Set(words.map(w=>w.topicNumber)),new Set([8,9,10,11,12,13,14]),'lessons 8-14 are not the whole bundled range');
 assert.equal(words[0].topicNumber,8,'dataset must start at lesson 8');
@@ -33,7 +34,10 @@ assert.ok(js.includes('const disabled=state.answerLock||!state.flipped'),'answer
 assert.ok(js.includes('state.flipped&&!state.answerLock'),'swipe answers must stay locked before reveal');
 assert.ok(js.includes("if(mode==='review')"),'review mode must retain dedicated SRS selection');
 assert.ok(!js.includes('const originalPickSession'),'pickSession must not be overridden after boot');
-assert.ok(js.includes('phoneticSource') || js.includes('phonetic(w.phonetic'),'phonetic rendering missing');
+assert.ok(js.includes('phonetic(w.phonetic'),'phonetic rendering missing');
+assert.ok(js.includes('COMPACT_WORDS_URL'),'compact dictionary loader missing');
+assert.ok(sw.includes('gestalt-v0.026'),'service worker version mismatch');
+assert.ok(sw.includes('words.compact.json'),'service worker compact dictionary missing');
 const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);
 const dup=ids.filter((id,i)=>ids.indexOf(id)!==i);assert.equal(new Set(dup).size,0,'duplicate ids: '+[...new Set(dup)].join(', '));
 const refIds=[...js.matchAll(/\$\('([^']+)'\)/g)].map(m=>m[1]);
@@ -42,10 +46,10 @@ const css=read('css/main.css');
 assert.match(css,/\.flashcard\.is-flipped \.flash-front\{transform:rotateY\(-180deg\)/,'flip front fix missing');
 assert.match(css,/\.flashcard\.is-flipped \.flash-back\{transform:rotateY\(0deg\)/,'flip back fix missing');
 assert.match(css,/\.flash-face\{[^}]*backface-visibility:hidden/,'backface visibility missing');
-assert.equal(read('VERSION').trim(),'0.025','version file mismatch');
-assert.equal(JSON.parse(read('package.json')).version,'0.0.25','package version mismatch');
-assert.match(read('server/index.mjs'),/VERSION='0.025'/,'server version mismatch');
-assert.match(read('sw.js'),/gestalt-v0\.025/,'service worker cache version mismatch');
+assert.equal(read('VERSION').trim(),'0.026','version file mismatch');
+assert.equal(JSON.parse(read('package.json')).version,'0.0.26','package version mismatch');
+assert.match(read('server/index.mjs'),/VERSION='0.026'/,'server version mismatch');
+assert.match(read('sw.js'),/gestalt-v0\.026/,'service worker cache version mismatch');
 
 assert.match(html,/id="backMeaning"/,'back translation element missing');
 assert.match(html,/id="sentenceToggle"/,'sentence toggle missing');
@@ -59,6 +63,6 @@ for(const w of words){assert.ok(typeof w.ukrainian==='string'&&w.ukrainian.trim(
 const centrum=words.find(w=>w.german==='das Stadtzentrum');
 assert.equal(centrum?.pluralForm,'Stadtzentren','plural reconstruction regression');
 
-const sw=read('sw.js');for(const asset of [...sw.matchAll(/'([^']+)'/g)].map(m=>m[1]).filter(x=>x.startsWith('./'))){assert.ok(fs.existsSync(path.join(root,asset))||asset==='./','missing SW asset '+asset)}
+for(const asset of [...sw.matchAll(/'([^']+)'/g)].map(m=>m[1]).filter(x=>x.startsWith('./'))){assert.ok(fs.existsSync(path.join(root,asset))||asset==='./','missing SW asset '+asset)}
 const srcs=[...new Set(words.map(w=>w.source))];assert.equal(srcs.length,7,'expected seven lesson source groups');
 console.log('SMOKE OK');

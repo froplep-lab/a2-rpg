@@ -1,5 +1,6 @@
-const VERSION='0.025';
+const VERSION='0.026';
 const WORDS_URL=new URL('../data/words.json', import.meta.url).href;
+const COMPACT_WORDS_URL=new URL('../data/words.compact.json', import.meta.url).href;
 const SAVE_VERSION=12;
 const SAVE_KEY='gestalt_learning_v12';
 const LEGACY_KEYS=['gestalt_learning_v9','gestalt_learning_v8','gestalt_learning_v7','gestalt_learning_v6','gestalt_learning_v5','gestalt_learning_v4','de_b1_rpg_progress_v3','deutsch_quest_v002'];
@@ -270,18 +271,40 @@ function bind(){
  $('themeSwitch').addEventListener('click',()=>{save.settings.theme=save.settings.theme==='dark'?'light':'dark';persist();syncTheme();renderSettings()});$('motionSwitch').addEventListener('click',()=>{save.settings.reducedMotion=!save.settings.reducedMotion;persist();syncTheme();renderSettings()});$('autoSpeakSwitch').addEventListener('click',()=>{save.settings.autoSpeak=!save.settings.autoSpeak;persist();renderSettings()});$('phoneticSwitch').addEventListener('click',()=>{save.settings.showPhonetic=!save.settings.showPhonetic;persist();renderSettings();renderCard()});$('voiceRate').addEventListener('change',e=>{save.settings.voiceRate=Number(e.target.value)||.9;persist()});$('voiceSelect').addEventListener('change',e=>{save.settings.voiceName=e.target.value;persist()});$('tgSyncBtn').addEventListener('click',syncTelegram);$('exportBtn').addEventListener('click',exportProgress);$('importFile').addEventListener('change',e=>{if(e.target.files?.[0])importProgress(e.target.files[0]);e.target.value=''});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('addModal').classList.contains('open'))closeAdd();if(state.screen==='learn'&&state.subview==='learn'&&!state.answerLock){if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&state.flipped){answerWord(e.key==='ArrowRight'?4:0);return}if(e.key===' '||e.key==='Enter'){e.preventDefault();toggleFlip()}}});
  $('resetBtn').addEventListener('click',async()=>{const ok=tg?.showConfirm?await new Promise(r=>tg.showConfirm('Скинути локальний прогрес?',r)):window.confirm('Скинути локальний прогрес?');if(ok){safeRemove(SAVE_KEY);location.reload()}})
 }
+const WORD_FIELDS=['id','german','ukrainian','grammar','emoji','sentence','sentenceUa','level','source','topicId','topicNumber','topicTitle','sourcePage','frequency','phonetic','headword','pluralMarker','pluralForm','translationNote'];
+function expandCompactDictionary(payload){
+  if(!payload||!Array.isArray(payload.words)||!Array.isArray(payload.fields))throw new Error('Некоректний компактний словник');
+  const fields=payload.fields.length?payload.fields:WORD_FIELDS;
+  return payload.words.map(row=>{const w={};fields.forEach((k,i)=>w[k]=row[i]);return w});
+}
+function validateDictionary(d){
+  if(!Array.isArray(d)||d.length===0)throw new Error('Словник порожній');
+  const valid=d.filter(w=>w&&typeof w==='object'&&String(w.id||'').trim()&&String(w.german||'').trim()&&String(w.ukrainian||'').trim());
+  if(valid.length<Math.min(50,d.length))throw new Error('Некоректна структура словника');
+  return valid;
+}
+async function fetchJsonFast(url,timeoutMs=10000){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeoutMs);
+  try{
+    const r=await fetch(url,{cache:'no-store',signal:controller.signal});
+    if(!r.ok)throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  }finally{clearTimeout(timer)}
+}
 async function loadWordData(){
-  const urls=[WORDS_URL,`${WORDS_URL}${WORDS_URL.includes('?')?'&':'?'}v=${encodeURIComponent(VERSION)}`];
+  const sources=[
+    {url:`${COMPACT_WORDS_URL}?v=${encodeURIComponent(VERSION)}`,compact:true},
+    {url:`${WORDS_URL}?v=${encodeURIComponent(VERSION)}`,compact:false},
+    {url:COMPACT_WORDS_URL,compact:true},
+    {url:WORDS_URL,compact:false}
+  ];
   let lastError=null;
-  for(const url of urls){
+  for(const source of sources){
     try{
-      const r=await fetch(url,{cache:'no-store'});
-      if(!r.ok)throw new Error(`HTTP ${r.status}`);
-      const d=await r.json();
-      if(!Array.isArray(d)||d.length===0)throw new Error('Словник порожній');
-      const valid=d.filter(w=>w&&typeof w==='object'&&String(w.id||'').trim()&&String(w.german||'').trim());
-      if(valid.length<Math.min(50,d.length))throw new Error('Некоректна структура словника');
-      words=valid;
+      const payload=await fetchJsonFast(source.url,10000);
+      const data=source.compact?expandCompactDictionary(payload):payload;
+      words=validateDictionary(data);
       return true;
     }catch(e){lastError=e}
   }

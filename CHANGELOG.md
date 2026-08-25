@@ -37,3 +37,11 @@
 - Kept category filtering inside the existing session logic rather than replacing it.
 - Added smoke-test coverage for these regressions.
 
+
+## v0.026 — Stability / loading
+- Optimized dictionary delivery with compact 364 KB payload (from ~841 KB JSON).
+- Added compact dictionary loader with full JSON fallback.
+- Added 10-second timeout and multi-source retry for dictionary loading.
+- Service Worker no longer blocks installation on dictionary pre-cache failure.
+- Dictionary requests use network-first with cache fallback.
+- Disabled immutable HTTP caching for HTML/JS/CSS/JSON/WebManifest so Telegram/mobile clients can receive fixes promptly.
