@@ -1,4 +1,4 @@
-const VERSION='0.031';
+const VERSION='0.032';
 const WORDS_URL=new URL('../data/words.json', import.meta.url).href;
 const COMPACT_WORDS_URL=new URL('../data/words.compact.json', import.meta.url).href;
 const SAVE_VERSION=12;
@@ -248,7 +248,7 @@ function updateCategoryCounts(){
   }
 }
 // AI CONTEXT: renders the current card; keep transform state and answer-lock semantics intact.
-function renderCard(){ensureLearningSession();const w=currentWord();if(!w){const topicCount=filterTopic(mergedWords(),state.currentTopic).length;$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent=topicCount?'Відновлюю картку…':'Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent=topicCount?'Перезапускаю сесію навчання':'Обери іншу тему або додай слово';$('wordHint').textContent=topicCount?'Будь ласка, зачекай мить…':'Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backMeaning').textContent='';$('backMeaningNote').textContent='';$('backMeaningNote').hidden=true;$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('sentencePanel').hidden=true;$('sentenceToggle').setAttribute('aria-expanded','false');$('sentenceToggle').textContent='Приклад речення ▾';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordLevel').textContent=w.level||'A2/B1';
+function renderCard(){ensureLearningSession();updateCategoryCounts();const w=currentWord();if(!w){const topicCount=filterTopic(mergedWords(),state.currentTopic).length;$('sessionPosition').textContent='0/0';$('wordEmoji').textContent='✨';$('wordLevel').textContent='—';$('wordGerman').textContent=topicCount?'Відновлюю картку…':'Немає слів';$('wordPhonetic').textContent='';$('wordGrammar').textContent='';$('wordMeaning').textContent=topicCount?'Перезапускаю сесію навчання':'Обери іншу тему або додай слово';$('wordHint').textContent=topicCount?'Будь ласка, зачекай мить…':'Твоя поточна тема не має слів для навчання.';$('wordSource').textContent='GESTALT';$('backGerman').textContent='Готово';$('backMeaning').textContent='';$('backMeaningNote').textContent='';$('backMeaningNote').hidden=true;$('backSentence').textContent='Обери тему, щоб почати навчання.';$('backSentenceUa').textContent='';$('sentencePanel').hidden=true;$('sentenceToggle').setAttribute('aria-expanded','false');$('sentenceToggle').textContent='Приклад речення ▾';$('flashcard').classList.remove('is-flipped');$('favoriteBtn').textContent='☆';$('favoriteBtn').classList.remove('active');$('rememberBtn').disabled=true;$('forgotBtn').disabled=true;return;}$('sessionPosition').textContent=`${Math.min(state.sessionIndex+1,state.session.length)}/${state.session.length}`;$('wordLevel').textContent=w.level||'A2/B1';
   const parts=wordDisplayParts(w); const rawG=parts.base||'—';
   const wordEl=$('wordGerman');
   wordEl.classList.remove('word-long','word-xlong');
@@ -353,26 +353,36 @@ async function fetchJsonFast(url,timeoutMs=10000){
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),timeoutMs);
   try{
-    const r=await fetch(url,{cache:'no-store',signal:controller.signal});
+    const r=await fetch(url,{signal:controller.signal});
     if(!r.ok)throw new Error(`HTTP ${r.status}`);
     return await r.json();
   }finally{clearTimeout(timer)}
 }
 // AI CONTEXT: compact-first dictionary loader with full JSON fallback; schema validation is a safety boundary.
 async function loadWordData(){
+  const base=typeof location!=='undefined'&&location.origin&&location.origin!=='null'?location.origin:'';
   const sources=[
+    {url:`./data/words.compact.json?v=${encodeURIComponent(VERSION)}`,compact:true},
     {url:`${COMPACT_WORDS_URL}?v=${encodeURIComponent(VERSION)}`,compact:true},
+    {url:`./data/words.json?v=${encodeURIComponent(VERSION)}`,compact:false},
     {url:`${WORDS_URL}?v=${encodeURIComponent(VERSION)}`,compact:false},
+    {url:'./data/words.compact.json',compact:true},
     {url:COMPACT_WORDS_URL,compact:true},
-    {url:WORDS_URL,compact:false}
+    {url:'./data/words.json',compact:false},
+    {url:WORDS_URL,compact:false},
+    {url:'https://a2-rpg.vercel.app/data/words.compact.json',compact:true},
+    {url:'https://a2-rpg.vercel.app/data/words.json',compact:false}
   ];
   let lastError=null;
   for(const source of sources){
     try{
-      const payload=await fetchJsonFast(source.url,10000);
+      const payload=await fetchJsonFast(source.url,8000);
       const data=source.compact?expandCompactDictionary(payload):payload;
-      words=validateDictionary(data);
-      return true;
+      const valid=validateDictionary(data);
+      if(valid&&valid.length>=50){
+        words=valid;
+        return true;
+      }
     }catch(e){lastError=e}
   }
   words=[];

@@ -45,7 +45,7 @@ assert.ok(js.includes("if(mode==='review')"),'review mode must retain dedicated 
 assert.ok(!js.includes('const originalPickSession'),'pickSession must not be overridden after boot');
 assert.ok(js.includes('phonetic(w.phonetic'),'phonetic rendering missing');
 assert.ok(js.includes('COMPACT_WORDS_URL'),'compact dictionary loader missing');
-assert.ok(sw.includes('gestalt-v0.031'),'service worker version mismatch');
+assert.ok(sw.includes('gestalt-v0.032'),'service worker version mismatch');
 assert.ok(sw.includes('words.compact.json'),'service worker compact dictionary missing');
 const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);
 const dup=ids.filter((id,i)=>ids.indexOf(id)!==i);assert.equal(new Set(dup).size,0,'duplicate ids: '+[...new Set(dup)].join(', '));
