@@ -59,15 +59,6 @@
         </div>
 
         <div id="subview-learn" class="subview active">
-          <section class="progress-card glass">
-            <div class="progress-ring" id="progressRing"><div><b id="dailyPct">0%</b><span>сьогодні</span></div></div>
-            <div class="progress-copy">
-              <span class="progress-label">Прогрес сьогодні</span>
-              <strong>+<span id="dailyLearned">0</span> слова</strong>
-              <span class="progress-good" id="progressGood">Почнемо? 🌱</span>
-            </div>
-            <div class="week-bars" id="weekBars" aria-label="Активність за тиждень"></div>
-          </section>
 
           <section class="study-zone">
             <div class="study-meta"><span id="sourceBadge">A2 · B1</span><span id="sessionPosition">1/24</span><button id="favoriteBtn" class="favorite" aria-label="Улюблене">☆</button></div>
@@ -88,7 +79,7 @@
                   <div id="wordGrammar" class="word-grammar">Іменник</div>
                   <div id="wordMeaning" class="word-meaning">—</div>
                   <div id="wordHint" class="word-hint">—</div>
-                  <div class="card-bottom"><span id="wordSource">Kursbuch · 8 Am Wochenende</span><span>↻ торкнись для прикладу</span></div>
+                  <div class="card-bottom"><span id="wordSource">Kursbuch · 8 Am Wochenende</span><span>↻ натисни картку для відповіді</span></div>
                 </div>
                 <div class="flash-face flash-back">
                   <div class="back-label">КОНТЕКСТ</div>
@@ -96,7 +87,7 @@
                   <div id="backSentence" class="back-sentence">—</div>
                   <div id="backSentenceUa" class="back-sentence-ua">—</div>
                   <button id="speakSentence" class="secondary-btn">🔊 Прослухати речення</button>
-                  <div class="back-tip">Контекст допомагає запам'ятати слово надовше.</div>
+                  <div class="back-tip">Переверни → прочитай приклад → обери «Знаю» або «Не знаю».</div>
                 </div>
               </article>
             </div>
@@ -111,6 +102,17 @@
 
         
         <div id="subview-stats" class="subview">
+          
+          <section class="progress-card glass">
+            <div class="progress-ring" id="progressRing"><div><b id="dailyPct">0%</b><span>сьогодні</span></div></div>
+            <div class="progress-copy">
+              <span class="progress-label">Прогрес сьогодні</span>
+              <strong>+<span id="dailyLearned">0</span> слова</strong>
+              <span class="progress-good" id="progressGood">Почнемо? 🌱</span>
+            </div>
+            <div class="week-bars" id="weekBars" aria-label="Активність за тиждень"></div>
+          </section>
+
           <section class="stats-grid">
             <div class="metric glass"><span>Всього слів</span><strong id="statTotal">0</strong></div>
             <div class="metric glass"><span>Нові</span><strong id="statNew">0</strong></div>

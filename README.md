@@ -1,4 +1,4 @@
-# GESTALT v0.021
+# GESTALT v0.022
 
 Premium mobile-first German vocabulary trainer for Telegram Mini Apps.
 

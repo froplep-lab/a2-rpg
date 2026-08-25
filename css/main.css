@@ -71,3 +71,18 @@ html[data-theme="light"]{--bg:#eff3fa;--bg2:#fff;--surface:rgba(255,255,255,.84)
   .answer-grid { position:sticky; bottom:calc(76px + env(safe-area-inset-bottom)); z-index:20; }
 }
 
+
+/* v0.022 learning-flow polish */
+.category-pills-row{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 10px;scrollbar-width:none;overscroll-behavior-inline:contain}
+.category-pills-row::-webkit-scrollbar{display:none}
+.cat-pill{flex:0 0 auto;white-space:nowrap}
+.answer-btn:disabled{opacity:.38;filter:saturate(.45);cursor:not-allowed;transform:none!important;box-shadow:none}
+.back-tip{max-width:320px;text-align:center;line-height:1.45}
+.word-plural{max-width:220px;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:640px){
+  .flashcard{min-height:500px}
+  .word-main-row{margin-top:48px}
+  .word-main-row h2{font-size:clamp(30px,9.6vw,40px);letter-spacing:-.03em}
+  .word-meaning{font-size:21px;margin-top:22px}
+  .flash-face{padding:18px}
+}
