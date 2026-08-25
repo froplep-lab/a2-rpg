@@ -10,7 +10,7 @@
 ### Learn screen
 - topic select + inline topic title.
 - category status pills: all/new/learning/review/mastered.
-- `flashcard` with front/back faces.
+- `flashcard` with a 3D front/visual-back track plus a flat `.flash-back` content overlay.
 - primary answer buttons.
 - stats subview.
 - collection subview.

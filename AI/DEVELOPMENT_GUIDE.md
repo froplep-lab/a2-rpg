@@ -36,3 +36,7 @@ The current code intentionally remains a single frontend module. Do not split/re
 ## Browser-driven development loop
 
 Use `npm run test:e2e` to launch a clean local server and Chromium/CDP session. The permanent harness exercises real DOM click paths, captures runtime state, records console/network failures, captures screenshots, and checks persistence after reload. For deterministic visual/layout coverage use `tests/fixtures/long-card.json`. When a browser test fails, inspect `tests/artifacts/e2e-result.json` before changing code.
+
+### Autonomous test commands
+
+Run `npm run test:regression` for source/state/platform checks and `npm run test:e2e` for real browser automation. `npm run test:all` combines both.

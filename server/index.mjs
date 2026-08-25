@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const PORT=Number(process.env.PORT||8080);
+const HOST=process.env.HOST||'127.0.0.1';
 const BOT_TOKEN=process.env.BOT_TOKEN||'';
 const MINI_APP_URL=(process.env.MINI_APP_URL||'').replace(/\/$/,'');
 const WEBHOOK_URL=(process.env.WEBHOOK_URL||'').replace(/\/$/,'');
@@ -100,5 +101,5 @@ const server=http.createServer(async(req,res)=>{
     serveStatic(req,res);
   }catch(e){sendJson(res,500,{ok:false,error:e.message||'server error'})}
 });
-server.listen(PORT,()=>console.log(`GESTALT ${VERSION} on http://127.0.0.1:${PORT}`));
+server.listen(PORT,HOST,()=>console.log(`GESTALT ${VERSION} on http://${HOST}:${PORT}`));
 configureBot().catch(e=>console.error(e));

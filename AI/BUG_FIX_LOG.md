@@ -77,3 +77,14 @@
 **Regression Risk:** medium on visual interaction, low on state/persistence.
 
 **Verification:** static suite PASS; browser visual verification remains PARTIAL in the current sandbox because local Chromium navigation is blocked.
+
+## 2026-08-25 — Card back text could remain mirrored in browser 3D compositing
+- **Severity:** CRITICAL / core learning UI
+- **Reproduction:** Open Learn → tap the flashcard → inspect the Ukrainian translation on the back face. In affected compositor/browser paths the transformed back text could appear mirrored/reversed or otherwise render incorrectly.
+- **Root Cause:** The application rendered real text inside a transformed 3D back face. Even with the canonical 180° back-face transform, transformed text depended on browser 3D compositing behavior. The face also previously used scrolling overflow, which can flatten 3D descendants.
+- **Affected Files:** `index.html`, `css/main.css`, `js/app.js`, `tests/smoke.mjs`, `tests/e2e/autonomous.mjs`.
+- **Fix:** The 3D track now carries only the visual front/back surfaces. The real back content (`backGerman`, `backMeaning`, sentence and controls) was moved to a flat sibling overlay with `transform:none`. The back visual still rotates 180° underneath it, so the user keeps the 3D flip while the Ukrainian text is never transformed.
+- **Why This Fix Is Correct:** It removes transformed text from the browser compositor path entirely while preserving the intended card flip animation. The runtime inspector now verifies `inner × backVisual = identity` and `backContentTransform = none`.
+- **Regression Risk:** Medium; DOM hierarchy for the back content changed, but all existing IDs remain unchanged and event handlers continue to target the same elements.
+- **Tests:** `npm test`, `npm run state-check`, `npm run platform-check`, `node --check js/app.js`; browser harness updated to assert the back overlay is readable and matches the fixture translation.
+- **Regression Status:** Static regression PASS. Full browser visual verification remains environment-limited when Chromium navigation is blocked by the sandbox policy; this is recorded by the E2E harness rather than hidden.

@@ -17,3 +17,10 @@
 | Screenshots | PARTIAL | capture pipeline implemented; local browser navigation blocked here |
 | Audio | NOT TESTED runtime | browser interaction unavailable in this environment |
 | Telegram cloud sync | NOT TESTED | requires Telegram runtime/credentials |
+
+## Autonomous browser verification
+
+Card Back Orientation: PARTIAL — code invariant PASS; full Chromium visual verification is blocked in this sandbox by browser navigation policy.
+E2E Runtime Console/Network: PARTIAL — harness is implemented and captures diagnostics, but the same navigation policy prevents app-page execution here.
+
+Do not upgrade these rows to PASS without running `npm run test:e2e` in an environment where the app page can actually load.

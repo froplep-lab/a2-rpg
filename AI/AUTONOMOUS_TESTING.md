@@ -34,3 +34,7 @@ reproduce
 ```
 
 The test suite is intended to accumulate regression knowledge rather than remain a disposable one-off test script.
+
+## Browser runner environment
+
+`npm run test:e2e` starts the local server and Chromium/CDP automatically. In restricted environments where loopback navigation is blocked, set `E2E_HOST` to a reachable host/IP; the harness records `tests/artifacts/e2e-result.json` with the exact browser/network failure instead of reporting a false PASS.

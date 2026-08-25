@@ -67,10 +67,11 @@ async function waitFor(url, timeoutMs = 8000) {
 
 async function main() {
   const appPort = await freePort(8790);
+  const browserHost = process.env.E2E_HOST || '127.0.0.1';
   const chromePort = await freePort(9220);
   const server = spawn(process.execPath, ['server/index.mjs'], {
     cwd: ROOT,
-    env: {...process.env, PORT: String(appPort), BOT_TOKEN: ''},
+    env: {...process.env, PORT: String(appPort), HOST: browserHost === '127.0.0.1' ? '0.0.0.0' : '0.0.0.0', BOT_TOKEN: ''},
     stdio: ['ignore', 'pipe', 'pipe']
   });
   let serverLog = '';
@@ -84,7 +85,7 @@ async function main() {
       '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--no-proxy-server',
       `--remote-debugging-port=${chromePort}`,
       `--user-data-dir=${path.join(ARTIFACTS, 'chrome-profile')}`,
-      `http://127.0.0.1:${appPort}/?debug=1`
+      'about:blank'
     ], {stdio: ['ignore', 'ignore', 'pipe']});
     let chromeErr = '';
     chrome.stderr.on('data', d => { chromeErr += d.toString(); });
@@ -119,7 +120,7 @@ async function main() {
     await cdp.send('Runtime.enable');
     await cdp.send('Network.enable');
     await cdp.send('Page.enable');
-    await cdp.send('Page.navigate', {url:`http://127.0.0.1:${appPort}/?debug=1`});
+    await cdp.send('Page.navigate', {url:`http://${browserHost}:${appPort}/?debug=1`});
     await sleep(2200);
 
     const evaluate = async expression => {
@@ -129,7 +130,7 @@ async function main() {
 
     const dev = await evaluate('({enabled:Boolean(window.__GESTALT_DEV__?.isEnabled),ready:document.readyState,url:location.href})');
     if (!dev?.enabled) {
-      fs.writeFileSync(path.join(ARTIFACTS, 'e2e-result.json'), JSON.stringify({ok:false,error:'Development bridge missing',dev,errors,warnings,networkFailures:networkFailures.filter(x=>!x.canceled),serverLog,chromeErr}, null, 2));
+      fs.writeFileSync(path.join(ARTIFACTS, 'e2e-result.json'), JSON.stringify({ok:false,error:'Development bridge missing',dev,errors,warnings,networkFailures:networkFailures.filter(x=>!x.canceled),serverLog,chromeErr,browserHost}, null, 2));
       throw new Error('Development bridge missing');
     }
 
@@ -147,6 +148,7 @@ async function main() {
     const flipResult = await evaluate('window.__GESTALT_DEV__.getState()');
     const backInfo = await evaluate(`({
       text: document.querySelector('#backMeaning')?.textContent || '',
+      backGerman: document.querySelector('#backGerman')?.textContent || '',
       visual: window.__GESTALT_DEV__.getComputedCard(),
       state: window.__GESTALT_DEV__.getState()
     })`);
@@ -158,7 +160,7 @@ async function main() {
     await sleep(700);
     const answerAfter = await evaluate('window.__GESTALT_DEV__.getState()');
     const savedAfterAnswer = await evaluate('window.__GESTALT_DEV__.getSave()');
-    await cdp.send('Page.navigate', {url:`http://127.0.0.1:${appPort}/?debug=1`});
+    await cdp.send('Page.navigate', {url:`http://${browserHost}:${appPort}/?debug=1`});
     await sleep(1200);
     const restored = await evaluate('window.__GESTALT_DEV__.getState()');
 
@@ -182,7 +184,8 @@ async function main() {
     await cdp.send('Emulation.clearDeviceMetricsOverride');
 
     const result = {
-      ok: errors.length === 0 && networkFailures.filter(x => !x.canceled).length === 0 && topicCount.includes('1') && backInfo.visual.netBackIdentity === true && flipResult.flipped === true && answerAfter.answers === answerBefore.answers + 1 && savedAfterAnswer.xp > 0 && restored.xp === savedAfterAnswer.xp,
+      environment: {browserHost},
+      ok: errors.length === 0 && networkFailures.filter(x => !x.canceled).length === 0 && topicCount.includes('1') && backInfo.visual.netBackIdentity === true && backInfo.visual.backContentTransform === 'none' && backInfo.visual.backContentVisibility === 'visible' && backInfo.text === fixture.customWords[0].ukrainian && backInfo.backGerman === fixture.customWords[0].german && flipResult.flipped === true && answerAfter.answers === answerBefore.answers + 1 && savedAfterAnswer.xp > 0 && restored.xp === savedAfterAnswer.xp,
       appPort, chromePort, stateBefore, topicCount, frontText, flipResult, answerBefore, answerAfter, savedAfterAnswer, restored, backInfo, desktop, mobile,
       errors, warnings, networkFailures: networkFailures.filter(x => !x.canceled),
       artifacts: 'tests/artifacts/', serverLog, chromeErr
@@ -199,7 +202,8 @@ async function main() {
 }
 
 main().catch(err => {
-  const result={ok:false,error:String(err?.stack||err)};
+  const existing = (()=>{try{return JSON.parse(fs.readFileSync(path.join(ARTIFACTS,'e2e-result.json'),'utf8'))}catch{return {}}})();
+  const result={...existing,ok:false,error:String(err?.stack||err)};
   try{fs.writeFileSync(path.join(ARTIFACTS,'e2e-result.json'),JSON.stringify(result,null,2));}catch{}
   console.error(err.stack || err); process.exitCode = 1;
 });

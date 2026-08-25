@@ -44,3 +44,7 @@ start server
 ## Visual evidence
 
 `tests/visual/README.md` documents the screenshot artifacts. Future AI sessions should inspect the corresponding screenshot when a visual assertion fails, especially for the flashcard front/back and mobile layout.
+
+### Card-flip invariants
+
+The 3D inner track and back visual surface may rotate. Actual back content must remain in `.flash-back` with `transform:none`, and the E2E inspector verifies `backContentTransform === "none"` plus the fixture Ukrainian translation.

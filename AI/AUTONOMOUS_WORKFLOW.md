@@ -87,3 +87,5 @@ npm run test:all         # regression + browser
 `PARTIAL`/`NOT TESTED` belongs in `AI/STABILITY_CHECKLIST.md` when the environment prevents a runtime verification.
 
 Never convert an infrastructure restriction such as `ERR_BLOCKED_BY_ADMINISTRATOR` into a product PASS.
+
+- On browser automation failure, inspect `tests/artifacts/e2e-result.json` before changing application code. Distinguish application failures from environment navigation policy failures.

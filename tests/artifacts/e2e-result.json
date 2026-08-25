@@ -1,0 +1,4 @@
+{
+  "ok": false,
+  "error": "Error: Development bridge missing\n    at main (file:///mnt/data/work_gestalt/current/tests/e2e/autonomous.mjs:134:13)"
+}

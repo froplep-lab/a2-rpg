@@ -40,3 +40,5 @@
 **Browser environment restriction:** some execution environments may block localhost navigation in Chromium (`ERR_BLOCKED_BY_ADMINISTRATOR`). This is a test-environment limitation, not proof of application failure. Preserve the failure artifact and rerun in an environment with local browser navigation enabled.
 
 **Card flip:** high visual sensitivity. The flip must remain split between static card shell, `flashcard-inner` 3D rotation, and locally reversed back face. Do not reintroduce shell-level transform or a second independent face animation without regression testing.
+
+- **RESOLVED:** actual Ukrainian/back content is no longer rendered inside a transformed 3D face; the back text uses a flat sibling overlay to eliminate mirrored-text compositor failures.
