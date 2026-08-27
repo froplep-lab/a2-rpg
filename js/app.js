@@ -1,4 +1,4 @@
-const VERSION='0.031';
+const VERSION='0.032';
 const WORDS_URL=new URL('../data/words.json', import.meta.url).href;
 const COMPACT_WORDS_URL=new URL('../data/words.compact.json', import.meta.url).href;
 const SAVE_VERSION=12;
@@ -383,7 +383,7 @@ async function boot(){
   }
   renderAll();maybeSpeakCurrent(false);
   initTelegram().then(syncTelegramBack);
-  if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{})}
+  if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).then(reg=>{reg.update?.().catch(()=>{});reg.addEventListener('updatefound',()=>{const worker=reg.installing;if(!worker)return;worker.addEventListener('statechange',()=>{if(worker.state==='activated'&&navigator.serviceWorker.controller&&!sessionStorage.getItem('gestalt_sw_reload_0032')){sessionStorage.setItem('gestalt_sw_reload_0032','1');location.reload()}})})}).catch(()=>{})}
   if(navigator.storage?.persist){navigator.storage.persist().catch(()=>{})}
 }
 
