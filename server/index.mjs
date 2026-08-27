@@ -11,7 +11,7 @@ const MINI_APP_URL=(process.env.MINI_APP_URL||'').replace(/\/$/,'');
 const WEBHOOK_URL=(process.env.WEBHOOK_URL||'').replace(/\/$/,'');
 const WEBHOOK_PATH='/telegram/webhook';
 const WEBHOOK_SECRET=process.env.WEBHOOK_SECRET||'';
-const VERSION='0.032';
+const VERSION='0.033';
 if(MINI_APP_URL&& !/^https:\/\//i.test(MINI_APP_URL))console.warn('MINI_APP_URL should use HTTPS for Telegram Mini App deployment');
 const jsonHeaders={'content-type':'application/json; charset=utf-8','cache-control':'no-store'};
 
