@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-const root=path.resolve(new URL('..',import.meta.url).pathname);
+import { fileURLToPath } from 'node:url';
+const root=path.resolve(fileURLToPath(new URL('..',import.meta.url)));
 const read=f=>fs.readFileSync(path.join(root,f),'utf8');
 const html=read('index.html'), css=read('css/main.css'), js=read('js/app.js'), sw=read('sw.js');
 assert.match(html,/viewport-fit=cover/,'iOS safe-area viewport missing');

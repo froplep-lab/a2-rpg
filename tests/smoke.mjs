@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-const root=path.resolve(new URL('..',import.meta.url).pathname);
+import { fileURLToPath } from 'node:url';
+const root=path.resolve(fileURLToPath(new URL('..',import.meta.url)));
 const read=f=>fs.readFileSync(path.join(root,f),'utf8');
 const html=read('index.html');
 const js=read('js/app.js');

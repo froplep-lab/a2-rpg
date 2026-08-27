@@ -1,5 +1,5 @@
 const CACHE='gestalt-v0.031';
-const SHELL=['./','./index.html','./css/main.css','./js/app.js','./data/book-vocabulary-manifest.json','./manifest.webmanifest','./assets/icon-192.png','./assets/icon-512.png'];
+const SHELL=['./','./index.html','./css/main.css','./js/app.js','./data/book-vocabulary-manifest.json','./data/words.compact.json','./manifest.webmanifest','./assets/icon-192.png','./assets/icon-512.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(async cache=>{
     for(const url of SHELL){try{await cache.add(url)}catch{}}

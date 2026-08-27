@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-const root=path.resolve(new URL('..',import.meta.url).pathname);
+import { fileURLToPath } from 'node:url';
+const root=path.resolve(fileURLToPath(new URL('..',import.meta.url)));
 const src=fs.readFileSync(path.join(root,'js/app.js'),'utf8');
 const start=src.indexOf('function defaults()');
 const end=src.indexOf('\nfunction loadSave()',start);
