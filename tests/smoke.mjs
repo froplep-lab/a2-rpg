@@ -76,6 +76,7 @@ assert.match(css,/\.flash-back\{transform:rotateY\(180deg\)/,'back content must 
 assert.ok(html.includes('class="flash-face flash-back"'),'canonical back face missing');
 assert.ok(js.includes("const VERSION='0.031'"),'app version must match release identity');
 assert.ok(js.includes("wordEl.classList.remove('word-long','word-xlong')"),'long-word card sizing logic missing');
+assert.ok(js.includes('if(sizeClass) wordEl.classList.add(sizeClass)'),'short words must not add an empty DOMToken');
 assert.equal(read('VERSION').trim(),'0.031','version file mismatch');
 assert.equal(JSON.parse(read('package.json')).version,'0.0.31','package version mismatch');
 assert.match(read('server/index.mjs'),/VERSION='0.031'/,'server version mismatch');

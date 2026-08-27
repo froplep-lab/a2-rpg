@@ -237,7 +237,8 @@ function renderCard(){ensureLearningSession();const w=currentWord();if(!w){const
   const parts=wordDisplayParts(w); const rawG=parts.base||'—';
   const wordEl=$('wordGerman');
   wordEl.classList.remove('word-long','word-xlong');
-  wordEl.classList.add(rawG.length>24?'word-xlong':rawG.length>16?'word-long':'');
+  const sizeClass=rawG.length>24?'word-xlong':rawG.length>16?'word-long':'';
+  if(sizeClass) wordEl.classList.add(sizeClass);
   wordEl.textContent=rawG;
   if($('wordPlural')) $('wordPlural').textContent=pluralForDisplay(w);
   let emj=w.emoji; if(!emj||emj==='✨') emj=emojiForWord(rawG,w.ukrainian); $('wordEmoji').textContent=emj;
@@ -422,4 +423,3 @@ function installDevBridge(){
 
 installDevBridge();
 boot();
-
