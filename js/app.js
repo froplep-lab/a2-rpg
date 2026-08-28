@@ -247,7 +247,10 @@ function renderCard(){ensureLearningSession();const w=currentWord();if(!w){const
   $('wordPhonetic').textContent=save.settings.showPhonetic&&w.phonetic?`/${phonetic(w.phonetic)}/`:'';
   $('wordGrammar').textContent=w.grammar||'';$('wordMeaning').textContent='';$('wordHint').textContent='Переверни картку, щоб перевірити переклад.';$('wordSource').textContent=w.source||'GESTALT · Картка';
   $('backGerman').textContent=rawG||'—';$('backMeaning').textContent=w.ukrainian||'—';$('backMeaningNote').textContent=w.translationNote||'';$('backMeaningNote').hidden=!w.translationNote;
-  $('backSentence').textContent=w.sentence||'—';$('backSentenceUa').textContent=sentenceUa(w);$('sentencePanel').hidden=!state.sentenceExpanded;$('sentenceToggle').setAttribute('aria-expanded',state.sentenceExpanded?'true':'false');$('sentenceToggle').textContent=state.sentenceExpanded?'Приклад речення ▴':'Приклад речення ▾';
+  $('backSentence').textContent=w.sentence||'—';
+  if($('backSentenceBadgeText')) $('backSentenceBadgeText').textContent=w.sentence||'Приклад відсутній';
+  if($('backEmoji')) $('backEmoji').textContent=emj;
+  $('backSentenceUa').textContent=sentenceUa(w);$('sentencePanel').hidden=!state.sentenceExpanded;$('sentenceToggle').setAttribute('aria-expanded',state.sentenceExpanded?'true':'false');$('sentenceToggle').textContent=state.sentenceExpanded?'Приклад речення ▴':'Приклад речення ▾';
   const k=wordKey(w), r=save.review[k]||{interval:0,reps:0,status:'new'};
   let stIcon='🆕 Нове',pct=0; if(r.status==='learning'||(r.status==='new'&&r.reps>0)){stIcon='🔄 У процесі';pct=30}else if(r.status==='review'){stIcon='📖 На повторенні';pct=Math.min(95,Math.round((r.interval/30)*100))}else if(r.status==='mastered'||r.interval>=21){stIcon='✅ Вивчене';pct=100}else if(r.interval>0){stIcon='🔄 У процесі';pct=Math.min(100,Math.round((r.interval/21)*100))} if(pct===0&&r.reps>0)pct=10;
   $('wordStatus').textContent=stIcon;$('wordProgressFill').style.width=pct+'%';$('wordProgressText').textContent=pct+'%';

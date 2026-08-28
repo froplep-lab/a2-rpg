@@ -114,3 +114,47 @@ html[data-theme="light"]{--bg:#eff3fa;--bg2:#fff;--surface:rgba(255,255,255,.84)
 .flash-back .back-meaning{overflow-wrap:anywhere;word-break:break-word}
 @media(prefers-reduced-motion:reduce){.flashcard-inner,.answer-btn{transition:none!important}}
 
+/* Центрування задньої сторони картки */
+.center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+  padding-top: 40px;
+}
+.center-text {
+  text-align: center;
+}
+
+/* Плашка для прикладу речення */
+.sentence-badge {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #a0a5b5;
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Анімація емодзі */
+.floating-emoji {
+  font-size: 42px;
+  margin-bottom: 12px;
+  animation: floatEmoji 3s ease-in-out infinite;
+}
+
+@keyframes floatEmoji {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
